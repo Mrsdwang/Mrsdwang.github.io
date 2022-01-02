@@ -1,0 +1,871 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>操作系统的系统调用 - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="操作系统的系统调用">
+<meta property="og:description" content="LAB2 一、 任务内容： 在原有的linux0.11上添加两个系统调用，及其相应的响应函数，并通过API调用系统调用。 两个系统调用的原型和应该完成的功">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://Mrsdwang.github.io/oslab2/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-05-18T00:00:00+00:00">
+<meta property="article:modified_time" content="2021-05-18T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="操作系统的系统调用">
+<meta name=twitter:description content="LAB2 一、 任务内容： 在原有的linux0.11上添加两个系统调用，及其相应的响应函数，并通过API调用系统调用。 两个系统调用的原型和应该完成的功">
+<meta name=application-name content="INT80">
+<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://Mrsdwang.github.io/oslab2/><link rel=prev href=http://Mrsdwang.github.io/oslab1/><link rel=next href=http://Mrsdwang.github.io/oslab3/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"操作系统的系统调用","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/Mrsdwang.github.io\/oslab2\/"},"genre":"posts","keywords":"操作系统","wordcount":7266,"url":"http:\/\/Mrsdwang.github.io\/oslab2\/","datePublished":"2021-05-18T00:00:00+00:00","dateModified":"2021-05-18T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> Posts </a><a class=menu-item href=/tags/> Tags </a><a class=menu-item href=/categories/> categories </a><a class=menu-item href=/aboutme/> About Me </a><a class=menu-item href=/search/><i class="fas fa-fw fa-search"></i> search </a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/ title>Posts</a><a class=menu-item href=/tags/ title>Tags</a><a class=menu-item href=/categories/ title>categories</a><a class=menu-item href=/aboutme/ title>About Me</a><a class=menu-item href=/search/ title><i class="fas fa-fw fa-search"></i>search</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container>
+<div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">操作系统的系统调用</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/><i class="far fa-folder fa-fw"></i>操作系统</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2021-05-18>2021-05-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 7266 字
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 15 分钟&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents></nav></div>
+</div><div class=content id=content><h1 id=lab2>LAB2</h1>
+<p>一、 任务内容：</p>
+<p>在原有的linux0.11上添加两个系统调用，及其相应的响应函数，并通过API调用系统调用。</p>
+<p>两个系统调用的原型和应该完成的功能如下</p>
+<p>（1）iam()</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>iam</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>name</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>功能：将name的内容拷贝到内核中保存下来</p>
+<p>要求：name长不能超过24个字符，包括最后的'\0'</p>
+<p>返回值：拷贝的字符串name的长度。若name长超过24，则返回 -1，并置errno为EINVAL（errno是个头文件，即return -EINVAL,EINVAL是errno.h里的一个宏定义）</p>
+<p>（2）whoami()</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>whoami</span><span class=p>(</span><span class=kt>char</span> <span class=o>*</span><span class=n>name</span><span class=p>,</span><span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>size</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>功能：将iam()保存到内核空间的字符串拷贝到name字符串指向的用户地址空间中，为了确保name不会越界访问，用size说明其大小</p>
+<p>返回值：拷贝字符串name的长度。若size小于name所占空间，返回 -1，并置errno为EINVAL</p>
+<p>二、明确何为系统调用。做什么的？如何做？</p>
+<p>要谈系统调用，那我们还是先了解一下何为内核。(只是让我自己再复习一下概念，能否说清楚)</p>
+<p>操作系统其实就是一个监控程序，对的，也是一个程序。它相当于单片机我们写的while(1)，而内核就是操作系统最核心的部分，也即这个程序里面最核心的代码。我们可以从linux源码看出其内核负责处理各种核心任务，比如I/O,进程管理，内存管理等。</p>
+<p>所以内核即操作系统这个程序里面最关键的代码。也就是他是计算机资源的管理者，包括硬件，软件资源。软件资源就是各种形式的数据，比如各种文件，软件程序。硬件资源就是总线、CPU、内存、磁盘、网卡、显卡及各种IO。</p>
+<p>那么系统调用是如何出现的呢？</p>
+<p>我们假设如果没有操作系统来管理各种进程，举个栗子，每个进程需要放进内存才能执行，那么就会在占用内存空间，如果两个任务同时申请同一个内存空间会造成冲突。更为严重，如果一个任务占用了必须一直运行的程序或者非常重要的程序的内存空间，那么计算机就崩溃了。</p>
+<p>同时，如果有操作系统，并且不对进程加以限制及控制，会发生什么情况？</p>
+<p>在举几个栗子，对于单任务，他可能把他的空间占用到了原本分配给操作系统的空间，那么两者就混合了，没办法区分，并且用户程序可以访问大部分硬件设备，甚至改变操作系统，如果一个病毒(恶意进程)也连接到了操作系统的程序里面，那它就成了操作系统的一部分了，因为没办法区分嘛。</p>
+<p>多任务呢？如果多个进程同时操控同一个硬件设备，数据传输就会错误，数据被污染，可以理解为一个程序的数据发送到了另一个程序。同时操作系统必须自己响应硬件中断，通过硬件中断来切换任务上下文，让合适的任务在合适时机运行。如果中断响应程序被更改了呢？操作系统又会如何运行呢？</p>
+<p>综上，操作系统必须要清楚哪些程序占用那些资源，合理控制分配，才能有序运行下去。为了避免一个普普通通的进程将自己干掉取代，操作系统必然需要采取强硬措施保证自己的地位。核心问题在于保护关键寄存器和重要的物理内存。</p>
+<p>既然操作系统是个监控程序，它要控制其下的进程，那么各种进程就必须要有分级制度，并且操作系统拥有最高控制权才能让其余的进程服从它的安排。这就引出了用户态和内核态。因此，只有有操作系统的前提，用户态和内核态这种概念才会存在。因为对于CPU来说不过是状态标志位的改变，即寄存器几个有特殊意义的位改变后，CPU有不同的工作方式。为了用户使用的方便，操作系统才衍生这用户态和内核态的概念</p>
+<p>这个控制权由硬件来控制，当CPU引导进入保护模式后，会有一张全局描述符表，记录了各代码段的特权级别，在linux中特权级别为0-3，0级等级最高。CS寄存器中有两位(CPL，当前特权级)用来指明CPU当前的特权级，0最高，3最低，分别称为内核态和用户态。同时还存在请求特权级RPL，其存在请求者的程序代码里，代码里要提供一个选择子selector，RPL保存选择子的最低两位。访问时的特权检查根据：有效特权级EPL=max(RPL,CPL)&lt;=CPL是否成立，所以用户程序最多访问CPL级别的代码段。</p>
+<p>当用户态进入内核态，特权级升高，内核态回到用户态，特权级降低。这个进程切换的同时还会切换相应的栈，ESP从用户栈切换到内核栈，再从内核栈切换到用户栈。以上措施皆为限制程序的访问能力来保证操作系统的安全。</p>
+<p>由上面我们也可以知道，用户态不能随随便便切换到内核态，要是随意切换，那操作系统不就也还是危险的了嘛。但是用户态必须要使用硬件设备，让操作系统来和硬件交互执行程序的各种功能，所以我们需要进入内核态啊，那么我们要如何做呢？这时候需要一个机制：用户态程序切换到内核态，但不能控制内核态中执行的指令。</p>
+<p>这个机制就是系统调用(嘿嘿，说了那么多终于讲到它了)，而执行机制的方法就是中断（异常的一种，且不仅这一个方法，所以称为”异常“会更为准确，例如缺页也会进入内核态进行取页换页的操作），可以理解为中断是能够陷入内核态的有效手段。用户程序通过系统调用的这个方法，告诉内核他要去操控哪些计算机资源。所以系统调用是内核态与用户态的分界</p>
+<p>例如我们使用printf函数，他就告诉了内核要控制显示器输出这样的字符串，所以我们可以在屏幕上看到字符串的输出，说明我们的程序已经进入过内核态并将数据传递给了显示器这个硬件。</p>
+<p>系统调用即调用系统函数，通过系统函数来实现控制硬件。系统函数是调用系统库中为该系统调用编写的一个接口函数(API)，但API并不会自己完成系统调用，而是真正的系统调用被封装在API中，换句话说，API调用真正的系统调用。例如write()这个系统函数就是一个API，这个函数中还有指令真正用来实现在显示器上显示字符。</p>
+<p>那么系统函数也是函数和我们用户态写的用户程序的函数有什么区别呢？调用用户程序的自定义函数，在汇编层面是通过call指令跳转到该函数地址，然后执行。</p>
+<p>而调用API到API调用真正的系统调用的过程如下：</p>
+<ol>
+<li>将系统调用函数的编号存入EAX;</li>
+<li>把函数参数存入其他通用寄存器;</li>
+<li>触发int 0x80，请求处理系统调用的system_call来处理;</li>
+</ol>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=1.jpg data-srcset="/oslab2/1.jpg, 1.jpg 1.5x, /oslab2/1.jpg 2x" data-sizes=auto alt=/oslab2/1.jpg title=1></p>
+<p>该次任务，我们在用户程序直接执行我们所写的系统调用函数。</p>
+<p>这个过程如下：</p>
+<ol>
+<li>应用程序调用库函数(API)</li>
+<li>API将系统调用号存入EAX，通过中断调用使系统进入内核态</li>
+<li>内核中的中断处理函数根据系统调用号，调用对应的内核函数（系统调用）</li>
+<li>系统调用完成相应功能，将返回值存入EAX，返回到中断处理函数</li>
+<li>中断处理函数返回到API</li>
+<li>API将EAX的值返回给应用程序</li>
+</ol>
+<p>三、分析及实现</p>
+<p>我们会从一些系统函数进行分析来充分理解用户程序是如何进行系统调用的。</p>
+<p>我们查看Linux0.11源码里的lib/close.c中close()的API</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define __LIBRARY__
+</span><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=n>_syscall1</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=n>close</span><span class=p>,</span> <span class=kt>int</span><span class=p>,</span> <span class=n>fd</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>_syscall 是一个宏，其在include/unistd.h中定义</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define _syscall1(type,name,atype,a) \
+</span><span class=cp>type name(atype a) \
+</span><span class=cp>{ \
+</span><span class=cp>long __res; \
+</span><span class=cp>__asm__ volatile (&#34;int $0x80&#34; \
+</span><span class=cp>    : &#34;=a&#34; (__res) \
+</span><span class=cp>    : &#34;0&#34; (__NR_##name),&#34;b&#34; ((long)(a))); \
+</span><span class=cp>if (__res &gt;= 0) \
+</span><span class=cp>    return (type) __res; \
+</span><span class=cp>errno = -__res; \
+</span><span class=cp>return -1; \
+</span><span class=cp>}
+</span></code></pre></td></tr></table>
+</div>
+</div><p>将_syscall1(int，close，int，fd)进行宏展开有</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>close</span><span class=p>(</span><span class=kt>int</span> <span class=n>fd</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=kt>long</span> <span class=n>__res</span><span class=p>;</span>
+    <span class=n>__asm__</span> <span class=k>volatile</span> <span class=p>(</span><span class=s>&#34;int $0x80&#34;</span>
+        <span class=o>:</span> <span class=s>&#34;=a&#34;</span> <span class=p>(</span><span class=n>__res</span><span class=p>)</span>
+        <span class=o>:</span> <span class=s>&#34;0&#34;</span> <span class=p>(</span><span class=n>__NR_close</span><span class=p>),</span><span class=s>&#34;b&#34;</span> <span class=p>((</span><span class=kt>long</span><span class=p>)(</span><span class=n>fd</span><span class=p>)));</span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>__res</span> <span class=o>&gt;=</span> <span class=mi>0</span><span class=p>)</span>
+        <span class=k>return</span> <span class=p>(</span><span class=kt>int</span><span class=p>)</span> <span class=n>__res</span><span class=p>;</span>
+    <span class=n>errno</span> <span class=o>=</span> <span class=o>-</span><span class=n>__res</span><span class=p>;</span>
+    <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个就是API的定义，里面包含了调用真正的系统调用。将宏__ NR_close存入EAX ( 你是不是会疑惑__ NR_close怎么出来的？咱先按下不表)，然后将fd存入EBS，然后进行0x80中断调用。从EAX取出返回值存入__res中，判断后再决定传什么值给API调用者。对比API进行真正系统调用的过程，那么可知这个就是进行了API到真正系统调用的实例。</p>
+<p>那么__NR_close是什么呢？它其实就是系统调用的编号，我们有一步要将系统调用号写入EAX让内核知道要调用哪一个内核函数嘛。所有系统调用的编号都在include/unistd.h里面定义。我们要自己写系统调用函数，也需要给我们的函数一个编号。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define __NR_close    6
+</span><span class=cp></span><span class=cm>/*
+</span><span class=cm>所以添加系统调用时需要修改include/unistd.h文件，
+</span><span class=cm>使其包含__NR_whoami和__NR_iam。
+</span><span class=cm>*/</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>因此对于我们写的用户程序调用系统调用需要有如下内容</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cm>/* 有它，_syscall1 等才有效。详见unistd.h */</span>
+<span class=cp>#define __LIBRARY__
+</span><span class=cp></span>
+<span class=cm>/* 有它，编译器才能获知自定义的系统调用的编号 */</span>
+<span class=cp>#include</span> <span class=cpf>&#34;unistd.h&#34;</span><span class=cp>
+</span><span class=cp></span>
+<span class=cm>/* iam()在用户空间的接口函数，调用系统调用，是系统调用iam()的API，在这个宏里面完成真正系统调用 */</span>
+<span class=n>_syscall1</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=n>iam</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span><span class=o>*</span><span class=p>,</span> <span class=n>name</span><span class=p>);</span>
+
+<span class=cm>/* whoami()在用户空间的接口函数 */</span>
+<span class=n>_syscall2</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=n>whoami</span><span class=p>,</span><span class=kt>char</span><span class=o>*</span><span class=p>,</span><span class=n>name</span><span class=p>,</span><span class=kt>unsigned</span> <span class=kt>int</span><span class=p>,</span><span class=n>size</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>所以我们在unistd.h文件中添加如下的内容</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=2.png data-srcset="/oslab2/2.png, 2.png 1.5x, /oslab2/2.png 2x" data-sizes=auto alt=/oslab2/2.png title=2></p>
+<p>如此我们就将我们自己写的系统调用函数设置好了</p>
+<p>我们调用close()API时调用了int 0x80，所以我们要从此进入内核。</p>
+<p>首先来了解0x80中断执行的过程</p>
+<p>首先我们看内核初始化的时候，主函数main()中调用了sched_init()初始化函数（现在是系统调用初始化的分析）</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>void</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
+<span class=p>{</span>
+<span class=c1>//    ……
+</span><span class=c1></span>    <span class=n>time_init</span><span class=p>();</span>
+    <span class=n>sched_init</span><span class=p>();</span>
+    <span class=n>buffer_init</span><span class=p>(</span><span class=n>buffer_memory_end</span><span class=p>);</span>
+<span class=c1>//    ……
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>sched_init() 在kernel/sched.c中定义</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>void</span> <span class=nf>sched_init</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
+<span class=p>{</span>
+<span class=c1>//    ……
+</span><span class=c1></span>    <span class=n>set_system_gate</span><span class=p>(</span><span class=mh>0x80</span><span class=p>,</span><span class=o>&amp;</span><span class=n>system_call</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>set_system_gate()是个宏，在include/asm/system.h中定义。我们可以看到他传入0x80这个参数和system_call这个中断程序的地址。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define set_system_gate(n,addr) \
+</span><span class=cp>    _set_gate(&amp;idt[n],15,3,addr)
+</span></code></pre></td></tr></table>
+</div>
+</div><p>而_set_gate定义为</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define _set_gate(gate_addr,type,dpl,addr) \
+</span><span class=cp>__asm__ (&#34;movw %%dx,%%ax\n\t&#34; \
+</span><span class=cp>    &#34;movw %0,%%dx\n\t&#34; \
+</span><span class=cp>    &#34;movl %%eax,%1\n\t&#34; \
+</span><span class=cp>    &#34;movl %%edx,%2&#34; \
+</span><span class=cp>    : \
+</span><span class=cp>    : &#34;i&#34; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), \
+</span><span class=cp>    &#34;o&#34; (*((char *) (gate_addr))), \
+</span><span class=cp>    &#34;o&#34; (*(4+(char *) (gate_addr))), \
+</span><span class=cp>    &#34;d&#34; ((char *) (addr)),&#34;a&#34; (0x00080000))
+</span></code></pre></td></tr></table>
+</div>
+</div><p>这里展示的是将system_call函数地址写到0x80对应的中断描述符中，相当于执行int 0x80指令，会产生一个异常陷入内核空间并执行系统调用处理函数system_call，那么明白了0x80号中断如何和system_call产生联系后，我们简单看下system_call的代码，是纯汇编语言编写的</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>!……
+! # 这是系统调用总数。如果增删了系统调用，必须做相应修改，所以我们增加两个系统调用函数，这里数值+2
+nr_system_calls = 72
+!……
+
+.globl system_call
+.align 2
+system_call:
+
+! # 检查系统调用编号是否在合法范围内
+    cmpl \$nr_system_calls-1,%eax
+    ja bad_sys_call
+    push %ds
+    push %es
+    push %fs
+    pushl %edx
+    pushl %ecx
+
+! # push %ebx,%ecx,%edx，是传递给系统调用的参数
+    pushl %ebx  # to the system call
+
+! # 让ds, es指向GDT，内核地址空间（修改段选择子为内核段）
+    movl $0x10,%edx
+    mov %dx,%ds
+    mov %dx,%es
+    movl $0x17,%edx
+! # 让fs指向LDT，用户地址空间
+    mov %dx,%fs
+    call sys_call_table(,%eax,4)
+    pushl %eax
+    movl current,%eax
+    cmpl $0,state(%eax)
+    jne reschedule
+    cmpl $0,counter(%eax)
+    je reschedule
+</code></pre></td></tr></table>
+</div>
+</div><p>并不需要完全理解每一句话，知道他整个程序是干什么的即可。当我们调用system_call这个函数后，可以看到他保存了“现场”，各种push将用户态的各种参数入栈，并让fs指向用户空间，都是为了从内核态回到用户态后，还能还原进入内核态前的状态。(这是操作系统完成的部分保存，硬件完成的还有一部分，比如ss、esp、cs等寄存器)</p>
+<p>并且该函数让我们从用户态陷入到了内核态。其余的简单了解一下即可。</p>
+<p>我们关注</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>call sys_call_table(,%eax,4)
+</code></pre></td></tr></table>
+</div>
+</div><p>我们知道EAX存放的是系统调用号，即__NR_xxxx。根据汇编寻址方法为</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>call sys_call_table + 4 * %eax
+</code></pre></td></tr></table>
+</div>
+</div><p>那么sys_call_table又是什么呢？我们可以在include/linux/sys.h中找到</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=3.png data-srcset="/oslab2/3.png, 3.png 1.5x, /oslab2/3.png 2x" data-sizes=auto alt=/oslab2/3.png title=3></p>
+<p>那么可知它是一个函数指针数组的起始地址。</p>
+<p>因此我们根据系统调用号算出系统调用相应的响应函数在表里的位置，并调用该函数。</p>
+<p>所以我们要在sys.h中加上 sys_iam() ,sys_whoami()两个响应函数引用</p>
+<p>更改如下图所示</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=4.png data-srcset="/oslab2/4.png, 4.png 1.5x, /oslab2/4.png 2x" data-sizes=auto alt=/oslab2/4.png title=4></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=5.png data-srcset="/oslab2/5.png, 5.png 1.5x, /oslab2/5.png 2x" data-sizes=auto alt=/oslab2/5.png title=5></p>
+<p>这里函数表添加的位置要和__NR_xxxx的值对应上，因为我们是根据这个值来计算函数在表里的位置的。</p>
+<p>那么因此可以知道我们执行 int 0x80 中断指令后就能保存现场->陷入内核->调用系统响应相应的响应函数。</p>
+<p>所以，那么我们就该写系统函数sys_iam()和sys_whoami(),我们将这两个函数写成一个who.c文件，这样就只需要一次编译。在完成这两个函数完整功能前，我们先写个测试代码。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>sys_iam</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span><span class=o>*</span> <span class=n>name</span><span class=p>){</span>
+	<span class=n>printk</span><span class=p>(</span><span class=s>&#34;Hello from sys_iam&#34;</span><span class=p>);</span>
+<span class=p>}</span>
+<span class=kt>int</span> <span class=nf>sys_whoami</span><span class=p>(</span><span class=kt>char</span><span class=o>*</span> <span class=n>name</span><span class=p>,</span><span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>size</span><span class=p>){</span>
+	<span class=n>printk</span><span class=p>(</span><span class=s>&#34;Hello from sys_whoami&#34;</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可能会有小伙伴疑问了？欸，为什么是printk而不是printf呢？ 首先明确我们现在是系统函数，调用这个函数的时候我们处于内核态，而内核态是不能使用用户态的函数printf的，所以有printk函数给内核函数使用。这两个函数本质调用的都是tty_write这个函数，但printk是在内核态，对fs寄存器操作不同于printf，因为fs寄存器指向用户态，所以他要将fs寄存器的内容入栈，保存现场，然后指向内核段，出内核态后再pop出&fs恢复现场</p>
+<p>然后我们运行 Linux0.11，并在上面编写test.c文件来调用系统函数。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define __LIBRARY__
+</span><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
+</span><span class=cp></span><span class=c1>//iam()和whoami()两个系统调用的入口参数
+</span><span class=c1></span><span class=n>_syscall1</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=n>iam</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=p>,</span> <span class=n>name</span><span class=p>);</span> 
+<span class=n>_syscall2</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=n>whoami</span><span class=p>,</span> <span class=kt>char</span><span class=o>*</span><span class=p>,</span> <span class=n>name</span><span class=p>,</span><span class=kt>unsigned</span> <span class=kt>int</span><span class=p>,</span><span class=n>size</span><span class=p>);</span>
+
+<span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>){</span>
+    <span class=kt>char</span> <span class=n>buf</span><span class=p>[</span><span class=mi>24</span><span class=p>];</span>
+    <span class=n>iam</span><span class=p>(</span><span class=s>&#34;test&#34;</span><span class=p>);</span>  <span class=c1>//这句和下句都只是满足需要传入参数，才能运行。
+</span><span class=c1></span>    <span class=n>whoami</span><span class=p>(</span><span class=n>buf</span><span class=p>,</span><span class=mi>24</span><span class=p>);</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么这样我们就能调用iam()和whoami()两个系统调用的响应函数sys_iam和sys_whoami了。我们得到输出</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=6.png data-srcset="/oslab2/6.png, 6.png 1.5x, /oslab2/6.png 2x" data-sizes=auto alt=/oslab2/6.png title=6></p>
+<p>因此我们可以确定我们增加系统调用和响应函数成功了，那么我们现在将响应函数更改为我们想要的功能。</p>
+<p>我们知道指针传递的参数是程序所在地址空间的逻辑地址，如果在内核就直接访问这个地址，得到的是内核空间的数据，而不会是用户态的数据，所以要把name这个字符串被内核读取存入，还需要其他的方法。</p>
+<p>我们从open(char *filename，…..)来分析open（）这个系统调用是如何处理内核态从用户态读取数据的。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>open</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span> <span class=n>filename</span><span class=p>,</span> <span class=kt>int</span> <span class=n>flag</span><span class=p>,</span> <span class=p>...)</span>
+<span class=p>{</span>
+<span class=c1>//    ……
+</span><span class=c1></span>    <span class=n>__asm__</span><span class=p>(</span><span class=s>&#34;int $0x80&#34;</span>
+            <span class=o>:</span><span class=s>&#34;=a&#34;</span> <span class=p>(</span><span class=n>res</span><span class=p>)</span>
+            <span class=o>:</span><span class=s>&#34;0&#34;</span> <span class=p>(</span><span class=n>__NR_open</span><span class=p>),</span><span class=s>&#34;b&#34;</span> <span class=p>(</span><span class=n>filename</span><span class=p>),</span><span class=s>&#34;c&#34;</span> <span class=p>(</span><span class=n>flag</span><span class=p>),</span>
+            <span class=s>&#34;d&#34;</span> <span class=p>(</span><span class=n>va_arg</span><span class=p>(</span><span class=n>arg</span><span class=p>,</span><span class=kt>int</span><span class=p>)));</span>
+<span class=c1>//    ……
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这段我们分析过了，就是把各种参数存在寄存器中。但这里open的文件名是通过EBX传递，就是进入内核后，通过EBX取出文件名字符串。但EBX指向的数据在用户空间，执行的却是内核代码。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>system_call: //所有的系统调用都从system_call开始
+!    ……
+    pushl %edx
+    pushl %ecx
+    pushl %ebx                # push %ebx,%ecx,%edx，这是传递给系统调用的参数
+    movl $0x10,%edx            # 让ds,es指向GDT，指向核心地址空间
+    mov %dx,%ds
+    mov %dx,%es
+    movl $0x17,%edx            # 让fs指向的是LDT，指向用户地址空间
+    mov %dx,%fs
+    call sys_call_table(,%eax,4)    # 即call sys_open
+</code></pre></td></tr></table>
+</div>
+</div><p>这段代码也分析过了，就是各种参数入栈来保存，然后通过fs获得用户数据段的数据。然后call sys_call_table，我们会得到sys_open响应函数</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>sys_open</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span> <span class=n>filename</span><span class=p>,</span><span class=kt>int</span> <span class=n>flag</span><span class=p>,</span><span class=kt>int</span> <span class=n>mode</span><span class=p>)</span>  <span class=c1>//filename这些参数从哪里来？
+</span><span class=c1></span><span class=p>{</span>
+    <span class=err>……</span>
+    <span class=k>if</span> <span class=p>((</span><span class=n>i</span><span class=o>=</span><span class=n>open_namei</span><span class=p>(</span><span class=n>filename</span><span class=p>,</span><span class=n>flag</span><span class=p>,</span><span class=n>mode</span><span class=p>,</span><span class=o>&amp;</span><span class=n>inode</span><span class=p>))</span><span class=o>&lt;</span><span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+        <span class=err>……</span>
+    <span class=p>}</span>
+    <span class=err>……</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>你可能会问我们不是查表找到的响应函数吗？那这些参数哪里获得呢？看看上面的汇编代码，我们pushl 了各种寄存器的值入栈，这些就是函数的参数。我们C语言函数调用另一个函数，就是要将传递的参数压栈，从右到左顺序压，然后call调用。如果要用汇编程序调用C函数就需要自己手动编写这些压栈代码。</p>
+<p>最后我们看到这些参数传给了open_namei（），我们继续深究会发现他里面还传给了dir_namei(),get_dir()，我们从get_dir函数看到</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>struct</span> <span class=n>m_inode</span> <span class=o>*</span> <span class=nf>get_dir</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span> <span class=n>pathname</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=err>……</span>
+    <span class=k>if</span> <span class=p>((</span><span class=n>c</span><span class=o>=</span><span class=n>get_fs_byte</span><span class=p>(</span><span class=n>pathname</span><span class=p>))</span><span class=o>==</span><span class=sc>&#39;/&#39;</span><span class=p>)</span> <span class=p>{</span>
+        <span class=err>……</span>
+    <span class=p>}</span>
+    <span class=err>……</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么我们就可以知道可以通过 get_fs_byte()这个函数获得用户空间的一个字节的数据。</p>
+<p>那么如何从内核态拷贝数据到用户态呢？</p>
+<p>我们在include/asm/segment.h中查看：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>extern</span> <span class=kr>inline</span> <span class=kt>unsigned</span> <span class=kt>char</span> <span class=nf>get_fs_byte</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span> <span class=n>addr</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=kt>unsigned</span> <span class=k>register</span> <span class=kt>char</span> <span class=n>_v</span><span class=p>;</span>
+    <span class=n>__asm__</span> <span class=p>(</span><span class=s>&#34;movb %%fs:%1,%0&#34;</span><span class=o>:</span><span class=s>&#34;=r&#34;</span> <span class=p>(</span><span class=n>_v</span><span class=p>)</span><span class=o>:</span><span class=s>&#34;m&#34;</span> <span class=p>(</span><span class=o>*</span><span class=n>addr</span><span class=p>));</span>
+    <span class=k>return</span> <span class=n>_v</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=k>extern</span> <span class=kr>inline</span> <span class=kt>void</span> <span class=nf>put_fs_byte</span><span class=p>(</span><span class=kt>char</span> <span class=n>val</span><span class=p>,</span><span class=kt>char</span> <span class=o>*</span><span class=n>addr</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=n>__asm__</span> <span class=p>(</span><span class=s>&#34;movb %0,%%fs:%1&#34;</span><span class=o>::</span><span class=s>&#34;r&#34;</span> <span class=p>(</span><span class=n>val</span><span class=p>),</span><span class=s>&#34;m&#34;</span> <span class=p>(</span><span class=o>*</span><span class=n>addr</span><span class=p>));</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>即put_fs_byte和其配套，可将内核态数据写入用户态。</p>
+<p>我们是否可以获得一个规律put_fs_xxx() and put_fs_xxx()是用来连接内核态和用户态的呢？</p>
+<p>那我们开始写sys_iam 和 sys_whoami函数</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;string.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;errno.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;asm/segment.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=cp>#define maxsize 24
+</span><span class=cp></span><span class=kt>char</span> <span class=n>msg</span><span class=p>[</span><span class=n>maxsize</span><span class=p>];</span>
+<span class=kt>int</span> <span class=n>msglen</span><span class=p>;</span>
+
+<span class=kt>int</span> <span class=nf>sys_iam</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span><span class=o>*</span> <span class=n>name</span><span class=p>){</span>
+	<span class=kt>int</span> <span class=n>len</span><span class=o>=</span><span class=mi>0</span><span class=p>;</span>
+	<span class=k>while</span><span class=p>(</span><span class=n>get_fs_byte</span><span class=p>(</span><span class=o>&amp;</span><span class=n>name</span><span class=p>[</span><span class=n>len</span><span class=p>])</span><span class=o>!=</span><span class=sc>&#39;0&#39;</span><span class=p>)</span>
+		<span class=n>len</span><span class=o>++</span><span class=p>;</span>
+	<span class=k>if</span><span class=p>(</span><span class=n>len</span><span class=o>&gt;</span><span class=mi>23</span><span class=p>)</span> <span class=k>return</span> <span class=o>-</span><span class=n>EINVAL</span><span class=p>;</span>
+	<span class=kt>int</span> <span class=n>i</span><span class=o>=</span><span class=mi>0</span><span class=p>;</span>
+	<span class=k>for</span><span class=p>(;</span><span class=n>i</span><span class=o>&lt;</span><span class=n>len</span><span class=p>;</span><span class=o>++</span><span class=n>i</span><span class=p>)</span> <span class=n>msg</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=n>get_fs_byte</span><span class=p>(</span><span class=o>&amp;</span><span class=n>name</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
+    <span class=n>msg</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=sc>&#39;\0&#39;</span><span class=p>;</span>
+	<span class=n>msglen</span> <span class=o>=</span> <span class=n>len</span><span class=p>;</span>
+	<span class=k>return</span> <span class=n>msglen</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=kt>int</span> <span class=nf>sys_whoami</span><span class=p>(</span><span class=kt>char</span> <span class=o>*</span><span class=n>name</span><span class=p>,</span> <span class=kt>unsigned</span> <span class=n>size</span><span class=p>){</span>
+	<span class=k>if</span><span class=p>(</span><span class=n>size</span> <span class=o>&lt;</span> <span class=n>msglen</span><span class=p>)</span> <span class=k>return</span> <span class=o>-</span><span class=n>EINVAL</span><span class=p>;</span>
+	<span class=kt>int</span> <span class=n>i</span><span class=o>=</span><span class=mi>0</span><span class=p>;</span>
+	<span class=k>for</span><span class=p>(;</span><span class=n>i</span><span class=o>&lt;</span><span class=n>msglen</span><span class=p>;</span><span class=o>++</span><span class=n>i</span><span class=p>)</span> <span class=n>name</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=n>put_fs_byte</span><span class=p>(</span><span class=n>msg</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
+	<span class=k>return</span> <span class=n>msglen</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当我们who.c完成后要在makefile里面增加对who.o的依赖</p>
+<p>如下图：</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=8.png data-srcset="/oslab2/8.png, 8.png 1.5x, /oslab2/8.png 2x" data-sizes=auto alt=/oslab2/8.png title=8></p>
+<p>然后在添加对who.c and who.o 的依赖的产生条件,如下图：</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=9.png data-srcset="/oslab2/9.png, 9.png 1.5x, /oslab2/9.png 2x" data-sizes=auto alt=/oslab2/9.png title=9></p>
+<p>完成上述步骤后，执行下面指令</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>make all
+</code></pre></td></tr></table>
+</div>
+</div><p>进行整体编译</p>
+<p>然后我们运行 Linux0.11，我们还需要在这里面添加iam和whoami两个系统调用号的宏定义。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=nb>cd</span> /usr/include/
+vi unistd.h
+</code></pre></td></tr></table>
+</div>
+</div><p>然后加上系统调用号</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=7.png data-srcset="/oslab2/7.png, 7.png 1.5x, /oslab2/7.png 2x" data-sizes=auto alt=/oslab2/7.png title=7></p>
+<p>然后</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=nb>cd</span> /usr/root/
+vi iam.c
+vi whoami.c
+</code></pre></td></tr></table>
+</div>
+</div><p>进行我们用户程序iam.c代码的编写（将传入字符串写入内核空间）</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define __LIBRARY__  </span><span class=c1>//
+</span><span class=c1></span><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;	// 要想调用系统调用需要这些两个</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;string.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=n>_syscall1</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span><span class=n>iam</span><span class=p>,</span><span class=k>const</span> <span class=n>cahr</span><span class=o>*</span><span class=p>,</span><span class=n>name</span><span class=p>);</span><span class=c1>//iam()系统调用的用户接口
+</span><span class=c1></span>
+<span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>**</span><span class=n>argv</span><span class=p>){</span>
+    <span class=kt>int</span> <span class=n>i</span><span class=p>;</span>
+    <span class=k>if</span><span class=p>(</span><span class=n>argc</span><span class=o>!=</span><span class=mi>2</span><span class=p>){</span>
+        <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Usage: %s &lt;message&gt;</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span><span class=n>argv</span><span class=p>[</span><span class=mi>0</span><span class=p>],</span><span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>]);</span>
+        <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=n>i</span> <span class=o>=</span> <span class=n>iam</span><span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>]);</span> <span class=c1>//这句系统调用就将我们传入的name写入了内核空间
+</span><span class=c1></span>    <span class=k>if</span><span class=p>(</span><span class=n>i</span> <span class=o>!=</span> <span class=n>strlen</span><span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>])){</span>
+        <span class=n>printf</span><span class=p>(</span><span class=s>&#34;set message error</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+        <span class=k>return</span> <span class=mi>0</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在进行whoami.c的编写</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define __LIBRARY__
+</span><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=n>_syscall2</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span><span class=n>whoami</span><span class=p>,</span><span class=kt>char</span> <span class=o>*</span><span class=p>,</span><span class=n>name</span><span class=p>,</span> <span class=kt>unsigned</span> <span class=kt>int</span><span class=p>,</span><span class=n>size</span><span class=p>);</span>
+
+<span class=kt>int</span> <span class=nf>mai</span><span class=p>(){</span>
+	<span class=kt>char</span> <span class=n>message</span><span class=p>[</span><span class=mi>24</span><span class=p>];</span>
+	<span class=n>whoami</span><span class=p>(</span><span class=n>message</span><span class=p>,</span><span class=mi>24</span><span class=p>);</span>
+	<span class=n>printf</span><span class=p>(</span><span class=s>&#34;%s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span><span class=n>message</span><span class=p>);</span>
+	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们采用如下命令编译iam.c和whoami.c两个文件</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>gcc -o iam iam.c
+gcc -o whoami whoami.c
+</code></pre></td></tr></table>
+</div>
+</div><p>只要没有其他语句出现那么就算程序写对了</p>
+<p>然后我们运行代码得到如下结果</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=10.png data-srcset="/oslab2/10.png, 10.png 1.5x, /oslab2/10.png 2x" data-sizes=auto alt=/oslab2/10.png title=10></p>
+<p>至此我们的任务完成！！！</p>
+<p>我们总结一下，</p>
+<p>系统调用的步骤->明白系统调用需要添加哪些信息代码->编写系统调用的响应函数（就是系统调用iam()后他会执行的功能的函数）->用户程序调用执行。</p>
+<p>了解系统调用过程要明白0x80号中断是如何陷入内核态的</p>
+<p>这里我们__NR_xxxx是系统调用号，一个宏定义。在响应函数表里添加响应函数sys_xxx。编写响应函数（也称内核函数）。</p>
+<p>用户程序需要#define __ LIBRARY __ ; #include &lt;unistd.h> ; _ syscall1(type,name,type,parameter….)。分别是 使能 _syscallx函数，引入系统调用号的宏，创建系统调用的用户程序接口（系统调用的API）。</p>
+<p>我们这里是直接调用系统调用，所以直接使用_syscallx，平时例如我们使用的printf作为系统调用的API</p>
+<p>附：</p>
+<p>errno是传统的错误代码返回机制。通常我们会返回0或1代表正确或错误，但不能说明哪错了，错了什么。所以全局变量errno就能保存错误值，调用者可以通过判断errno来决定如何应对错误。错误值的含义都有标准定义。</p>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2021-05-18</span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/oslab2/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/>操作系统</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/oslab1/ class=prev rel=prev title=操作系统的引导><i class="fas fa-angle-left fa-fw"></i>操作系统的引导</a>
+<a href=/oslab3/ class=next rel=next title=进程运行轨迹的跟踪与统计>进程运行轨迹的跟踪与统计<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>ShiDong</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer>
+</div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1}}</script><script type=text/javascript src=/js/theme.min.js></script></body>
+</html>

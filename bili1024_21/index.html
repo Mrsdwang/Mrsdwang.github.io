@@ -1,0 +1,302 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>B站1024逆向题 - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="B站1024逆向题">
+<meta property="og:description" content="第五题： **任务：**找到FLAG，也就是APP正确的账号密码 步骤： 先打开APP看看运行出现的东西， 将apk用jadx打开，并查看com.e">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://Mrsdwang.github.io/bili1024_21/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-10-30T00:00:00+00:00">
+<meta property="article:modified_time" content="2021-10-30T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="B站1024逆向题">
+<meta name=twitter:description content="第五题： **任务：**找到FLAG，也就是APP正确的账号密码 步骤： 先打开APP看看运行出现的东西， 将apk用jadx打开，并查看com.e">
+<meta name=application-name content="INT80">
+<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://Mrsdwang.github.io/bili1024_21/><link rel=prev href=http://Mrsdwang.github.io/afl%E6%B7%BB%E5%8A%A0socket%E5%8F%91%E5%8C%85%E5%8A%9F%E8%83%BD/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"B站1024逆向题","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/Mrsdwang.github.io\/bili1024_21\/"},"genre":"posts","keywords":"逆向","wordcount":1835,"url":"http:\/\/Mrsdwang.github.io\/bili1024_21\/","datePublished":"2021-10-30T00:00:00+00:00","dateModified":"2021-10-30T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> Posts </a><a class=menu-item href=/tags/> Tags </a><a class=menu-item href=/categories/> categories </a><a class=menu-item href=/aboutme/> About Me </a><a class=menu-item href=/search/><i class="fas fa-fw fa-search"></i> search </a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/ title>Posts</a><a class=menu-item href=/tags/ title>Tags</a><a class=menu-item href=/categories/ title>categories</a><a class=menu-item href=/aboutme/ title>About Me</a><a class=menu-item href=/search/ title><i class="fas fa-fw fa-search"></i>search</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container>
+<div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">B站1024逆向题</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2021-10-30>2021-10-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1835 字
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents></nav></div>
+</div><div class=content id=content><p><em><strong>第五题：</strong></em></p>
+<p>**任务：**找到FLAG，也就是APP正确的账号密码</p>
+<p><strong>步骤：</strong></p>
+<p>先打开APP看看运行出现的东西，</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=app_run.png data-srcset="/bili1024_21/app_run.png, app_run.png 1.5x, /bili1024_21/app_run.png 2x" data-sizes=auto alt=/bili1024_21/app_run.png title=apprun></p>
+<p>将apk用jadx打开，并查看com.example.test.MainActivity的代码</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=code.png data-srcset="/bili1024_21/code.png, code.png 1.5x, /bili1024_21/code.png 2x" data-sizes=auto alt=/bili1024_21/code.png title=code></p>
+<p>其中可以发现关键的函数，即Encrypt.b ，Encrypt.a，getBytes</p>
+<p>后面的if中调用equals函数可知，该代码的作用就是对输入的账号密码通过Encrypt类的a和b函数进行加密，然后与正确的加密后的账号密码比对是否相等。</p>
+<p>那么只需要将bArr以及第一个equals中new byte[]的字节数组进行解码即可。</p>
+<p>首先查看Encrypt类</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Encrypt.png data-srcset="/bili1024_21/Encrypt.png, Encrypt.png 1.5x, /bili1024_21/Encrypt.png 2x" data-sizes=auto alt=/bili1024_21/Encrypt.png title=Encrypt></p>
+<p>加密的方法很简单，先将输入的账号密码和 i 进行异或，在调用Base64的库函数进行Base64编码。</p>
+<p>那么获得正确的账号密码的方法就很明显了，直接将程序中列出来的两个字节数组先进行Base64的解码，在和 相同的 i 进行异或即可。</p>
+<p>这里通过java来进行解密，还需了解一下 Base64库的decode函数的使用，就是喂一个字节数字数组，通过Base64加密返回一个 字节字符数组。</p>
+<p>JAVA解密代码如下：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kn>package</span> <span class=nn>com.example.helloworld</span><span class=o>;</span>
+<span class=kn>import</span> <span class=nn>java.util.Base64</span><span class=o>;</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>HelloWorld</span> <span class=o>{</span>
+    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=o>{</span>
+        <span class=n>Base64</span><span class=o>.</span><span class=na>Decoder</span> <span class=n>decoder</span> <span class=o>=</span> <span class=n>Base64</span><span class=o>.</span><span class=na>getDecoder</span><span class=o>();</span>
+        <span class=kt>byte</span><span class=o>[]</span> <span class=n>data</span> <span class=o>=</span> <span class=o>{</span><span class=n>78</span><span class=o>,</span> <span class=n>106</span><span class=o>,</span> <span class=n>73</span><span class=o>,</span> <span class=n>49</span><span class=o>,</span> <span class=n>79</span><span class=o>,</span> <span class=n>122</span><span class=o>,</span> <span class=n>65</span><span class=o>,</span> <span class=n>51</span><span class=o>,</span> <span class=n>89</span><span class=o>,</span> <span class=n>71</span><span class=o>,</span> <span class=n>65</span><span class=o>,</span> <span class=n>117</span><span class=o>,</span> <span class=n>78</span><span class=o>,</span> <span class=n>106</span><span class=o>,</span> <span class=n>78</span><span class=o>,</span> <span class=n>109</span><span class=o>,</span> <span class=n>78</span><span class=o>,</span> <span class=n>122</span><span class=o>,</span> <span class=n>99</span><span class=o>,</span> <span class=n>55</span><span class=o>,</span> <span class=n>89</span><span class=o>,</span> <span class=n>109</span><span class=o>,</span> <span class=n>85</span><span class=o>,</span> <span class=n>61</span><span class=o>};</span>
+        <span class=kt>byte</span><span class=o>[]</span> <span class=n>data1</span> <span class=o>=</span> <span class=o>{</span><span class=n>89</span><span class=o>,</span> <span class=n>87</span><span class=o>,</span> <span class=n>66</span><span class=o>,</span> <span class=n>108</span><span class=o>,</span> <span class=n>79</span><span class=o>,</span> <span class=n>109</span><span class=o>,</span> <span class=n>90</span><span class=o>,</span> <span class=n>110</span><span class=o>,</span> <span class=n>78</span><span class=o>,</span> <span class=n>106</span><span class=o>,</span> <span class=n>65</span><span class=o>,</span> <span class=n>117</span><span class=o>,</span> <span class=n>79</span><span class=o>,</span> <span class=n>109</span><span class=o>,</span> <span class=n>74</span><span class=o>,</span> <span class=n>109</span><span class=o>,</span> <span class=n>78</span><span class=o>,</span> <span class=n>122</span><span class=o>,</span> <span class=n>65</span><span class=o>,</span> <span class=n>120</span><span class=o>,</span> <span class=n>79</span><span class=o>,</span> <span class=n>50</span><span class=o>,</span> <span class=n>89</span><span class=o>,</span> <span class=n>61</span><span class=o>};</span>
+
+        <span class=kt>byte</span><span class=o>[]</span><span class=n>bArr</span> <span class=o>=</span> <span class=n>decoder</span><span class=o>.</span><span class=na>decode</span><span class=o>(</span><span class=n>data</span><span class=o>);</span>
+        <span class=kt>byte</span><span class=o>[]</span><span class=n>bArr1</span> <span class=o>=</span> <span class=n>decoder</span><span class=o>.</span><span class=na>decode</span><span class=o>(</span><span class=n>data1</span><span class=o>);</span>
+        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>();</span>
+
+        <span class=kt>int</span> <span class=n>length</span> <span class=o>=</span> <span class=n>bArr</span><span class=o>.</span><span class=na>length</span><span class=o>;</span>
+        <span class=k>for</span> <span class=o>(</span><span class=kt>int</span> <span class=n>i2</span> <span class=o>=</span> <span class=n>0</span><span class=o>;</span> <span class=n>i2</span> <span class=o>&lt;</span> <span class=n>length</span><span class=o>;</span> <span class=n>i2</span><span class=o>++)</span> <span class=o>{</span>
+            <span class=n>bArr</span><span class=o>[</span><span class=n>i2</span><span class=o>]</span> <span class=o>=</span> <span class=o>(</span><span class=kt>byte</span><span class=o>)</span> <span class=o>(</span><span class=n>bArr</span><span class=o>[</span><span class=n>i2</span><span class=o>]</span> <span class=o>^</span> <span class=n>3</span><span class=o>);</span>
+            <span class=n>bArr1</span><span class=o>[</span><span class=n>i2</span><span class=o>]</span> <span class=o>=</span> <span class=o>(</span><span class=kt>byte</span><span class=o>)</span> <span class=o>(</span><span class=n>bArr1</span><span class=o>[</span><span class=n>i2</span><span class=o>]</span> <span class=o>^</span> <span class=n>3</span><span class=o>);</span>
+        <span class=o>}</span>
+        <span class=n>String</span> <span class=n>res</span> <span class=o>=</span> <span class=k>new</span> <span class=n>String</span><span class=o>(</span><span class=n>bArr</span><span class=o>);</span>
+        <span class=n>String</span> <span class=n>res1</span> <span class=o>=</span> <span class=k>new</span> <span class=n>String</span><span class=o>(</span><span class=n>bArr1</span><span class=o>);</span>
+        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=n>res</span><span class=o>);</span>
+        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=n>res1</span><span class=o>);</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>程序输出得到：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=mi>516834</span><span class=n>cc</span><span class=o>-</span><span class=mf>50e448</span><span class=n>af</span>
+<span class=n>bcf9ed53</span><span class=o>-</span><span class=mi>9</span><span class=n>ae4328e</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>提交FLAG时需合并成：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=mi>516834</span><span class=n>cc</span><span class=o>-</span><span class=mf>50e448</span><span class=n>af</span><span class=o>-</span><span class=n>bcf9ed53</span><span class=o>-</span><span class=mi>9</span><span class=n>ae4328e</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img class=lazyload src=/svg/loading.min.svg data-src=res.png data-srcset="/bili1024_21/res.png, res.png 1.5x, /bili1024_21/res.png 2x" data-sizes=auto alt=/bili1024_21/res.png title=res></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=resapp.png data-srcset="/bili1024_21/resapp.png, resapp.png 1.5x, /bili1024_21/resapp.png 2x" data-sizes=auto alt=/bili1024_21/resapp.png title=resapp></p>
+<p><em><strong>第六题：</strong></em></p>
+<p>一开始看到第六题的网址和第五题一样，还以为是网址放错了，但是几天后还没有更新，于是就考虑到是不是第六题的flag也在第五题给的APP中，于是反编译该app，得到的lib文件中存在libMylib.so文件，于是推测第六题flag在so文件里。</p>
+<p>我一开始打算用IDA动态调试so文件，但是一attach进程，APP就会直接关闭，我怀疑APP用了什么反调试方法，于是直接IDA打开so文件，查看是否有相关的反调试代码，结果并没有发现，反而发现了关键的产生flag的代码。</p>
+<p>用IDA打开libMylib.so文件，并查看EXPORTS窗口，导出的函数如下：</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=export.png data-srcset="/bili1024_21/export.png, export.png 1.5x, /bili1024_21/export.png 2x" data-sizes=auto alt=/bili1024_21/export.png title=export></p>
+<p>双击JNI_Onload，并且翻到最顶，查看如下注释：</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=needlib.png data-srcset="/bili1024_21/needlib.png, needlib.png 1.5x, /bili1024_21/needlib.png 2x" data-sizes=auto alt=/bili1024_21/needlib.png title=needlib></p>
+<p>查看标黑的，可以看到该so文件依赖了以上几个so库，并且这个so文件的名字为libMylib.so。我们需要注意libc.so这个依赖库，因为关键的函数从这个库里调用的。</p>
+<p>再次回到JNI_OnLoad函数处，将汇编转为C语言，如下：</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Jni_Onload.png data-srcset="/bili1024_21/Jni_Onload.png, Jni_Onload.png 1.5x, /bili1024_21/Jni_Onload.png 2x" data-sizes=auto alt=/bili1024_21/Jni_Onload.png title=Jni_Onload></p>
+<p>可以看到，该函数注册了MainActivity，并且在下面调用了一个all的函数，双击进去，会发现还有一个all函数被调用，再次进入，我们就能得到如下代码(只截图关键部分)</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=all.png data-srcset="/bili1024_21/all.png, all.png 1.5x, /bili1024_21/all.png 2x" data-sizes=auto alt=/bili1024_21/all.png title=all></p>
+<p>第一个if，判断条件虽是数字，但其实是ASCII码，其意思就是判断abi是否是’x86‘，release-version是否为’9‘，接着打开了/data/2233文件，并且后面需要a+的权限，结合后面的fput，应该是要把一些数据写入该文件，那么还需要再/data处创建2233文件，此处需要root才能访问，也需要APP获得root权限才能写入。</p>
+<p>那么关键的就是如何绕过第一个if了，v16，v17的值为__system_property_get函数的返回值，因此我们需要对该函数进行hook，更改其返回值即可。</p>
+<p>因为hook需要知道该函数所在so文件，我们查看IMPORT窗口</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=import.png data-srcset="/bili1024_21/import.png, import.png 1.5x, /bili1024_21/import.png 2x" data-sizes=auto alt=/bili1024_21/import.png title=import></p>
+<p>可以看到__system_property_get是从libc.so导入的。</p>
+<p>那么接下来用frida进行hook注入，注入代码如下：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-javascript data-lang=javascript><span class=kd>function</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>Java</span><span class=p>.</span><span class=nx>perform</span><span class=p>(</span><span class=kd>function</span><span class=p>(){</span>
+        <span class=kd>var</span> <span class=nx>str</span><span class=p>;</span>
+        <span class=kd>var</span> <span class=nx>arg</span><span class=p>;</span>
+        <span class=c1>//findExportByName是获得__system_property_get函数再libc.so中的地址
+</span><span class=c1></span>        <span class=nx>Interceptor</span><span class=p>.</span><span class=nx>attach</span><span class=p>(</span><span class=nx>Module</span><span class=p>.</span><span class=nx>findExportByName</span><span class=p>(</span><span class=s2>&#34;libc.so&#34;</span><span class=p>,</span> <span class=s2>&#34;__system_property_get&#34;</span><span class=p>),</span> <span class=p>{</span>
+            <span class=nx>onEnter</span><span class=o>:</span> <span class=kd>function</span> <span class=p>(</span><span class=nx>args</span><span class=p>)</span> <span class=p>{</span> <span class=c1>//此处的args为函数调用时传入的参数
+</span><span class=c1></span>                <span class=nx>str</span> <span class=o>=</span> <span class=nx>Memory</span><span class=p>.</span><span class=nx>readCString</span><span class=p>(</span><span class=nx>args</span><span class=p>[</span><span class=mi>0</span><span class=p>]);</span> <span class=c1>//获得abi或version
+</span><span class=c1></span>                <span class=nx>arg</span> <span class=o>=</span> <span class=nx>args</span><span class=p>[</span><span class=mi>1</span><span class=p>];</span> <span class=c1>//保存返回值的变量
+</span><span class=c1></span>                <span class=k>if</span><span class=p>(</span><span class=nx>str</span><span class=p>.</span><span class=nx>indexOf</span><span class=p>(</span><span class=s1>&#39;ro.product.cpu.abi&#39;</span><span class=p>)</span><span class=o>!=-</span><span class=mi>1</span><span class=o>||</span><span class=nx>str</span><span class=p>.</span><span class=nx>indexOf</span><span class=p>(</span><span class=s1>&#39;ro.build.version.release&#39;</span><span class=p>)</span><span class=o>!=-</span><span class=mi>1</span><span class=p>){</span>
+                    <span class=c1>//如果有这两个字符串
+</span><span class=c1></span>                <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=s2>&#34;now hook &#34;</span><span class=o>+</span><span class=nx>str</span><span class=p>)</span>
+                <span class=p>}</span>
+            <span class=p>},</span>
+            <span class=nx>onLeave</span><span class=o>:</span> <span class=kd>function</span> <span class=p>(</span><span class=nx>retval</span><span class=p>)</span> <span class=p>{</span>
+                <span class=k>if</span><span class=p>(</span><span class=nx>str</span><span class=p>.</span><span class=nx>indexOf</span><span class=p>(</span><span class=s1>&#39;ro.product.cpu.abi&#39;</span><span class=p>)</span><span class=o>!=-</span><span class=mi>1</span><span class=p>){</span>
+                    <span class=kd>var</span> <span class=nx>old_abi</span> <span class=o>=</span> <span class=nx>Memory</span><span class=p>.</span><span class=nx>readCString</span><span class=p>(</span><span class=nx>arg</span><span class=p>);</span>
+                    <span class=nx>Memory</span><span class=p>.</span><span class=nx>writeUtf8String</span><span class=p>(</span><span class=nx>arg</span><span class=p>,</span> <span class=s2>&#34;x86&#34;</span><span class=p>);</span> <span class=c1>//直接向内存地址写入x86
+</span><span class=c1></span>                    <span class=kd>var</span> <span class=nx>new_abi</span> <span class=o>=</span> <span class=nx>Memory</span><span class=p>.</span><span class=nx>readCString</span><span class=p>(</span><span class=nx>arg</span><span class=p>);</span>
+                    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=s1>&#39;old_abi is:&#39;</span><span class=p>,</span><span class=nx>old_abi</span><span class=p>,</span><span class=s1>&#39;new_abi is:&#39;</span><span class=p>,</span><span class=nx>new_abi</span><span class=p>);</span>
+                <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>str</span><span class=p>.</span><span class=nx>indexOf</span><span class=p>(</span><span class=s1>&#39;ro.build.version.release&#39;</span><span class=p>)</span><span class=o>!=-</span><span class=mi>1</span><span class=p>){</span>
+                    <span class=kd>var</span> <span class=nx>old_ver</span> <span class=o>=</span> <span class=nx>Memory</span><span class=p>.</span><span class=nx>readCString</span><span class=p>(</span><span class=nx>arg</span><span class=p>);</span>
+                    <span class=nx>Memory</span><span class=p>.</span><span class=nx>writeUtf8String</span><span class=p>(</span><span class=nx>arg</span><span class=p>,</span> <span class=s2>&#34;9&#34;</span><span class=p>);</span> <span class=c1>//直接向内存地址写入9
+</span><span class=c1></span>                    <span class=kd>var</span> <span class=nx>new_ver</span> <span class=o>=</span> <span class=nx>Memory</span><span class=p>.</span><span class=nx>readCString</span><span class=p>(</span><span class=nx>arg</span><span class=p>);</span>
+                    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=s1>&#39;old_ver is:&#39;</span><span class=p>,</span><span class=nx>old_ver</span><span class=p>,</span><span class=s1>&#39;new_ver is:&#39;</span><span class=p>,</span><span class=nx>new_ver</span><span class=p>);</span>
+                <span class=p>}</span>
+            <span class=p>}</span>
+        <span class=p>});</span>
+    <span class=p>});</span>
+<span class=p>}</span>
+<span class=nx>setImmediate</span><span class=p>(</span><span class=nx>main</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>打开APP，然后在命令行执行</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>frida -U --no-pause -f com.example.test -l hook.js
+</code></pre></td></tr></table>
+</div>
+</div><p>frida运行后得到如下结果：</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=frida.png data-srcset="/bili1024_21/frida.png, frida.png 1.5x, /bili1024_21/frida.png 2x" data-sizes=auto alt=/bili1024_21/frida.png title=frida></p>
+<p>检验是否hook成功，打开2233文件查看，结果如下：</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=2233.png data-srcset="/bili1024_21/2233.png, 2233.png 1.5x, /bili1024_21/2233.png 2x" data-sizes=auto alt=/bili1024_21/2233.png title=2233></p>
+<p>总共16行，那么根据第五题的结果，可以推测出flag为4行一组，’-‘隔开，结果为：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=n>b13981f4</span><span class=o>-</span><span class=mi>5</span><span class=n>ae996d4</span><span class=o>-</span><span class=n>bc04be5b</span><span class=o>-</span><span class=mi>34662</span><span class=n>a78</span>
+</code></pre></td></tr></table>
+</div>
+</div></div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2021-10-30</span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/bili1024_21/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/%E9%80%86%E5%90%91/>逆向</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/afl%E6%B7%BB%E5%8A%A0socket%E5%8F%91%E5%8C%85%E5%8A%9F%E8%83%BD/ class=prev rel=prev title=AFL添加socket发包功能><i class="fas fa-angle-left fa-fw"></i>AFL添加socket发包功能</a></div>
+</div>
+</article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>ShiDong</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer>
+</div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1}}</script><script type=text/javascript src=/js/theme.min.js></script></body>
+</html>
