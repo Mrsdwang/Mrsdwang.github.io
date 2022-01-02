@@ -5,6 +5,8 @@
 
 现在博客根目录打开git bash
 
+先在博客客根目录打开git bash
+
 必须再改动前 git pull
 
 git add . # 添加目录下全部内容 
