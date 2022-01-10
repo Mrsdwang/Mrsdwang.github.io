@@ -11,7 +11,7 @@ PE文件可分为PE头与PE体。DOS头到节区头都是PE头部份，其下节
 
 **相对虚拟地址**：要与虚拟地址区别开来，相对虚拟地址(Relative Virtual Address)指的是从某个基准位置(ImageBase)开始的相对地址。VA与RVA存在一个换算关系
 
-​            							<center>**RVA + ImageBase = VA</center>**
+​            							**<center>RVA + ImageBase = VA</center>**
 
 为什么要这样做？这样做有个好处，当PE文件的内部数据都以相对虚拟地址存在的时候，当文件从硬盘加载到内存，若加载出存在了文件，那么该文件就应该进行重定位，如果使用RVA，文件进行重定位后并不影响该文件数据的定位，因为此时只需要根据重定位的定制变更ImageBase就可以正常定位到所有原来的地址。如果是使用VA，当重定位后，每个地址都需要一起改变，否则就会定位失败，读取不到正确的信息。
 
@@ -330,9 +330,9 @@ typedef struct _IMAGE_SECTION_HEADER
 
 因此我们需要学习节区是如何完成内存地址与文件偏移间的映射换算，根据公式：
 
-   <center> **RAW - PointerToRawData = RVA - VirtualAddress</center>**
+​    **<center>RAW - PointerToRawData = RVA - VirtualAddress</center>**
 
-​	<center> **RAW = RVA - VirtualAddress + PointerToRawData</center>**
+​	 **<center>RAW = RVA - VirtualAddress + PointerToRawData</center>**
 
 其中PointerToRawData 与 VirtualAddress 为节区头结构体中的成员
 
@@ -343,7 +343,7 @@ typedef struct _IMAGE_SECTION_HEADER
 2. 根据公式换算 RAW = ABA8(RVA) - 9000(VA) + 7C00(PointerToRawData) = 97A8
 ```
 
-观察发现，ABA8在第二个节区，而97A8在第三个节区。这种就属于"无法定义与RVA相对应的RAW值"。这种情况是因为.data节区的VirtualSize值要比SizeOfRawData值大。
+观察发现，ABA8在第二个节区，而97A8在第三个节区。这种就属于"无法定义与RVA相对应的RAW值"。**这种情况是因为.data节区的VirtualSize值要比SizeOfRawData值大**。
 
 #### IAT
 
@@ -458,7 +458,7 @@ INT(RAW = 6D90)
 
 IAT(RAW = 6C4)
 
-![6D90](6c4.png)
+![6c4](6c4.png)
 
 两者的值并不相同。
 
