@@ -328,7 +328,7 @@ typedef struct _IMAGE_SECTION_HEADER
 
 我们看到，当PE文件从磁盘加载到内存中会发生的变换。
 
-因此我们需要学习节区是如何完成内存地址与文件偏移间的映射换算，根据公式：
+因此我们需要学习节区是如何完成内存地址与文件偏移间的映射换算，根据公式
 
 ​    **<center>RAW - PointerToRawData = RVA - VirtualAddress</center>**
 
@@ -458,7 +458,7 @@ INT(RAW = 6D90)
 
 IAT(RAW = 6C4)
 
-![6c4](6c4.png)
+![6C4](6C4.png)
 
 两者的值并不相同。
 
