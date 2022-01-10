@@ -7,19 +7,19 @@ PE文件可分为PE头与PE体。DOS头到节区头都是PE头部份，其下节
 
 对于PE文件结构的分析，我们需要明确如下几个概念
 
-**虚拟地址：**内存中使用Virtual Address来表示位置，VA指的是进程虚拟内存的绝对地址。
+**虚拟地址**：内存中使用Virtual Address来表示位置，VA指的是进程虚拟内存的绝对地址。
 
-**相对虚拟地址：**要与虚拟地址区别开来，相对虚拟地址(Relative Virtual Address)指的是从某个基准位置(ImageBase)开始的相对地址。VA与RVA存在一个换算关系
+**相对虚拟地址**：要与虚拟地址区别开来，相对虚拟地址(Relative Virtual Address)指的是从某个基准位置(ImageBase)开始的相对地址。VA与RVA存在一个换算关系
 
 ​            							**RVA + ImageBase = VA**
 
 为什么要这样做？这样做有个好处，当PE文件的内部数据都以相对虚拟地址存在的时候，当文件从硬盘加载到内存，若加载出存在了文件，那么该文件就应该进行重定位，如果使用RVA，文件进行重定位后并不影响该文件数据的定位，因为此时只需要根据重定位的定制变更ImageBase就可以正常定位到所有原来的地址。如果是使用VA，当重定位后，每个地址都需要一起改变，否则就会定位失败，读取不到正确的信息。
 
-**映像(Image)：**PE文件加载到内存时，文件不会全部加载，而是根据节区头起始地址、节区大小等属性值来加载。因此内存和磁盘中的PE具有不同的形态。把加载到内存的形态称为映像加以区别。
+**映像(Image)**：PE文件加载到内存时，文件不会全部加载，而是根据节区头起始地址、节区大小等属性值来加载。因此内存和磁盘中的PE具有不同的形态。把加载到内存的形态称为映像加以区别。
 
-**节：**节是PE文件中代码或数据的基本单位。可分为三个大类，代码(.text)、数据(.data)、资源(.src)节。
+**节**：节是PE文件中代码或数据的基本单位。可分为三个大类，代码(.text)、数据(.data)、资源(.src)节。
 
-**最小基本单位：**我们知道内存中的数据存放时是按照最小基本单位的倍数进行放入，也就是**段**、**页**的概念，如果数据被按照这样存入内存，当数据的大小不能刚好填充满最小基本单位的倍数时，就会用NULL填充，因此在PE头与各节区的尾部都存在一个区域，称为**NULL填充**。最小基本单位是为了提高处理文件、内存、网络包的效率。具体可以自行去了解。
+**最小基本单位**：我们知道内存中的数据存放时是按照最小基本单位的倍数进行放入，也就是**段**、**页**的概念，如果数据被按照这样存入内存，当数据的大小不能刚好填充满最小基本单位的倍数时，就会用NULL填充，因此在PE头与各节区的尾部都存在一个区域，称为**NULL填充**。最小基本单位是为了提高处理文件、内存、网络包的效率。具体可以自行去了解。
 
 各节区头定义了各节区在文件或内存中的大小、位置、属性等。
 
@@ -67,9 +67,9 @@ IMAGE_DOS_HEADER STRUCT
 
 分别是
 
-**e_magic：**DOS签名(DOS signature：4D5A=>ASCII值"MZ")，固定为MZ，MZ为MS-DOS的设计者Mark Zbikowski的缩写
+**e_magic**：DOS签名(DOS signature：4D5A=>ASCII值"MZ")，固定为MZ，MZ为MS-DOS的设计者Mark Zbikowski的缩写
 
-**e_lfanew：**指示NT头的偏移，不同文件值可能不同。
+**e_lfanew**：指示NT头的偏移，不同文件值可能不同。
 
 其余的参数都是在MS-DOS下运行改成需要用的到。
 
@@ -87,7 +87,7 @@ e_lfanew的偏移为0x3C，第60个字节，我们可以看到其保存了一个
 
 我们可以通过对DOS存根的修改，在EXE文件中创造出另一个文件，使它能在DOS和Windows都能运行，但分别运行的是16位DOS代码，32或64位window代码
 
-若希望程序尽可能小，可以把DOS存根删除。
+**若希望程序尽可能小，可以把DOS存根删除。**
 
 #### NT头
 
@@ -137,19 +137,19 @@ struct IMAGE_FILE_HEADER
 
 前四个字节为Signature，文件头从E5开始F8结束。我们一对一的进行分析
 
-014C为Machine码的值，查看宏定义，其代表的是Intel386或后继CPU及其兼容的CPU
+0x014C为Machine码的值，查看宏定义，其代表的是Intel386或后继CPU及其兼容的CPU
 
-0003为NumberOfSection，节区数量为3，我们用PE编辑器查看，节区数量确实为3
+0x0003为NumberOfSection，节区数量为3，我们用PE编辑器查看，节区数量确实为3
 
 ![节区数量](节区数量.png)
 
-48025287为TimeDataTemp
+0x48025287为TimeDataTemp
 
 后面全为0的8个字节分别是PointerToSymbolTable，NumberOfSymbols
 
-00E0为SizeOfOptionalHeader的值，十进制为224。
+0x00E0为SizeOfOptionalHeader的值，十进制为224。
 
-010F为IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE宏定义的值相或得到的结果
+0x010F为IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE宏定义的值相或得到的结果
 
 ##### NT头：可选头
 
@@ -209,13 +209,25 @@ typedef struct _IMAGE_OPTIONAL_HEADER
 在IMAGE_OPTIONAL_HEADER32结构体中，需要特别注意下面的成员
 
 1. **Magic** 可执行文件得可选头结构体为IMAGE_OPTIONAL_HEADER32结构体的时候是10B，为IMAGE_OPIONAL_HEADER64结构体的时候为20B。ROM镜像就把B改为7.
+
 2. **AddressOfEntryPoint** 持有程序入口点(EntryPoint)的RVA值，用来指出程序最先执行的代码的起始地址。为0的时候就从ImageBase地址执行。对于DLL文件来说是可选的
+
 3. **ImageBase** 用来指出文件优先装入的地址，即程序装入内存后的第一个字节的首选地址，必须为64K的倍数。DLL默认为10000000H，EXE默认为00400000H。当文件载入内存后，EIP寄存器会设置为ImageBase+AddressOfEntryPoint
+
 4. **SectionAlignment，FileAlignment** 其中的FileAlignment指定了节区在磁盘文件中的最小单位，值应该为200h到10000h之间的2的幂；而SectionAlignment指定了节区在内存中的最小单位，其必须大于等于FileAlignment的值。一个文件中SectionAlignment和FileAlignment的值可能相同也可能不相同。这两个量的值与之前说过的内存中最小基本单元的概念相同，节区在文件和内存所占的空间必须为FileAlignment和SectionAlignment的整数倍
+
 5. **SizeOfImage** 当PE文件被加载到内存中的时候，加载的文件大小与整个文件的大小不同，该值就指定了Image在虚拟内存所占的大小，必须为SectionAlignment的倍数。
-6. **SizeOfHeaders** 用来指出整个PE头的大小，该值必须是FileAlignment大小的整数倍。第一个节区相对该文件开始的地址的偏移量就是这个值的大小。向上舍入为FileAlignment的整数倍。计算方式为 `e_lfanew /*DOS头部*/ + 4 /*PE签名*/ + sizeof(IMAGE_FILE_HEADER) + SizeOfOptionalHeader /*NT头*/ + sizeof(IMAGE_SECTION_HEADER)*NumberOfSections) /*节区头的大小*/`
+
+6. **SizeOfHeaders** 用来指出整个PE头的大小，该值必须是FileAlignment大小的整数倍。第一个节区相对该文件开始的地址的偏移量就是这个值的大小。向上舍入为FileAlignment的整数倍。PE头大小的计算方式为 
+
+   ```c
+   SizeOfHeaders = [e_lfanew /*DOS头部*/ + 4 /*PE签名*/ + sizeof(IMAGE_FILE_HEADER) + SizeOfOptionalHeader /*NT头*/ + sizeof(IMAGE_SECTION_HEADER) * NumberOfSections /*节区头的大小*/]/ FileAlignment * FileAlignment + FileAlignment;
+   ```
+
 7. **Subsystem** 该值用来区分系统驱动文件(\*.sys)和普通可执行文件(\*.exe)。值为1代表系统驱动(Drive)文件，2代表窗口应用程序GUI文件，3代表控制台应用程序CUI文件
+
 8. **NumberOfRvaAndSizes** 用来指定DataDirectory数组的长度，翻看前面的结构体定义我们会发现DataDirectory的长度是用了一个宏IMAGE_NUMBER_DIRECTORY_ENTRIES来定义的，长度为16。但这个值同样也用来指定DataDirectory的长度，不会冲突吗？PE装载器是通过该值来识别数组的大小，因此DataDirectory的长度可以不是16
+
 9. **DataDirectory** 是IMAGE_DATA_DIRECTORY结构体组成的数组，也就是结构体数组，其结构体的定义也在该节开始处给出了。
 
 ```c
@@ -243,23 +255,23 @@ DataDirectory[F] = Reserved Directory //保留
 
 上图是可选头的数据，总共0xE0的大小，我们对上面提到的几个较为重要的值进行分析
 
-最开始的两个字节010B就是Magic的值，
+最开始的两个字节0x010B就是Magic的值，
 
-AddressOfEntryPoint从108h处开始到10Bh总共4个字节，为739D，即该程序的入口地址的虚拟地址为0000739D
+1. AddressOfEntryPoint从108h处开始到10Bh总共4个字节，为0x739D，即该程序的入口地址的虚拟地址为0x0000739D
 
-ImageBase从114h开始到117h，值为01000000。
+2. ImageBase从114h开始到117h，值为0x01000000。
 
-SectionAlignment从118h到11Bh，值为00001000，所以节区在内存存放时要按照1000的倍数进行对齐存储
+3. SectionAlignment从118h到11Bh，值为0x00001000，所以节区在内存存放时要按照1000的倍数进行对齐存储
 
-FileAlignment从11Ch到11Fh，值为000002000，所以节区在磁盘存放时要按照200的倍数进行对齐
+4. FileAlignment从11Ch到11Fh，值为0x000002000，所以节区在磁盘存放时要按照200的倍数进行对齐
 
-SizeOfImage从130h到133h，值为00014000，当文件加载到内存后的总体大小，14000h也为1000h(SectionAlignment)的整数倍
+5. SizeOfImage从130h到133h，值为0x00014000，当文件加载到内存后的总体大小，14000h也为1000h(SectionAlignment)的整数倍
 
-SizeOfHeaders 从134h到137h，值为00000400，即PE头的大小
+6. SizeOfHeaders 从134h到137h，值为0x00000400，即PE头的大小
 
-NumberOfDirectories 从154h到157h，值为00000010，是十六进制，换成十进制就为16
+7. NumberOfDirectories 从154h到157h，值为0x00000010，是十六进制，换成十进制就为16
 
-后面每八个字节就是DataDirectory数组的一个元素，前四个字节为相应的Directory的虚拟地址，后四个为该Directory的大小。在这里EXPORT Directory的虚拟地址从158h到15Bh，全为0；其size从15Ch到15Fh，为0。IMPORT Directory的虚拟地址从160h到163h，为00007604，size从164h到167h，为000000C8.
+后面每八个字节就是DataDirectory数组的一个元素，前四个字节为相应的Directory的虚拟地址，后四个为该Directory的大小。在这里EXPORT Directory的虚拟地址从158h到15Bh，全为0；其size从15Ch到15Fh，为0。IMPORT Directory的虚拟地址从160h到163h，为0x00007604，size从164h到167h，为0x000000C8.
 
 #### 节区头
 
@@ -302,13 +314,13 @@ typedef struct _IMAGE_SECTION_HEADER
 
 拿一个节区进行说明，
 
-2E74657874000000=>ASCII=".text"，为什么这里不是小端序的表示方式。因为数组在内存中是连续的，无论大端序还是小端序，存储顺序都相同
+1. 0x2E74657874000000=>ASCII=".text"，为什么这里不是小端序的表示方式。因为数组在内存中是连续的，无论大端序还是小端序，存储顺序都相同
 
-00007748为VirtualSize为内存中节区的大小，00001000为该节区在内存的起始相对虚拟地址
+2. 0x00007748为VirtualSize为内存中节区的大小，0x00001000为该节区在内存的起始相对虚拟地址
 
-00007800 为SizeOfRawData，为节区在磁盘的大小，00000400为节区在磁盘的起始地址，是相对文件起始地址的偏移地址
+3. 0x00007800 为SizeOfRawData，为节区在磁盘的大小，0x00000400为节区在磁盘的起始地址，是相对文件起始地址的偏移地址
 
-在1FCh，60000020为Characteristics成员的值，是由IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ bitOR得到的
+4. 在1FCh，0x60000020为Characteristics成员的值，是由IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ bitOR得到的
 
 #### RVA to RAW
 
@@ -318,16 +330,18 @@ typedef struct _IMAGE_SECTION_HEADER
 
 因此我们需要学习节区是如何完成内存地址与文件偏移间的映射换算，根据公式：
 
-​                 			   **RAW - PointerToRawData = RVA - VirtualAddress**					
+   <center> **RAW - PointerToRawData = RVA - VirtualAddress**</center>
 
-​								**RAW = RVA - VirtualAddress + PointerToRawData**
+​	<center> **RAW = RVA - VirtualAddress + PointerToRawData</center>**
 
 其中PointerToRawData 与 VirtualAddress 为节区头结构体中的成员
 
 举个例子：当RVA=ABA8时，File Offset = ？
 
- 	1. 首先查找RVA ABA8位于的节区，这里位于节区.data
- 	2. 根据公式换算 RAW = ABA8(RVA) - 9000(VA) + 7C00(PointerToRawData) = 97A8
+```
+1. 首先查找RVA ABA8位于的节区，这里位于节区.data
+2. 根据公式换算 RAW = ABA8(RVA) - 9000(VA) + 7C00(PointerToRawData) = 97A8
+```
 
 观察发现，ABA8在第二个节区，而97A8在第三个节区。这种就属于"无法定义与RVA相对应的RAW值"。这种情况是因为.data节区的VirtualSize值要比SizeOfRawData值大。
 
@@ -400,7 +414,7 @@ IAT提供的机制与隐式链接有关
 
 ![调用代码](调用代码.png)
 
-GetModuleHandle函数位于KERNEL32.dll中，我们可以看到010073AC地址的这一指令MOV EDI,DWORD PTD DS:[<&KERNEL32.GetModuleHandleA>]，后面接着CALL了EDI的地址的函数。
+GetModuleHandle函数位于KERNEL32.dll中，我们可以看到010073AC地址的这一指令**MOV EDI,DWORD PTD DS:[<&KERNEL32.GetModuleHandleA>]**，后面接着CALL EDI里的数据，也就是函数地址。
 
 这两句指令就是获取GetModuleHandleA函数的地址，然后调用它。可以看到EDI保存的是75740A60这个地址，这个地址保存在010010CC处，这里获取函数地址是通过读取该函数的地址所存放的地址，也就是读取IAT表中，存放的该函数的地址。为什么要这么绕一圈，而不是直接读取呢？
 
@@ -418,7 +432,7 @@ DLL重定位也是造成这一问题的原因，如果两个DLL的ImageBase都�
 
 ![IAT加载后](IAT加载后.png)
 
-书上提到**"INT中个元素的值为IMAGE_IMPORT_BY_NAME结构体指针(有时IAT也拥有相同值)"**，网上资料和书上给的**EXE文件载入前**对应的导入表结构图如下图
+书上提到**\"INT中个元素的值为IMAGE_IMPORT_BY_NAME结构体指针(有时IAT也拥有相同值)"**，网上资料和书上给的**EXE文件载入前**对应的导入表结构图如下图
 
 ![IAT加载前](IAT加载前.png)
 
@@ -472,7 +486,7 @@ IAT(RAW = 80C)
 
 ![80C](80C.png)
 
-**从这个EXE文件可以看到INT与IAT数据相同，都指向了IMAGE_IMPORT_BY_NAME结构数组。**
+**从这个EXE文件可以看到INT与IAT数据和长度相同，都指向了IMAGE_IMPORT_BY_NAME结构数组。**
 
 #### EAT
 
