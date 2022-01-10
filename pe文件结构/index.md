@@ -432,7 +432,7 @@ DLL重定位也是造成这一问题的原因，如果两个DLL的ImageBase都�
 
 ![IAT加载后](IAT加载后.png)
 
-书上提到**\"INT中个元素的值为IMAGE_IMPORT_BY_NAME结构体指针(有时IAT也拥有相同值)"**，网上资料和书上给的**EXE文件载入前**对应的导入表结构图如下图
+书上提到"**INT中个元素的值为IMAGE_IMPORT_BY_NAME结构体指针(有时IAT也拥有相同值)**"，网上资料和书上给的**EXE文件载入前**对应的导入表结构图如下图
 
 ![IAT加载前](IAT加载前.png)
 
