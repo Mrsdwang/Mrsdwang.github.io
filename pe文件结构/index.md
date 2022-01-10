@@ -11,7 +11,7 @@ PE文件可分为PE头与PE体。DOS头到节区头都是PE头部份，其下节
 
 **相对虚拟地址**：要与虚拟地址区别开来，相对虚拟地址(Relative Virtual Address)指的是从某个基准位置(ImageBase)开始的相对地址。VA与RVA存在一个换算关系
 
-​            							**RVA + ImageBase = VA**
+​            							<center>**RVA + ImageBase = VA</center>**
 
 为什么要这样做？这样做有个好处，当PE文件的内部数据都以相对虚拟地址存在的时候，当文件从硬盘加载到内存，若加载出存在了文件，那么该文件就应该进行重定位，如果使用RVA，文件进行重定位后并不影响该文件数据的定位，因为此时只需要根据重定位的定制变更ImageBase就可以正常定位到所有原来的地址。如果是使用VA，当重定位后，每个地址都需要一起改变，否则就会定位失败，读取不到正确的信息。
 
@@ -137,19 +137,19 @@ struct IMAGE_FILE_HEADER
 
 前四个字节为Signature，文件头从E5开始F8结束。我们一对一的进行分析
 
-0x014C为Machine码的值，查看宏定义，其代表的是Intel386或后继CPU及其兼容的CPU
+1. 0x014C为Machine码的值，查看宏定义，其代表的是Intel386或后继CPU及其兼容的CPU
 
-0x0003为NumberOfSection，节区数量为3，我们用PE编辑器查看，节区数量确实为3
+2. 0x0003为NumberOfSection，节区数量为3，我们用PE编辑器查看，节区数量确实为3
 
 ![节区数量](节区数量.png)
 
-0x48025287为TimeDataTemp
+3. 0x48025287为TimeDataTemp
 
-后面全为0的8个字节分别是PointerToSymbolTable，NumberOfSymbols
+4. 后面全为0的8个字节分别是PointerToSymbolTable，NumberOfSymbols
 
-0x00E0为SizeOfOptionalHeader的值，十进制为224。
+5. 0x00E0为SizeOfOptionalHeader的值，十进制为224。
 
-0x010F为IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE宏定义的值相或得到的结果
+6. 0x010F为IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE宏定义的值相或得到的结果
 
 ##### NT头：可选头
 
@@ -330,7 +330,7 @@ typedef struct _IMAGE_SECTION_HEADER
 
 因此我们需要学习节区是如何完成内存地址与文件偏移间的映射换算，根据公式：
 
-   <center> **RAW - PointerToRawData = RVA - VirtualAddress**</center>
+   <center> **RAW - PointerToRawData = RVA - VirtualAddress</center>**
 
 ​	<center> **RAW = RVA - VirtualAddress + PointerToRawData</center>**
 

@@ -103,7 +103,7 @@
 <p>对于PE文件结构的分析，我们需要明确如下几个概念</p>
 <p><strong>虚拟地址</strong>：内存中使用Virtual Address来表示位置，VA指的是进程虚拟内存的绝对地址。</p>
 <p><strong>相对虚拟地址</strong>：要与虚拟地址区别开来，相对虚拟地址(Relative Virtual Address)指的是从某个基准位置(ImageBase)开始的相对地址。VA与RVA存在一个换算关系</p>
-<p>​ <strong>RVA + ImageBase = VA</strong></p>
+<p>​ <center><strong>RVA + ImageBase = VA</center></strong></p>
 <p>为什么要这样做？这样做有个好处，当PE文件的内部数据都以相对虚拟地址存在的时候，当文件从硬盘加载到内存，若加载出存在了文件，那么该文件就应该进行重定位，如果使用RVA，文件进行重定位后并不影响该文件数据的定位，因为此时只需要根据重定位的定制变更ImageBase就可以正常定位到所有原来的地址。如果是使用VA，当重定位后，每个地址都需要一起改变，否则就会定位失败，读取不到正确的信息。</p>
 <p><strong>映像(Image)</strong>：PE文件加载到内存时，文件不会全部加载，而是根据节区头起始地址、节区大小等属性值来加载。因此内存和磁盘中的PE具有不同的形态。把加载到内存的形态称为映像加以区别。</p>
 <p><strong>节</strong>：节是PE文件中代码或数据的基本单位。可分为三个大类，代码(.text)、数据(.data)、资源(.src)节。</p>
@@ -253,13 +253,29 @@
 </ol>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=NT%e5%8f%af%e9%80%89%e5%a4%b4.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png, NT%e5%8f%af%e9%80%89%e5%a4%b4.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png title=NT可选头></p>
 <p>前四个字节为Signature，文件头从E5开始F8结束。我们一对一的进行分析</p>
+<ol>
+<li>
 <p>0x014C为Machine码的值，查看宏定义，其代表的是Intel386或后继CPU及其兼容的CPU</p>
+</li>
+<li>
 <p>0x0003为NumberOfSection，节区数量为3，我们用PE编辑器查看，节区数量确实为3</p>
+</li>
+</ol>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%8a%82%e5%8c%ba%e6%95%b0%e9%87%8f.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E6%95%B0%E9%87%8F.png, %e8%8a%82%e5%8c%ba%e6%95%b0%e9%87%8f.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E6%95%B0%E9%87%8F.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E6%95%B0%E9%87%8F.png title=节区数量></p>
+<ol start=3>
+<li>
 <p>0x48025287为TimeDataTemp</p>
+</li>
+<li>
 <p>后面全为0的8个字节分别是PointerToSymbolTable，NumberOfSymbols</p>
+</li>
+<li>
 <p>0x00E0为SizeOfOptionalHeader的值，十进制为224。</p>
+</li>
+<li>
 <p>0x010F为IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE宏定义的值相或得到的结果</p>
+</li>
+</ol>
 <h5 id=nt头可选头>NT头：可选头</h5>
 <div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
@@ -547,7 +563,7 @@
 <p><img class=lazyload src=/svg/loading.min.svg data-src=PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png, PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png title=PE文件与内存间的映射></p>
 <p>我们看到，当PE文件从磁盘加载到内存中会发生的变换。</p>
 <p>因此我们需要学习节区是如何完成内存地址与文件偏移间的映射换算，根据公式：</p>
-<center> **RAW - PointerToRawData = RVA - VirtualAddress**</center>
+<center> **RAW - PointerToRawData = RVA - VirtualAddress</center>**
 <p>​ <center> <strong>RAW = RVA - VirtualAddress + PointerToRawData</center></strong></p>
 <p>其中PointerToRawData 与 VirtualAddress 为节区头结构体中的成员</p>
 <p>举个例子：当RVA=ABA8时，File Offset = ？</p>
