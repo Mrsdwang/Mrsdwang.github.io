@@ -7,14 +7,14 @@
 <title>PE文件结构解析 - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="PE文件结构解析">
 <meta property="og:description" content="PE文件基本概述 PE文件可分为PE头与PE体。DOS头到节区头都是PE头部份，其下节区合称为PE体，并且PE节区紧跟在NT头后。 对于PE文件">
 <meta property="og:type" content="article">
-<meta property="og:url" content="http://int80.top/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/"><meta property="article:section" content="posts">
+<meta property="og:url" content="http://int80.top/pe_structure_analysis/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2022-01-10T00:00:00+00:00">
 <meta property="article:modified_time" content="2022-01-10T00:00:00+00:00">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="PE文件结构解析">
 <meta name=twitter:description content="PE文件基本概述 PE文件可分为PE头与PE体。DOS头到节区头都是PE头部份，其下节区合称为PE体，并且PE节区紧跟在NT头后。 对于PE文件">
 <meta name=application-name content="INT80">
-<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/><link rel=prev href=http://int80.top/bili1024_21/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"PE文件结构解析","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84\/"},"genre":"posts","keywords":"逆向","wordcount":12124,"url":"http:\/\/int80.top\/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84\/","datePublished":"2022-01-10T00:00:00+00:00","dateModified":"2022-01-10T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/pe_structure_analysis/><link rel=prev href=http://int80.top/bili1024_21/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"PE文件结构解析","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/pe_structure_analysis\/"},"genre":"posts","keywords":"逆向","wordcount":12143,"url":"http:\/\/int80.top\/pe_structure_analysis\/","datePublished":"2022-01-10T00:00:00+00:00","dateModified":"2022-01-10T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
 <body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
 <div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
 <div class=header-wrapper>
@@ -56,7 +56,7 @@
 <div class=toc-content id=toc-content-auto></div>
 </div><article class="page single"><h1 class="single-title animated flipInX">PE文件结构解析</h1><div class=post-meta>
 <div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2022-01-10>2022-01-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 12124 字
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2022-01-10>2022-01-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 12143 字
 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 25 分钟&nbsp;</div>
 </div><div class="details toc" id=toc-static kept>
 <div class="details-summary toc-title">
@@ -109,7 +109,7 @@
 <p><strong>节</strong>：节是PE文件中代码或数据的基本单位。可分为三个大类，代码(.text)、数据(.data)、资源(.src)节。</p>
 <p><strong>最小基本单位</strong>：我们知道内存中的数据存放时是按照最小基本单位的倍数进行放入，也就是<strong>段</strong>、<strong>页</strong>的概念，如果数据被按照这样存入内存，当数据的大小不能刚好填充满最小基本单位的倍数时，就会用NULL填充，因此在PE头与各节区的尾部都存在一个区域，称为<strong>NULL填充</strong>。最小基本单位是为了提高处理文件、内存、网络包的效率。具体可以自行去了解。</p>
 <p>各节区头定义了各节区在文件或内存中的大小、位置、属性等。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png, PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png title=PE文件与内存间的映射></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png data-srcset="/pe_structure_analysis/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png, PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png 1.5x, /pe_structure_analysis/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png 2x" data-sizes=auto alt=/pe_structure_analysis/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png title=PE文件与内存间的映射></p>
 <p><em><strong>需特别说明，在Intel的CPU以小端序保存数据，即高位字节保存在高位地址</strong></em></p>
 <h4 id=dos头>DOS头</h4>
 <p>DOS头存在的目的是为了让PE文件兼容DOS文件。</p>
@@ -173,10 +173,10 @@
 <p><strong>e_lfanew</strong>：指示NT头的偏移，不同文件值可能不同。</p>
 <p>其余的参数都是在MS-DOS下运行改成需要用的到。</p>
 <p>e_lfanew的偏移为0x3C，第60个字节，我们可以看到其保存了一个地址E0，而这个地址就是PE文件的开始的位置，并且这个地址的数据默认为"PE00"，我们后面会进行更详细讲解。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=DOS%e5%a4%b4.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/DOS%E5%A4%B4.png, DOS%e5%a4%b4.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/DOS%E5%A4%B4.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/DOS%E5%A4%B4.png title=DOS头></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=DOS%e5%a4%b4.png data-srcset="/pe_structure_analysis/DOS%E5%A4%B4.png, DOS%e5%a4%b4.png 1.5x, /pe_structure_analysis/DOS%E5%A4%B4.png 2x" data-sizes=auto alt=/pe_structure_analysis/DOS%E5%A4%B4.png title=DOS头></p>
 <h4 id=dos存根>DOS存根</h4>
 <p>在DOS头后面紧接着就是MS-DOS程序。被称为DOS存根，是可选项，即有没有DOS存根程序都可以运行，并且其大小不固定。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=DOS%e5%ad%98%e6%a0%b9.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/DOS%E5%AD%98%E6%A0%B9.png, DOS%e5%ad%98%e6%a0%b9.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/DOS%E5%AD%98%E6%A0%B9.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/DOS%E5%AD%98%E6%A0%B9.png title=DOS存根></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=DOS%e5%ad%98%e6%a0%b9.png data-srcset="/pe_structure_analysis/DOS%E5%AD%98%E6%A0%B9.png, DOS%e5%ad%98%e6%a0%b9.png 1.5x, /pe_structure_analysis/DOS%E5%AD%98%E6%A0%B9.png 2x" data-sizes=auto alt=/pe_structure_analysis/DOS%E5%AD%98%E6%A0%B9.png title=DOS存根></p>
 <p>40-4D区域为16位的汇编指令，一个可执行文件在Windows中由于被识别为PE文件，所以DOS存根的代码不被执行；在DOS环境下运行即可执行该代码。该段汇编代码就是输出"This program cannot be run in DOS mode（此程序不能在DOS模式下运行）”这条消息，然后终止程序。</p>
 <p>我们可以通过对DOS存根的修改，在EXE文件中创造出另一个文件，使它能在DOS和Windows都能运行，但分别运行的是16位DOS代码，32或64位window代码</p>
 <p><strong>若希望程序尽可能小，可以把DOS存根删除。</strong></p>
@@ -202,7 +202,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>Signature成员被设置为4550=>ASCII码为"PE00"，Signature的地址也即NT头开始的地址，在DOS头的e_lfanew中表明了。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=e_lfanew.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/e_lfanew.png, e_lfanew.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/e_lfanew.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/e_lfanew.png title=e_lfanew></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=e_lfanew.png data-srcset="/pe_structure_analysis/e_lfanew.png, e_lfanew.png 1.5x, /pe_structure_analysis/e_lfanew.png 2x" data-sizes=auto alt=/pe_structure_analysis/e_lfanew.png title=e_lfanew></p>
 <p>另外两个成员分别是文件头与可选头</p>
 <h5 id=nt头文件头>NT头：文件头</h5>
 <div class=highlight><div class=chroma>
@@ -251,29 +251,29 @@
 <p><strong>Characteristics</strong> 用来标识文件的属性，即文件是否是可运行状态，是否为DLL文件等信息，通过BIT OR进行组合。需要特别记住0002h和2000h两个值，分别代表文件是可执行的，文件是DLL类型</p>
 </li>
 </ol>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=NT%e5%8f%af%e9%80%89%e5%a4%b4.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png, NT%e5%8f%af%e9%80%89%e5%a4%b4.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png title=NT可选头></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=NT%e5%8f%af%e9%80%89%e5%a4%b4.png data-srcset="/pe_structure_analysis/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png, NT%e5%8f%af%e9%80%89%e5%a4%b4.png 1.5x, /pe_structure_analysis/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png 2x" data-sizes=auto alt=/pe_structure_analysis/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png title=NT可选头></p>
 <p>前四个字节为Signature，文件头从E5开始F8结束。我们一对一的进行分析</p>
 <ol>
 <li>
-<p>0x014C为Machine码的值，查看宏定义，其代表的是Intel386或后继CPU及其兼容的CPU</p>
+<p><strong>Machine码</strong>的值为0x014C，查看宏定义，其代表的是Intel386或后继CPU及其兼容的CPU</p>
 </li>
 <li>
-<p>0x0003为NumberOfSection，节区数量为3，我们用PE编辑器查看，节区数量确实为3</p>
+<p><strong>NumberOfSection</strong>为0x0003，节区数量为3，我们用PE编辑器查看，节区数量确实为3</p>
 </li>
 </ol>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%8a%82%e5%8c%ba%e6%95%b0%e9%87%8f.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E6%95%B0%E9%87%8F.png, %e8%8a%82%e5%8c%ba%e6%95%b0%e9%87%8f.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E6%95%B0%E9%87%8F.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E6%95%B0%E9%87%8F.png title=节区数量></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%8a%82%e5%8c%ba%e6%95%b0%e9%87%8f.png data-srcset="/pe_structure_analysis/%E8%8A%82%E5%8C%BA%E6%95%B0%E9%87%8F.png, %e8%8a%82%e5%8c%ba%e6%95%b0%e9%87%8f.png 1.5x, /pe_structure_analysis/%E8%8A%82%E5%8C%BA%E6%95%B0%E9%87%8F.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E8%8A%82%E5%8C%BA%E6%95%B0%E9%87%8F.png title=节区数量></p>
 <ol start=3>
 <li>
-<p>0x48025287为TimeDataTemp</p>
+<p><strong>TimeDataTemp</strong>为0x48025287</p>
 </li>
 <li>
-<p>后面全为0的8个字节分别是PointerToSymbolTable，NumberOfSymbols</p>
+<p>后面全为0的8个字节分别是<strong>PointerToSymbolTable</strong>，<strong>NumberOfSymbols</strong></p>
 </li>
 <li>
-<p>0x00E0为SizeOfOptionalHeader的值，十进制为224。</p>
+<p><strong>SizeOfOptionalHeader</strong>的值为0x00E0，十进制为224。</p>
 </li>
 <li>
-<p>0x010F为IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE宏定义的值相或得到的结果</p>
+<p><strong>Characteristics</strong>为0x010F，该值为IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE宏定义的值相或得到的结果</p>
 </li>
 </ol>
 <h5 id=nt头可选头>NT头：可选头</h5>
@@ -460,7 +460,7 @@
 </span></code></pre></td></tr></table>
 </div>
 </div><p>其中最重要的是EXPORT和IMPORT Directory，前者是存放了EDT 导出目录表的虚拟地址和大小，从该文件导出的函数；后者是存放IDT导入目录表的虚拟地址和大小，从其余文件导入的函数。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=NT%e5%8f%af%e9%80%89%e5%a4%b4.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png, NT%e5%8f%af%e9%80%89%e5%a4%b4.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png title=NT可选头></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=NT%e5%8f%af%e9%80%89%e5%a4%b4.png data-srcset="/pe_structure_analysis/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png, NT%e5%8f%af%e9%80%89%e5%a4%b4.png 1.5x, /pe_structure_analysis/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png 2x" data-sizes=auto alt=/pe_structure_analysis/NT%E5%8F%AF%E9%80%89%E5%A4%B4.png title=NT可选头></p>
 <p>上图是可选头的数据，总共0xE0的大小，我们对上面提到的几个较为重要的值进行分析</p>
 <p>最开始的两个字节0x010B就是Magic的值，</p>
 <ol>
@@ -542,8 +542,8 @@
 <li><strong>Characteristics</strong> 指出该节区的属性特征，不同的数据位代表不同属性，多个属性通过bit OR进行组合</li>
 </ol>
 <p>节区头紧跟在NT头后，可以理解为就是一个IMAGE_SECTION_HEADER的结构体数组，成员个数就被定义在IMAGE_FILE_HEADER中的NumberOfSection成员上，需要注意的是在最后一个节区头后最好应该有一个与节表同样大小的用0x00填充的空白数据。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%8a%82%e5%8c%ba%e5%a4%b4%e6%88%90%e5%91%98%e5%9b%be%e8%a7%a3.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E5%A4%B4%E6%88%90%E5%91%98%E5%9B%BE%E8%A7%A3.png, %e8%8a%82%e5%8c%ba%e5%a4%b4%e6%88%90%e5%91%98%e5%9b%be%e8%a7%a3.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E5%A4%B4%E6%88%90%E5%91%98%E5%9B%BE%E8%A7%A3.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E5%A4%B4%E6%88%90%E5%91%98%E5%9B%BE%E8%A7%A3.png title=节区头成员图解></p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%8a%82%e5%8c%ba%e5%a4%b4.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E5%A4%B4.png, %e8%8a%82%e5%8c%ba%e5%a4%b4.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E5%A4%B4.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%8A%82%E5%8C%BA%E5%A4%B4.png title=节区头></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%8a%82%e5%8c%ba%e5%a4%b4%e6%88%90%e5%91%98%e5%9b%be%e8%a7%a3.png data-srcset="/pe_structure_analysis/%E8%8A%82%E5%8C%BA%E5%A4%B4%E6%88%90%E5%91%98%E5%9B%BE%E8%A7%A3.png, %e8%8a%82%e5%8c%ba%e5%a4%b4%e6%88%90%e5%91%98%e5%9b%be%e8%a7%a3.png 1.5x, /pe_structure_analysis/%E8%8A%82%E5%8C%BA%E5%A4%B4%E6%88%90%E5%91%98%E5%9B%BE%E8%A7%A3.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E8%8A%82%E5%8C%BA%E5%A4%B4%E6%88%90%E5%91%98%E5%9B%BE%E8%A7%A3.png title=节区头成员图解></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%8a%82%e5%8c%ba%e5%a4%b4.png data-srcset="/pe_structure_analysis/%E8%8A%82%E5%8C%BA%E5%A4%B4.png, %e8%8a%82%e5%8c%ba%e5%a4%b4.png 1.5x, /pe_structure_analysis/%E8%8A%82%E5%8C%BA%E5%A4%B4.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E8%8A%82%E5%8C%BA%E5%A4%B4.png title=节区头></p>
 <p>拿一个节区进行说明，</p>
 <ol>
 <li>
@@ -560,7 +560,7 @@
 </li>
 </ol>
 <h4 id=rva-to-raw>RVA to RAW</h4>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png, PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png title=PE文件与内存间的映射></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png data-srcset="/pe_structure_analysis/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png, PE%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e9%97%b4%e7%9a%84%e6%98%a0%e5%b0%84.png 1.5x, /pe_structure_analysis/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png 2x" data-sizes=auto alt=/pe_structure_analysis/PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84.png title=PE文件与内存间的映射></p>
 <p>我们看到，当PE文件从磁盘加载到内存中会发生的变换。</p>
 <p>因此我们需要学习节区是如何完成内存地址与文件偏移间的映射换算，根据公式：</p>
 <p>​ <strong><center>RAW - PointerToRawData = RVA - VirtualAddress</center></strong></p>
@@ -677,7 +677,7 @@
 </li>
 </ol>
 <p>IAT提供的机制与隐式链接有关</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%b0%83%e7%94%a8%e4%bb%a3%e7%a0%81.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png, %e8%b0%83%e7%94%a8%e4%bb%a3%e7%a0%81.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png title=调用代码></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%b0%83%e7%94%a8%e4%bb%a3%e7%a0%81.png data-srcset="/pe_structure_analysis/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png, %e8%b0%83%e7%94%a8%e4%bb%a3%e7%a0%81.png 1.5x, /pe_structure_analysis/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png title=调用代码></p>
 <p>GetModuleHandle函数位于KERNEL32.dll中，我们可以看到010073AC地址的这一指令<strong>MOV EDI,DWORD PTD DS:[&lt;&KERNEL32.GetModuleHandleA>]</strong>，后面接着CALL EDI里的数据，也就是函数地址。</p>
 <p>这两句指令就是获取GetModuleHandleA函数的地址，然后调用它。可以看到EDI保存的是75740A60这个地址，这个地址保存在010010CC处，这里获取函数地址是通过读取该函数的地址所存放的地址，也就是读取IAT表中，存放的该函数的地址。为什么要这么绕一圈，而不是直接读取呢？</p>
 <p>这是因为不同系统上、不同版本的KERNERL32.dll，其里面的函数的地址都可能会发生变化，因此每次加载DLL时通过将函数地址写入固定的地址，就可以避免函数地址不同导致的错误。</p>
@@ -686,12 +686,12 @@
 <p>综上三个原因，最大的问题就是硬编码无法保证能读取到正确的不断变化的函数地址，因此需要额外的不会变化的内存空间来保存函数地址。</p>
 <p>从上面我们操作可以看出，被调用的函数的地址所存放的地址就位于IAT数组的地址上，因此<strong>加载后的IAT数组存放的是函数的地址</strong>。</p>
 <p><strong>EXE文件载入后</strong>对应的导入表结构图</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e5%8a%a0%e8%bd%bd%e5%90%8e.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/IAT%E5%8A%A0%E8%BD%BD%E5%90%8E.png, IAT%e5%8a%a0%e8%bd%bd%e5%90%8e.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/IAT%E5%8A%A0%E8%BD%BD%E5%90%8E.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/IAT%E5%8A%A0%E8%BD%BD%E5%90%8E.png title=IAT加载后></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e5%8a%a0%e8%bd%bd%e5%90%8e.png data-srcset="/pe_structure_analysis/IAT%E5%8A%A0%E8%BD%BD%E5%90%8E.png, IAT%e5%8a%a0%e8%bd%bd%e5%90%8e.png 1.5x, /pe_structure_analysis/IAT%E5%8A%A0%E8%BD%BD%E5%90%8E.png 2x" data-sizes=auto alt=/pe_structure_analysis/IAT%E5%8A%A0%E8%BD%BD%E5%90%8E.png title=IAT加载后></p>
 <p>书上提到"<strong>INT中个元素的值为IMAGE_IMPORT_BY_NAME结构体指针(有时IAT也拥有相同值)</strong>"，网上资料和书上给的<strong>EXE文件载入前</strong>对应的导入表结构图如下图</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e5%8a%a0%e8%bd%bd%e5%89%8d.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/IAT%E5%8A%A0%E8%BD%BD%E5%89%8D.png, IAT%e5%8a%a0%e8%bd%bd%e5%89%8d.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/IAT%E5%8A%A0%E8%BD%BD%E5%89%8D.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/IAT%E5%8A%A0%E8%BD%BD%E5%89%8D.png title=IAT加载前></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e5%8a%a0%e8%bd%bd%e5%89%8d.png data-srcset="/pe_structure_analysis/IAT%E5%8A%A0%E8%BD%BD%E5%89%8D.png, IAT%e5%8a%a0%e8%bd%bd%e5%89%8d.png 1.5x, /pe_structure_analysis/IAT%E5%8A%A0%E8%BD%BD%E5%89%8D.png 2x" data-sizes=auto alt=/pe_structure_analysis/IAT%E5%8A%A0%E8%BD%BD%E5%89%8D.png title=IAT加载前></p>
 <p>但我实际上用十六进制编辑器查看一个IMAGE_IMPORT_DESCRIPTOR的IAT和INT数组内容时，两者其实是不一样的。这部分我比较<strong>迷惑</strong>，<strong>IAT在加载前是不一定和INT一样都指向IMAGE_IMPORT_BY_NAME结构体数组吗</strong>，<strong>如果有错误还望得到指正</strong></p>
 <p>首先通过DataDirectory找到Import Directory的地址，在前面对可选头学习的时候已经提到了，此处为00007604，这个为RVA地址，但是我们查看的是PE文件载入前的数据，因此需要从RVA换算成为RAW地址，7604 - 1000 + 400 = 6A04，6A04便是IMAGE_IMPORT_DESCRIPTOR结构体数组在磁盘中的起始位置，根据DataDirectory结构体中的Import Directory的Size数据可知，导入表的大小为C8，因此导入表的数据如下</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%af%bc%e5%85%a5%e8%a1%a8.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%AF%BC%E5%85%A5%E8%A1%A8.png, %e5%af%bc%e5%85%a5%e8%a1%a8.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%AF%BC%E5%85%A5%E8%A1%A8.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%AF%BC%E5%85%A5%E8%A1%A8.png title=导入表></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%af%bc%e5%85%a5%e8%a1%a8.png data-srcset="/pe_structure_analysis/%E5%AF%BC%E5%85%A5%E8%A1%A8.png, %e5%af%bc%e5%85%a5%e8%a1%a8.png 1.5x, /pe_structure_analysis/%E5%AF%BC%E5%85%A5%E8%A1%A8.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E5%AF%BC%E5%85%A5%E8%A1%A8.png title=导入表></p>
 <p>其中6A04h - 6417h为IMAGE_IMPORT_DESCRIPTOR结构体数组的第一个元素的数据，各个成员的值如下</p>
 <table>
 <thead>
@@ -725,23 +725,23 @@
 </table>
 <p>通过十六进制编辑器查看6D90和6C4的内容如下</p>
 <p>INT(RAW = 6D90)</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=6D90.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/6D90.png, 6D90.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/6D90.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/6D90.png title=6D90></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=6D90.png data-srcset="/pe_structure_analysis/6D90.png, 6D90.png 1.5x, /pe_structure_analysis/6D90.png 2x" data-sizes=auto alt=/pe_structure_analysis/6D90.png title=6D90></p>
 <p>IAT(RAW = 6C4)</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=6C4.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/6C4.png, 6C4.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/6C4.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/6C4.png title=6C4></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=6C4.png data-srcset="/pe_structure_analysis/6C4.png, 6C4.png 1.5x, /pe_structure_analysis/6C4.png 2x" data-sizes=auto alt=/pe_structure_analysis/6C4.png title=6C4></p>
 <p>两者的值并不相同。</p>
 <p>我们再通过Ollydbg，直接查看IAT数据，以如下图的函数为例</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%b0%83%e7%94%a8%e4%bb%a3%e7%a0%81.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png, %e8%b0%83%e7%94%a8%e4%bb%a3%e7%a0%81.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png title=调用代码></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%b0%83%e7%94%a8%e4%bb%a3%e7%a0%81.png data-srcset="/pe_structure_analysis/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png, %e8%b0%83%e7%94%a8%e4%bb%a3%e7%a0%81.png 1.5x, /pe_structure_analysis/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%81.png title=调用代码></p>
 <p>我们在十六进制编辑器查看RAW = (010010CC - 01000000 - 1000 +400) = 4CCh的数据</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=4CC.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/4CC.png, 4CC.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/4CC.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/4CC.png title=4CC></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=4CC.png data-srcset="/pe_structure_analysis/4CC.png, 4CC.png 1.5x, /pe_structure_analysis/4CC.png 2x" data-sizes=auto alt=/pe_structure_analysis/4CC.png title=4CC></p>
 <p>可以发现4CCh处的数据为7C80B731，与ollydbg的不同。</p>
 <p><strong>我考虑到是不是这个用来练习的EXE文件有问题，于是换了一个EXE文件进行查看</strong></p>
 <p>与之前同样的步骤，先从DataDirectory的获取IMPORT Directory的地址，在获得一个IMAGE_IMPORT_DESCRIPTOR结构体信息，这里就直接略过。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=82c.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/82c.png, 82c.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/82c.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/82c.png title=82c></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=82c.png data-srcset="/pe_structure_analysis/82c.png, 82c.png 1.5x, /pe_structure_analysis/82c.png 2x" data-sizes=auto alt=/pe_structure_analysis/82c.png title=82c></p>
 <p>其中INT的RVA为2074，转化为RAW为874。IAT的RVA为200C，转化为RAW为80C</p>
 <p>INT(RAW = 874)</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=874.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/874.png, 874.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/874.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/874.png title=874></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=874.png data-srcset="/pe_structure_analysis/874.png, 874.png 1.5x, /pe_structure_analysis/874.png 2x" data-sizes=auto alt=/pe_structure_analysis/874.png title=874></p>
 <p>IAT(RAW = 80C)</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=80C.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/80C.png, 80C.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/80C.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/80C.png title=80C></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=80C.png data-srcset="/pe_structure_analysis/80C.png, 80C.png 1.5x, /pe_structure_analysis/80C.png 2x" data-sizes=auto alt=/pe_structure_analysis/80C.png title=80C></p>
 <p><strong>从这个EXE文件可以看到INT与IAT数据和长度相同，都指向了IMAGE_IMPORT_BY_NAME结构数组。</strong></p>
 <h4 id=eat>EAT</h4>
 <p>EAT是一种核心机制，可以使不同的应用程序可以调用库文件中提供的函数。也就是说，只有通过EAT才能准确求得相应库中导出函数的起始地址。</p>
@@ -800,7 +800,7 @@
 <p>详细过程如下图</p>
 </li>
 </ol>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=EAT%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e8%bf%87%e7%a8%8b.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B.png, EAT%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e8%bf%87%e7%a8%8b.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B.png title=EAT导出函数过程></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=EAT%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e8%bf%87%e7%a8%8b.png data-srcset="/pe_structure_analysis/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B.png, EAT%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e8%bf%87%e7%a8%8b.png 1.5x, /pe_structure_analysis/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B.png 2x" data-sizes=auto alt=/pe_structure_analysis/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B.png title=EAT导出函数过程></p>
 <ol start=2>
 <li>
 <p><strong>通过函数序号查找函数地址</strong></p>
@@ -812,35 +812,35 @@
 <p>过程如下图</p>
 </li>
 </ol>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=EAT%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e8%bf%87%e7%a8%8b2.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B2.png, EAT%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e8%bf%87%e7%a8%8b2.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B2.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B2.png title=EAT导出函数过程2></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=EAT%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e8%bf%87%e7%a8%8b2.png data-srcset="/pe_structure_analysis/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B2.png, EAT%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e8%bf%87%e7%a8%8b2.png 1.5x, /pe_structure_analysis/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B2.png 2x" data-sizes=auto alt=/pe_structure_analysis/EAT%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E8%BF%87%E7%A8%8B2.png title=EAT导出函数过程2></p>
 <p>我们通过例子来熟悉导出表查找函数的过程</p>
 <ol>
 <li><strong>查找函数名称表</strong></li>
 </ol>
 <p>首先需要查到EXPORT Directory的RVA，然后转化成RAW。这一步就查看DataDirectory即可。跳过，得到的IMAGE_EXPORT_DIRECTORY的结构体数据如下</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=EXPORT%e7%bb%93%e6%9e%84%e4%bd%93.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/EXPORT%E7%BB%93%E6%9E%84%E4%BD%93.png, EXPORT%e7%bb%93%e6%9e%84%e4%bd%93.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/EXPORT%E7%BB%93%E6%9E%84%E4%BD%93.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/EXPORT%E7%BB%93%E6%9E%84%E4%BD%93.png title=EXPORT结构体></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=EXPORT%e7%bb%93%e6%9e%84%e4%bd%93.png data-srcset="/pe_structure_analysis/EXPORT%E7%BB%93%E6%9E%84%E4%BD%93.png, EXPORT%e7%bb%93%e6%9e%84%e4%bd%93.png 1.5x, /pe_structure_analysis/EXPORT%E7%BB%93%E6%9E%84%E4%BD%93.png 2x" data-sizes=auto alt=/pe_structure_analysis/EXPORT%E7%BB%93%E6%9E%84%E4%BD%93.png title=EXPORT结构体></p>
 <ol start=2>
 <li><strong>查找函数名称并获得其在函数名称表的索引</strong></li>
 </ol>
 <p>NumberOfNames为 3B9，AddressOfNames 成员值为 RVA = 3538，RAW = 2938，查看该地址</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0%e8%a1%a8.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E8%A1%A8.png, %e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0%e8%a1%a8.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E8%A1%A8.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E8%A1%A8.png title=函数名称表></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0%e8%a1%a8.png data-srcset="/pe_structure_analysis/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E8%A1%A8.png, %e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0%e8%a1%a8.png 1.5x, /pe_structure_analysis/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E8%A1%A8.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E8%A1%A8.png title=函数名称表></p>
 <p>选择RVA = 4BBC => RAW = 3FBD的数据进行查看，</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0.png, %e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0.png title=导出函数名称></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0.png data-srcset="/pe_structure_analysis/%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0.png, %e5%af%bc%e5%87%ba%e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0.png 1.5x, /pe_structure_analysis/%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0.png title=导出函数名称></p>
 <p>即为AddConsoleAliasA这个库函数的名称，其在函数名称表里索引为2.</p>
 <ol start=3>
 <li><strong>查看函数名称序号表</strong></li>
 </ol>
 <p>再将索引作为函数名称序号表的索引，并获取这个索引下数组的内容，这里AddressOfNameOrdinals 的 RVA 为441C => RAW 为381C，查看函数名称索引表内容如下</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0%e5%ba%8f%e5%8f%b7%e8%a1%a8.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E5%BA%8F%E5%8F%B7%E8%A1%A8.png, %e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0%e5%ba%8f%e5%8f%b7%e8%a1%a8.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E5%BA%8F%E5%8F%B7%E8%A1%A8.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E5%BA%8F%E5%8F%B7%E8%A1%A8.png title=函数名称序号表></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0%e5%ba%8f%e5%8f%b7%e8%a1%a8.png data-srcset="/pe_structure_analysis/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E5%BA%8F%E5%8F%B7%E8%A1%A8.png, %e5%87%bd%e6%95%b0%e5%90%8d%e7%a7%b0%e5%ba%8f%e5%8f%b7%e8%a1%a8.png 1.5x, /pe_structure_analysis/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E5%BA%8F%E5%8F%B7%E8%A1%A8.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E5%BA%8F%E5%8F%B7%E8%A1%A8.png title=函数名称序号表></p>
 <p>因为索引为2，因此在函数名称序号表读取数组第三个元素的值，为02</p>
 <ol start=4>
 <li><strong>通过函数地址表查找计算实际虚拟地址</strong></li>
 </ol>
 <p>AddressOfFunctions成员的值为RVA = 2654 => RAW = 1A54，查看该地址数据如下</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%87%bd%e6%95%b0%e5%9c%b0%e5%9d%80%e8%a1%a8.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80%E8%A1%A8.png, %e5%87%bd%e6%95%b0%e5%9c%b0%e5%9d%80%e8%a1%a8.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80%E8%A1%A8.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80%E8%A1%A8.png title=函数地址表></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%87%bd%e6%95%b0%e5%9c%b0%e5%9d%80%e8%a1%a8.png data-srcset="/pe_structure_analysis/%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80%E8%A1%A8.png, %e5%87%bd%e6%95%b0%e5%9c%b0%e5%9d%80%e8%a1%a8.png 1.5x, /pe_structure_analysis/%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80%E8%A1%A8.png 2x" data-sizes=auto alt=/pe_structure_analysis/%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80%E8%A1%A8.png title=函数地址表></p>
 <p>获取的函数序号为02，查找函数地址表的第三个数组内容，RVA = 000326D9</p>
 <p>我们通过查看Kernel32.dll的ImageBase = 7C800000 (ImageBase的值存在可选头的结构体中)，然后计算AddConsoleAliasA函数的实际虚拟地址，(7C800000 + 326D9 = 7C8326D9)，使用Ollydbg查看0x7C8326D9地址的指令得到如图</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=AddConsoleAliasA.png data-srcset="/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/AddConsoleAliasA.png, AddConsoleAliasA.png 1.5x, /pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/AddConsoleAliasA.png 2x" data-sizes=auto alt=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/AddConsoleAliasA.png title=AddConsoleAliasA></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=AddConsoleAliasA.png data-srcset="/pe_structure_analysis/AddConsoleAliasA.png, AddConsoleAliasA.png 1.5x, /pe_structure_analysis/AddConsoleAliasA.png 2x" data-sizes=auto alt=/pe_structure_analysis/AddConsoleAliasA.png title=AddConsoleAliasA></p>
 <p>则该处就为AddConsoleAliasA函数的实际虚拟地址。</p>
 <h4 id=结束>结束</h4>
 <p>到此，PE文件结构就学习结束了，自己学习一段时间后再回过头来通过博客的方式复习和加强PE文件结构的知识点，为逆向进阶打好基础，但又因为时间缘故，还有其他较为重要的事情需要做，不能完成做一个自己的控制台PE查看器的任务。对于PE文件来说还有重定位表，绑定导入表，资源表等，我还没学！！！我学了我加上来！！！！写不动了！！！！学不动了！！！</p>
@@ -854,7 +854,7 @@
 </div>
 <div class=post-info-line>
 <div class=post-info-md><span>
-<a class=link-to-markdown href=/pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/index.md target=_blank>阅读原始文档</a>
+<a class=link-to-markdown href=/pe_structure_analysis/index.md target=_blank>阅读原始文档</a>
 </span></div>
 <div class=post-info-share>
 <span></span>

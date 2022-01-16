@@ -137,19 +137,19 @@ struct IMAGE_FILE_HEADER
 
 前四个字节为Signature，文件头从E5开始F8结束。我们一对一的进行分析
 
-1. 0x014C为Machine码的值，查看宏定义，其代表的是Intel386或后继CPU及其兼容的CPU
+1. **Machine码**的值为0x014C，查看宏定义，其代表的是Intel386或后继CPU及其兼容的CPU
 
-2. 0x0003为NumberOfSection，节区数量为3，我们用PE编辑器查看，节区数量确实为3
+2. **NumberOfSection**为0x0003，节区数量为3，我们用PE编辑器查看，节区数量确实为3
 
 ![节区数量](节区数量.png)
 
-3. 0x48025287为TimeDataTemp
+3. **TimeDataTemp**为0x48025287
 
-4. 后面全为0的8个字节分别是PointerToSymbolTable，NumberOfSymbols
+4. 后面全为0的8个字节分别是**PointerToSymbolTable**，**NumberOfSymbols**
 
-5. 0x00E0为SizeOfOptionalHeader的值，十进制为224。
+5. **SizeOfOptionalHeader**的值为0x00E0，十进制为224。
 
-6. 0x010F为IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE宏定义的值相或得到的结果
+6. **Characteristics**为0x010F，该值为IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE宏定义的值相或得到的结果
 
 ##### NT头：可选头
 
