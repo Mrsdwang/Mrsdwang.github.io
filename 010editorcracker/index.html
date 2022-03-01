@@ -1,0 +1,544 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>010editor 最新V12版本逆向算法以及暴力破解 - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="010editor 最新V12版本逆向算法以及暴力破解">
+<meta property="og:description" content="网上和论坛全是32位 老版本的010 editor破解的教程，没有64位版本，自己也需要用，可是软件太贵了，于是自己尝试了一下暴力和算法逆向写注">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://int80.top/010editorcracker/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-03-01T00:00:00+00:00">
+<meta property="article:modified_time" content="2022-03-01T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="010editor 最新V12版本逆向算法以及暴力破解">
+<meta name=twitter:description content="网上和论坛全是32位 老版本的010 editor破解的教程，没有64位版本，自己也需要用，可是软件太贵了，于是自己尝试了一下暴力和算法逆向写注">
+<meta name=application-name content="INT80">
+<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/010editorcracker/><link rel=prev href=http://int80.top/pe_structure_analysis/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"010editor 最新V12版本逆向算法以及暴力破解","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/010editorcracker\/"},"genre":"posts","keywords":"逆向, 破解","wordcount":7419,"url":"http:\/\/int80.top\/010editorcracker\/","datePublished":"2022-03-01T00:00:00+00:00","dateModified":"2022-03-01T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> Posts </a><a class=menu-item href=/tags/> Tags </a><a class=menu-item href=/categories/> categories </a><a class=menu-item href=/aboutme/> About Me </a><a class=menu-item href=/search/><i class="fas fa-fw fa-search"></i> search </a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/ title>Posts</a><a class=menu-item href=/tags/ title>Tags</a><a class=menu-item href=/categories/ title>categories</a><a class=menu-item href=/aboutme/ title>About Me</a><a class=menu-item href=/search/ title><i class="fas fa-fw fa-search"></i>search</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container>
+<div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">010editor 最新V12版本逆向算法以及暴力破解</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2022-03-01>2022-03-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 7419 字
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 15 分钟&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href=#0x00-爆破法>0x00 爆破法</a></li>
+<li><a href=#0x01-逆向算法>0x01 逆向算法</a></li>
+<li><a href=#0x02-注册机代码>0x02 注册机代码</a></li>
+<li><a href=#0x03-忽略网络验证>0x03 忽略网络验证</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div><div class=content id=content><p>网上和论坛全是32位 老版本的010 editor破解的教程，没有64位版本，自己也需要用，可是软件太贵了，于是自己尝试了一下暴力和算法逆向写注册机两种方法进行破解。使用的版本是v12.0.1 64bit，在该博客发表时还是官网最新版。</p>
+<p>该博客仅用作个人技术学习交流，勿用于其余用途，请在自己经济条件允许的条件下支持正版。</p>
+<h4 id=0x00-爆破法>0x00 爆破法</h4>
+<p>把010 editor放入x64dbg运行起来，然后在tool->register处随意输入序列号，此时会弹出对话框，再到x64dbg中搜索该字符串，于是可以跳转到认证序列号的代码处。</p>
+<p>如下图所示，当我们在使用该字符串的地址处打上断点，再次check license后就会在断点处停止</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%9b%be1.png data-srcset="/010editorcracker/%E5%9B%BE1.png, %e5%9b%be1.png 1.5x, /010editorcracker/%E5%9B%BE1.png 2x" data-sizes=auto alt=/010editorcracker/%E5%9B%BE1.png title=图1></p>
+<p>在图中指令 mov edx,90 的上一条指令为jmp指令，如果程序从该指令以上执行下来的话便不会再执行图中的指令，那么我们可以推测程序存在某处跳转，让程序从mov edx,90指令 开始执行，如是查看 mov edx,90的交叉引用，如下图所示</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e4%b8%80%e6%ac%a1%e8%b7%b3%e8%bd%ac%e5%88%a4%e6%96%ad.png data-srcset="/010editorcracker/%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%B7%B3%E8%BD%AC%E5%88%A4%E6%96%AD.png, %e7%ac%ac%e4%b8%80%e6%ac%a1%e8%b7%b3%e8%bd%ac%e5%88%a4%e6%96%ad.png 1.5x, /010editorcracker/%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%B7%B3%E8%BD%AC%E5%88%A4%E6%96%AD.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%B7%B3%E8%BD%AC%E5%88%A4%E6%96%AD.png title=第一次跳转判断></p>
+<p>在地址7FF7F967574F处存在jne 7FF7F9675819，即跳转到mov edx,90处的指令</p>
+<p>那么继续往上看，地址7FF7F967574F处的jne是判断那两个数据不相同时才跳转</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e4%ba%8c%e6%ac%a1%e8%b7%b3%e8%bd%ac%e5%88%a4%e6%96%ad.png data-srcset="/010editorcracker/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E8%B7%B3%E8%BD%AC%E5%88%A4%E6%96%AD.png, %e7%ac%ac%e4%ba%8c%e6%ac%a1%e8%b7%b3%e8%bd%ac%e5%88%a4%e6%96%ad.png 1.5x, /010editorcracker/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E8%B7%B3%E8%BD%AC%E5%88%A4%E6%96%AD.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E8%B7%B3%E8%BD%AC%E5%88%A4%E6%96%AD.png title=第二次跳转判断></p>
+<p>如上图所示，若ebx不等于93那么就会跳转至弹出序列号不正确的代码处，如果相等则会判断edi是否等于73，如果等于则会弹出提示“密码正确，试用期延长”的窗口。我们在地址7FF7F967574F处打上断点，查看各使用的寄存器的值，以此判断是在哪些地方发生了跳转</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%af%84%e5%ad%98%e5%99%a8%e6%95%b0%e6%8d%ae1.png data-srcset="/010editorcracker/%E5%AF%84%E5%AD%98%E5%99%A8%E6%95%B0%E6%8D%AE1.png, %e5%af%84%e5%ad%98%e5%99%a8%e6%95%b0%e6%8d%ae1.png 1.5x, /010editorcracker/%E5%AF%84%E5%AD%98%E5%99%A8%E6%95%B0%E6%8D%AE1.png 2x" data-sizes=auto alt=/010editorcracker/%E5%AF%84%E5%AD%98%E5%99%A8%E6%95%B0%E6%8D%AE1.png title=寄存器数据1></p>
+<p>可以发现，edi = 117 != ED != 20C因此会直接运行到cmp ebx,93处，而此时ebx=E7 !=93，因此发生了跳转，而且edi = 117 !=71，但cmp edi,71处的跳转到的代码并不是我们所期望的，因此我们进追踪ebx有关的代码</p>
+<p>同时在地址7FF7F9675731处的上一条指令为jmp ，且跳转到我们并不需要的代码段处，因此可以判断该jmp在此次运行中并不会执行，那么就存在某处的jxx指令跳转到了地址7FF7F9675731，同样的查找交叉引用，发现地址7FF7F967559B处存在指令jne 7FF7F9675731，如下图所示</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%b7%b3%e8%bd%ac%e4%b8%89.png data-srcset="/010editorcracker/%E8%B7%B3%E8%BD%AC%E4%B8%89.png, %e8%b7%b3%e8%bd%ac%e4%b8%89.png 1.5x, /010editorcracker/%E8%B7%B3%E8%BD%AC%E4%B8%89.png 2x" data-sizes=auto alt=/010editorcracker/%E8%B7%B3%E8%BD%AC%E4%B8%89.png title=跳转三></p>
+<p>可见在地址7FF7F967559B处 会判断edi是否等于EB,等于则会表明序列号正确，否则就会跳转至提示序列号错误的代码处。</p>
+<p>其实在这里我们就可以破解了，只需要在此处将edi改为DB即可，但这样我们每次都需要点击check license才行。</p>
+<p>再看地址7FF7F967558C处的 mov edi,eax 可以推测为前面的call 的函数的返回值给了edi用来判断是否等于DB，那么进入该函数分析一下，在函数开头打上断点，再次在010 editor 点击checklicense，发现程序并没有在该函数处停下来，那么我们的推测是错误的，那么就在地址7FF7F967558E与7FF7F9675595打上断点，并再次运行，会发现程序停在了7FF7F9675595处，那么肯定是存在跳转指令让程序跳转至此，直接查找交叉引用，我们可以溯源到如下图所示的代码处</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e5%9b%9b%e6%ac%a1%e8%b7%b3%e8%bd%ac.png data-srcset="/010editorcracker/%E7%AC%AC%E5%9B%9B%E6%AC%A1%E8%B7%B3%E8%BD%AC.png, %e7%ac%ac%e5%9b%9b%e6%ac%a1%e8%b7%b3%e8%bd%ac.png 1.5x, /010editorcracker/%E7%AC%AC%E5%9B%9B%E6%AC%A1%E8%B7%B3%E8%BD%AC.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E5%9B%9B%E6%AC%A1%E8%B7%B3%E8%BD%AC.png title=第四次跳转></p>
+<p>这里有两条跳转的指令，打上断点运行，判断是在从哪里跳转的</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e5%9b%9b%e6%ac%a1%e8%b7%b3%e8%bd%ac%e5%88%a4%e6%96%ad.png data-srcset="/010editorcracker/%E7%AC%AC%E5%9B%9B%E6%AC%A1%E8%B7%B3%E8%BD%AC%E5%88%A4%E6%96%AD.png, %e7%ac%ac%e5%9b%9b%e6%ac%a1%e8%b7%b3%e8%bd%ac%e5%88%a4%e6%96%ad.png 1.5x, /010editorcracker/%E7%AC%AC%E5%9B%9B%E6%AC%A1%E8%B7%B3%E8%BD%AC%E5%88%A4%E6%96%AD.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E5%9B%9B%E6%AC%A1%E8%B7%B3%E8%BD%AC%E5%88%A4%E6%96%AD.png title=第四次跳转判断></p>
+<p>我们需要让其在cmp edi,DB 处edi等于DB，使其不发生跳转，从而执行序列号判断正确的部分的代码，我们是从cmp edi,DB追踪edi到此，而在上图我们可以看到 在7FF7F967544A call的函数后 mov edi,eax 将返回值给了edi，那么这个edi是否就是后面cmp edi,DB会用的edi？我们打上断点，看看是否会运行这句，如果运行，该edi就会被用到cmp edi,DB，因为我们是从这里一路追踪，也只有该处更改了edi的值。</p>
+<p>经过测试，程序确实停在mov edi,eax处，如下图</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=edi%e5%88%a4%e6%96%ad.png data-srcset="/010editorcracker/edi%E5%88%A4%E6%96%AD.png, edi%e5%88%a4%e6%96%ad.png 1.5x, /010editorcracker/edi%E5%88%A4%E6%96%AD.png 2x" data-sizes=auto alt=/010editorcracker/edi%E5%88%A4%E6%96%AD.png title=edi判断></p>
+<p>那么进入 7FF7F967544A处 call的函数进行分析即可</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0.png data-srcset="/010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0.png, %e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0.png 1.5x, /010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0.png title=关键函数></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0RAX.png data-srcset="/010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0RAX.png, %e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0RAX.png 1.5x, /010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0RAX.png 2x" data-sizes=auto alt=/010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0RAX.png title=关键函数RAX></p>
+<p>此时RAX=E7，那么程序会跳转至7FF7F97CAE2C，那么我们查看该处代码</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=2C.png data-srcset="/010editorcracker/2C.png, 2C.png 1.5x, /010editorcracker/2C.png 2x" data-sizes=auto alt=/010editorcracker/2C.png title=2C></p>
+<p>可以发现这里的 eax = 177，与之前我们获取的edi = 177相同，那么此处也会存在 mov eax,DB的指令</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=63.png data-srcset="/010editorcracker/63.png, 63.png 1.5x, /010editorcracker/63.png 2x" data-sizes=auto alt=/010editorcracker/63.png title=63></p>
+<p>显然就是若该函数跳转至此那么就能使edi = DB，而跳转到该处的代码为下图</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0.png data-srcset="/010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0.png, %e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0.png 1.5x, /010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0.png title=关键函数></p>
+<p>那么我们只需要把7FF7F97CAD9D处的指令由je改为 jmp即可</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e4%bf%ae%e6%94%b9%e5%90%8e.png data-srcset="/010editorcracker/%E4%BF%AE%E6%94%B9%E5%90%8E.png, %e4%bf%ae%e6%94%b9%e5%90%8e.png 1.5x, /010editorcracker/%E4%BF%AE%E6%94%B9%E5%90%8E.png 2x" data-sizes=auto alt=/010editorcracker/%E4%BF%AE%E6%94%B9%E5%90%8E.png title=修改后></p>
+<p>验证结果如下</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e9%aa%8c%e8%af%81%e7%bb%93%e6%9e%9c.png data-srcset="/010editorcracker/%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C.png, %e9%aa%8c%e8%af%81%e7%bb%93%e6%9e%9c.png 1.5x, /010editorcracker/%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C.png 2x" data-sizes=auto alt=/010editorcracker/%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C.png title=验证结果></p>
+<p>接着打补丁即可。</p>
+<h4 id=0x01-逆向算法>0x01 逆向算法</h4>
+<p>从爆破法的破解过程我们可以发现关键函数，并且要求关键函数返回0xDB，进入关键函数查看，函数内部如图</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0%e5%86%85%e9%83%a8.png data-srcset="/010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0%E5%86%85%E9%83%A8.png, %e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0%e5%86%85%e9%83%a8.png 1.5x, /010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0%E5%86%85%E9%83%A8.png 2x" data-sizes=auto alt=/010editorcracker/%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0%E5%86%85%E9%83%A8.png title=关键函数内部></p>
+<p>只有当地址7FF5EF9AD95处call的函数返回值为0x2D才能让该关键函数返回值为0xDB，那么推测序列号加密算法以及判断序列号是否正确的代码就在该7FF75EC118函数里。进入函数进行查看。</p>
+<p>在后面的调试可以发现在如下指令下进行了判断Name字符串以及Password字符串是否为空，寄存器rax+4分别保存着Name和Password两个字符串的长度数据，可以看到分别为0x3，0x18，转为十进制后大小与实际字符串长度相同</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Password%e7%ae%97%e6%b3%95%e5%85%a5%e5%8f%a3.png data-srcset="/010editorcracker/Password%E7%AE%97%E6%B3%95%E5%85%A5%E5%8F%A3.png, Password%e7%ae%97%e6%b3%95%e5%85%a5%e5%8f%a3.png 1.5x, /010editorcracker/Password%E7%AE%97%E6%B3%95%E5%85%A5%E5%8F%A3.png 2x" data-sizes=auto alt=/010editorcracker/Password%E7%AE%97%E6%B3%95%E5%85%A5%E5%8F%A3.png title=Password算法></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Name%e9%95%bf.png data-srcset="/010editorcracker/Name%E9%95%BF.png, Name%e9%95%bf.png 1.5x, /010editorcracker/Name%E9%95%BF.png 2x" data-sizes=auto alt=/010editorcracker/Name%E9%95%BF.png title=Name长></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Password%e9%95%bf.png data-srcset="/010editorcracker/Password%E9%95%BF.png, Password%e9%95%bf.png 1.5x, /010editorcracker/Password%E9%95%BF.png 2x" data-sizes=auto alt=/010editorcracker/Password%E9%95%BF.png title=Password长></p>
+<p>并且进入地址7FFC6C84CA341处call的函数调试可知，其两个两个的取出了Password中的字符串进行运算，运算结果保存在了rdx的地址中，在之后会使用。</p>
+<p>可以判断该处代码正在进行Password的编码，那么该处大概率进行序列号正确的判断，进入函数7FF6C8185650进行调试，发现由两部分代码都是在重复的做某件事，</p>
+<p>第一部分</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Password%e9%a2%84%e5%88%a4%e6%96%ad.png data-srcset="/010editorcracker/Password%E9%A2%84%E5%88%A4%E6%96%AD.png, Password%e9%a2%84%e5%88%a4%e6%96%ad.png 1.5x, /010editorcracker/Password%E9%A2%84%E5%88%A4%E6%96%AD.png 2x" data-sizes=auto alt=/010editorcracker/Password%E9%A2%84%E5%88%A4%E6%96%AD.png title=Password预判断></p>
+<p>进入图中 call的9QByteRef函数进行查看，可以发现这部分代码就是在判断Password每间隔4个字母是否为“-”，还可以发现这部分代码只有mov dword ptr ss:[rbp-18],X,不同，并且每次都是以大小5的幅度增加，由0x4增加到0x13，刚好判断了4个“-”</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=9QByteRef.png data-srcset="/010editorcracker/9QByteRef.png, 9QByteRef.png 1.5x, /010editorcracker/9QByteRef.png 2x" data-sizes=auto alt=/010editorcracker/9QByteRef.png title=9QByteRef></p>
+<p>继续往下调试会发现在做着重复的事情的第二部分代码</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Password%e6%a0%b8%e5%bf%83%e7%ae%97%e6%b3%95.png data-srcset="/010editorcracker/Password%E6%A0%B8%E5%BF%83%E7%AE%97%E6%B3%95.png, Password%e6%a0%b8%e5%bf%83%e7%ae%97%e6%b3%95.png 1.5x, /010editorcracker/Password%E6%A0%B8%E5%BF%83%E7%AE%97%E6%B3%95.png 2x" data-sizes=auto alt=/010editorcracker/Password%E6%A0%B8%E5%BF%83%E7%AE%97%E6%B3%95.png title=Password核心算法></p>
+<p>进入函数BQBytreRef，跟踪调试，会发现其读取Password的数据存储在eax中，那么该函数的功能就是读取Password的单个字母</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=BQByteRef.png data-srcset="/010editorcracker/BQByteRef.png, BQByteRef.png 1.5x, /010editorcracker/BQByteRef.png 2x" data-sizes=auto alt=/010editorcracker/BQByteRef.png title=BQByteRef></p>
+<p>再进入7FF6C818A1DC函数进行查看调试，会发现该函数根据al和dl寄存器的值（最初的值就是取出的Password的字母）进行判断，然后执行一些加减运算再存入eax中</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Password%e7%bc%96%e7%a0%81%e7%ae%97%e6%b3%95.png data-srcset="/010editorcracker/Password%E7%BC%96%E7%A0%81%E7%AE%97%E6%B3%95.png, Password%e7%bc%96%e7%a0%81%e7%ae%97%e6%b3%95.png 1.5x, /010editorcracker/Password%E7%BC%96%E7%A0%81%E7%AE%97%E6%B3%95.png 2x" data-sizes=auto alt=/010editorcracker/Password%E7%BC%96%E7%A0%81%E7%AE%97%E6%B3%95.png title=Password编码算法></p>
+<p>接着处理后的字母数据存入ebx，再执行shl bl,4，即把bl左移4位，接着再次调用BQByteRef的函数取出下一个Password的字母，然后对该字母再次通过函数7FF6C818A1DC对该字母进行处理，然后与上一次处理的字母以十六进制方式相加，并保存在rdi寄存器的地址中。</p>
+<p>该两部分代码都是在对Password进行编码处理，处理结果保存在rdi寄存器所保存的地址里。回到调用处理Password函数的代码处，即地址7FFC6C84CA341。</p>
+<p>我们将经算法处理后的Password数据定义为key[10]</p>
+<p>后面的汇编代码过于复杂，打开ida查看该处反编译得到的C代码会更容易分析。</p>
+<p>ida查找到该处也是先找到关键字符串所在位置，即序列号识别成功后弹框的字符串，该部分代码如下图</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=ida0xDB.png data-srcset="/010editorcracker/ida0xDB.png, ida0xDB.png 1.5x, /010editorcracker/ida0xDB.png 2x" data-sizes=auto alt=/010editorcracker/ida0xDB.png title=ida0xDB></p>
+<p>那么跳转至该处的关键为v17是否等于219，也就是0xDB，而v17变量值的来源如下图的函数</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=idav17.png data-srcset="/010editorcracker/idav17.png, idav17.png 1.5x, /010editorcracker/idav17.png 2x" data-sizes=auto alt=/010editorcracker/idav17.png title=idav17></p>
+<p>进入sub_140084F4函数，会发现只有当v6 = 0x2D时才会返回219，因此可以判断该函数就为在x64dbg中我们所发现的关键函数，该函数在ida如下</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=ida0x2D.png data-srcset="/010editorcracker/ida0x2D.png, ida0x2D.png 1.5x, /010editorcracker/ida0x2D.png 2x" data-sizes=auto alt=/010editorcracker/ida0x2D.png title=ida0x2D></p>
+<p>再进入sub_140006118函数查看，前面说到判断Name和Password的长度对应在C代码为</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=ida%e5%88%a4%e6%96%ad%e9%95%bf%e5%ba%a6.png data-srcset="/010editorcracker/ida%E5%88%A4%E6%96%AD%E9%95%BF%E5%BA%A6.png, ida%e5%88%a4%e6%96%ad%e9%95%bf%e5%ba%a6.png 1.5x, /010editorcracker/ida%E5%88%A4%E6%96%AD%E9%95%BF%E5%BA%A6.png 2x" data-sizes=auto alt=/010editorcracker/ida%E5%88%A4%E6%96%AD%E9%95%BF%E5%BA%A6.png title=ida判断长度></p>
+<p>a1+8 为Name字符串数据的保存地址，a1+8+4就为Name的长度的数据，a1+16为Password字符串数据的保存地址，al+16+4就为Password的长度</p>
+<p>在x64dbg中地址为7FFC6C84CA341的call的函数对应到ida的函数为</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=idaPassword%e7%ae%97%e6%b3%95.png data-srcset="/010editorcracker/idaPassword%E7%AE%97%E6%B3%95.png, idaPassword%e7%ae%97%e6%b3%95.png 1.5x, /010editorcracker/idaPassword%E7%AE%97%E6%B3%95.png 2x" data-sizes=auto alt=/010editorcracker/idaPassword%E7%AE%97%E6%B3%95.png title=idaPassword算法></p>
+<p>观察后面的do-while循环，我看不出这里做了什么，但是这里用到了对Password处理后的数据，似乎是在检验处理后的Password数据是否符合规定。因为这部分用到的变量并不影响后面的核心算法，因此不再分析。</p>
+<p>再看后面的赋值代码，由前面处理Password后的数据存放在&v41这个信息，以及根据ida创建变量时给的注释（v41 = [rbp-20h],v43 = [rbp-1eh]），我们可以判断Password处理后得到的数据以数组形式保存，数组起始地址为&v41，&v41-&v50为连续的地址，且都保存着相应地址上的处理后的数据，这也就是为什么之前我们定义为key[10]数组的原因。因此v13-v18就直接保存了经Password编码算法处理后得到的数据。</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=v44.png data-srcset="/010editorcracker/v44.png, v44.png 1.5x, /010editorcracker/v44.png 2x" data-sizes=auto alt=/010editorcracker/v44.png title=v44></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=v41-v50.png data-srcset="/010editorcracker/v41-v50.png, v41-v50.png 1.5x, /010editorcracker/v41-v50.png 2x" data-sizes=auto alt=/010editorcracker/v41-v50.png title=v41-v50></p>
+<p>为了验证，我们在x64dbg中查看程序运行到该处时的rbp-20h的数据，从dump中可以看到此处的数据与我们所推测的相同</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=v13-v18.png data-srcset="/010editorcracker/v13-v18.png, v13-v18.png 1.5x, /010editorcracker/v13-v18.png 2x" data-sizes=auto alt=/010editorcracker/v13-v18.png title=v13-v18></p>
+<p>将Password通过编码算法处理后得的数据定义为key[10]数组，那么上述赋值就为v13 = key[7], v14 = key[5],v15 = key[2], v16 = key[1],v17 = key[0],v18 = key[3]</p>
+<p>再看switch(v44) 语句，可以判断只有当key[3]为0x9c，0xfc和0xac时才能进入第二段算法，因为该函数需要返回0x2D才能让关键函数返回0xBD，因此我们只关注能返回0x2D的分支。</p>
+<p>若要返回0x2D，那么该分支会跳转至LABEL_33处，那么0xfc的分支可以直接排除掉；0x9c分支并未使用key[8]与key[9]的数据，因此可以推断该分支只生成8Byte的Password；而0xac的分支使用了key[8]与key[9]，因此是可以生成10Byte的Password，我们只需分析其中一个分支就可以，这里我们分析key[3]=0xac的情况。</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=0xac.png data-srcset="/010editorcracker/0xac.png, 0xac.png 1.5x, /010editorcracker/0xac.png 2x" data-sizes=auto alt=/010editorcracker/0xac.png title=0xac></p>
+<p>这部分流程就是通过一些对key的一些数据进行计算后获取v23和v29两个主要变量，其中v23-1&lt;=0x3E7，因此v23取值范围必须为[0x1,0x3E7]</p>
+<p>接着跳转到LABEL_26继续分析</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=label26.png data-srcset="/010editorcracker/label26.png, label26.png 1.5x, /010editorcracker/label26.png 2x" data-sizes=auto alt=/010editorcracker/label26.png title=label26></p>
+<p>LOBYTE(v4)我们可以通过查看对应的汇编代码来理解其作用，这里0x0Fc是-4，那么就是使用rdx的低八位与-4相比较，如果不相等就将rsi的低八位置0。</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=LOBYTE.png data-srcset="/010editorcracker/LOBYTE.png, LOBYTE.png 1.5x, /010editorcracker/LOBYTE.png 2x" data-sizes=auto alt=/010editorcracker/LOBYTE.png title=LOBYTE></p>
+<p>然后对Name进行一些格式的处理后保存在v24上，在函数sub_140004B88中传入了v24，推测是对Name字符串进行一些算法处理，进入该函数调试发现，该函数确实将Name的每个字符都进行了一些处理，并且还有一个很大的数组dword_140B34AD0保存着用来编码处理Name的数据。</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Name%e7%bc%96%e7%a0%81.png data-srcset="/010editorcracker/Name%E7%BC%96%E7%A0%81.png, Name%e7%bc%96%e7%a0%81.png 1.5x, /010editorcracker/Name%E7%BC%96%E7%A0%81.png 2x" data-sizes=auto alt=/010editorcracker/Name%E7%BC%96%E7%A0%81.png title=Name编码></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%a4%a7%e6%95%b0%e7%bb%84.png data-srcset="/010editorcracker/%E5%A4%A7%E6%95%B0%E7%BB%84.png, %e5%a4%a7%e6%95%b0%e7%bb%84.png 1.5x, /010editorcracker/%E5%A4%A7%E6%95%B0%E7%BB%84.png 2x" data-sizes=auto alt=/010editorcracker/%E5%A4%A7%E6%95%B0%E7%BB%84.png title=大数组></p>
+<p>回到调用编码Name字符串函数的代码处继续分析，</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=ida%e5%88%a4%e6%96%ad.png data-srcset="/010editorcracker/ida%E5%88%A4%E6%96%AD.png, ida%e5%88%a4%e6%96%ad.png 1.5x, /010editorcracker/ida%E5%88%A4%E6%96%AD.png 2x" data-sizes=auto alt=/010editorcracker/ida%E5%88%A4%E6%96%AD.png title=ida判断></p>
+<p>对于第一个if，我们对照汇编代码来理解，可以发现BYTE1、BYTE2、HIBYTE都是对v25进行右移后再判断</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=ida%e5%88%a4%e6%96%ad%e7%9a%84%e6%b1%87%e7%bc%96.png data-srcset="/010editorcracker/ida%E5%88%A4%E6%96%AD%E7%9A%84%E6%B1%87%E7%BC%96.png, ida%e5%88%a4%e6%96%ad%e7%9a%84%e6%b1%87%e7%bc%96.png 1.5x, /010editorcracker/ida%E5%88%A4%E6%96%AD%E7%9A%84%E6%B1%87%E7%BC%96.png 2x" data-sizes=auto alt=/010editorcracker/ida%E5%88%A4%E6%96%AD%E7%9A%84%E6%B1%87%E7%BC%96.png title=ida判断的汇编></p>
+<p>第二个if，v18 == -100 ( 0x9c)，而我们执行的分支为v18 = 0xac因此不进入该if，同样对于if( v18 == -4 (0xfc))也跳过，因此该分支将会直接执行else if(v29)的代码，又因为我们必须渠道LABEL_33才能返回0x2D，因此v29必须大于v35</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=v29.png data-srcset="/010editorcracker/v29.png, v29.png 1.5x, /010editorcracker/v29.png 2x" data-sizes=auto alt=/010editorcracker/v29.png title=v29></p>
+<p>我们追溯v35的值，发现其为加密算法函数的第三个传入参数，一直追溯到该函数调用时的汇编代码，我们可以发现，该函数的第三个参数大小为常数0x49C7</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=49c7.png data-srcset="/010editorcracker/49c7.png, 49c7.png 1.5x, /010editorcracker/49c7.png 2x" data-sizes=auto alt=/010editorcracker/49c7.png title=49c7></p>
+<p>因此v29需要大于0x49C7。</p>
+<p>那么以上就分析完了010 editor的算法流程</p>
+<h4 id=0x02-注册机代码>0x02 注册机代码</h4>
+<p>在上述算法流程的分析过程我们可以发现两部分算法，第一部分是先对Password进行第一步处理获得key，然后判断key的第四个元素是不是0xac，是才能进入下一部分算法，第二部分算法先通过两个对key数据处理后得到两个变量，这两个变量再传入对Name编码的函数，这样Name和Password就产生了关系。</p>
+<p>我们需要反过来求key值，首先总结一下第二部分算法使用到的key值</p>
+<p>第一个算法为</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%ae%97%e6%b3%95.png data-srcset="/010editorcracker/%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%AE%97%E6%B3%95.png, %e7%ac%ac%e4%b8%80%e4%b8%aa%e7%ae%97%e6%b3%95.png 1.5x, /010editorcracker/%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%AE%97%E6%B3%95.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%AE%97%E6%B3%95.png title=第一个算法></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%ae%97%e6%b3%952.png data-srcset="/010editorcracker/%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%AE%97%E6%B3%952.png, %e7%ac%ac%e4%b8%80%e4%b8%aa%e7%ae%97%e6%b3%952.png 1.5x, /010editorcracker/%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%AE%97%E6%B3%952.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%AE%97%E6%B3%952.png title=第一个算法2></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=n>a1</span> <span class=o>=</span> <span class=p>((</span><span class=n>v23</span><span class=o>*</span><span class=mh>0xb</span> <span class=o>^</span> <span class=mh>0x3421</span><span class=p>)</span> <span class=o>-</span> <span class=mi>19760</span><span class=p>)</span><span class=o>^</span><span class=mh>0x7892</span>
+<span class=n>a1</span> <span class=o>=</span> <span class=p>((</span><span class=n>key</span><span class=p>[</span><span class=mi>5</span><span class=p>]</span><span class=o>^</span><span class=n>key</span><span class=p>[</span><span class=mi>2</span><span class=p>])</span><span class=o>+</span><span class=p>((</span><span class=n>key</span><span class=p>[</span><span class=mi>7</span><span class=p>]</span><span class=o>^</span><span class=n>key</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span><span class=o>&lt;&lt;</span><span class=mi>8</span><span class=p>))</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>第二个算法为</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e4%ba%8c%e4%b8%aa%e7%ae%97%e6%b3%951.png data-srcset="/010editorcracker/%E7%AC%AC%E4%BA%8C%E4%B8%AA%E7%AE%97%E6%B3%951.png, %e7%ac%ac%e4%ba%8c%e4%b8%aa%e7%ae%97%e6%b3%951.png 1.5x, /010editorcracker/%E7%AC%AC%E4%BA%8C%E4%B8%AA%E7%AE%97%E6%B3%951.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E4%BA%8C%E4%B8%AA%E7%AE%97%E6%B3%951.png title=第二个算法1></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e4%ba%8c%e4%b8%aa%e7%ae%97%e6%b3%952.png data-srcset="/010editorcracker/%E7%AC%AC%E4%BA%8C%E4%B8%AA%E7%AE%97%E6%B3%952.png, %e7%ac%ac%e4%ba%8c%e4%b8%aa%e7%ae%97%e6%b3%952.png 1.5x, /010editorcracker/%E7%AC%AC%E4%BA%8C%E4%B8%AA%E7%AE%97%E6%B3%952.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E4%BA%8C%E4%B8%AA%E7%AE%97%E6%B3%952.png title=第二个算法2></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=n>a1</span> <span class=o>=</span> <span class=p>(((((</span><span class=n>v29</span><span class=o>*</span><span class=mh>0x11</span><span class=p>)</span> <span class=o>^</span> <span class=mh>0xffe53167</span><span class=p>)</span> <span class=o>+</span> <span class=mi>180597</span><span class=p>)</span> <span class=o>^</span> <span class=mh>0x22c078</span><span class=p>)</span> <span class=o>^</span> <span class=mh>0x5B8C27</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xffffff</span>
+<span class=n>a1</span> <span class=o>=</span> <span class=p>(</span><span class=n>key</span><span class=p>[</span><span class=mi>6</span><span class=p>]</span><span class=o>^</span><span class=n>key</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span><span class=o>+</span><span class=p>((</span><span class=n>key</span><span class=p>[</span><span class=mi>5</span><span class=p>]</span><span class=o>^</span><span class=n>key</span><span class=p>[</span><span class=mi>9</span><span class=p>])</span><span class=o>&lt;&lt;</span><span class=mi>16</span><span class=p>)</span><span class=o>+</span><span class=p>((</span><span class=n>key</span><span class=p>[</span><span class=mi>8</span><span class=p>]</span><span class=o>^</span><span class=n>key</span><span class=p>[</span><span class=mi>4</span><span class=p>])</span><span class=o>&lt;&lt;</span><span class=mi>8</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>再看对Name进行编码的算法函数使用的参数为v24(转换格式后的Name字符串)、v4 = 1(因v18!=-4)、v22 = v29、(a1+48)=v23，并且编码后的数据赋予v25，然后在判断v25的低8位、低16位、高32位、高64位是否分别等于key[4]、key[5]、key[6]、key[7]，</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e4%b8%80%e6%ad%a5%e9%80%86%e5%90%91.png data-srcset="/010editorcracker/%E7%AC%AC%E4%B8%80%E6%AD%A5%E9%80%86%E5%90%91.png, %e7%ac%ac%e4%b8%80%e6%ad%a5%e9%80%86%e5%90%91.png 1.5x, /010editorcracker/%E7%AC%AC%E4%B8%80%E6%AD%A5%E9%80%86%E5%90%91.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E4%B8%80%E6%AD%A5%E9%80%86%E5%90%91.png title=第一步逆向></p>
+<p>而我们所执行的分支要求必须相等，因此我们也就可以对Name编码后求出key[4 - 7]的数据。</p>
+<p>当我们获得key[4 - 7]的数据后，就可以再通过逆向求解对key数据编码的两个算法就能获得其余key的数据，但是这里有一个问题，就是我们缺少v29 以及 v23两个关键数据进行算法逆向计算。</p>
+<p>在之前的流程分析，我们可以发现v23的取值在[0x1,0x3E7]之间，v29必须大于0x49C7，那么我们只需要在两个变量的取值范围随机取值即可，可以给两个变量赋符合条件的常数，也可以通过rand() % 0x3E7获得v23，rand() + 0x49C8获得v29。在这里我们直接给常数即可。</p>
+<p>到后面我发现v23 变量是一对Name和Password可以使用的用户数量，v29是和使用期限有关的数据。</p>
+<p>综上，注册机的思路理清，那么就可以开始写代码了。</p>
+<p>在此之前我们需要获取Name编码时所需要的大数组数据，我们通过x64dbg调试到编码Name的函数里(因为我们填的Name以及Password不能让程序执行到这，因此需要手动更改程序跳转条件，让程序能够执行到编码Name的函数)。我们在ida查看该数组会发现后面还接了0x34大小的0数据，因此我们在复制的时候还需要考虑这个细节。</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%a4%a7%e6%95%b0%e7%bb%84%e5%a4%8d%e5%88%b6.png data-srcset="/010editorcracker/%E5%A4%A7%E6%95%B0%E7%BB%84%E5%A4%8D%E5%88%B6.png, %e5%a4%a7%e6%95%b0%e7%bb%84%e5%a4%8d%e5%88%b6.png 1.5x, /010editorcracker/%E5%A4%A7%E6%95%B0%E7%BB%84%E5%A4%8D%E5%88%B6.png 2x" data-sizes=auto alt=/010editorcracker/%E5%A4%A7%E6%95%B0%E7%BB%84%E5%A4%8D%E5%88%B6.png title=大数组复制></p>
+<p>首先是对Name编码的算法，我们直接参照ida反编译的代码进行编写</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span><span class=lnt>80
+</span><span class=lnt>81
+</span><span class=lnt>82
+</span><span class=lnt>83
+</span><span class=lnt>84
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=n>DWORD</span> <span class=n>LockName</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+<span class=mh>0x39CB44B8</span><span class=p>,</span> <span class=mh>0x23754F67</span><span class=p>,</span> <span class=mh>0x5F017211</span><span class=p>,</span> <span class=mh>0x3EBB24DA</span><span class=p>,</span> <span class=mh>0x351707C6</span><span class=p>,</span> <span class=mh>0x63F9774B</span><span class=p>,</span> <span class=mh>0x17827288</span><span class=p>,</span> <span class=mh>0x0FE74821</span><span class=p>,</span>
+<span class=mh>0x5B5F670F</span><span class=p>,</span> <span class=mh>0x48315AE8</span><span class=p>,</span> <span class=mh>0x785B7769</span><span class=p>,</span> <span class=mh>0x2B7A1547</span><span class=p>,</span> <span class=mh>0x38D11292</span><span class=p>,</span> <span class=mh>0x42A11B32</span><span class=p>,</span> <span class=mh>0x35332244</span><span class=p>,</span> <span class=mh>0x77437B60</span><span class=p>,</span>
+<span class=mh>0x1EAB3B10</span><span class=p>,</span> <span class=mh>0x53810000</span><span class=p>,</span> <span class=mh>0x1D0212AE</span><span class=p>,</span> <span class=mh>0x6F0377A8</span><span class=p>,</span> <span class=mh>0x43C03092</span><span class=p>,</span> <span class=mh>0x2D3C0A8E</span><span class=p>,</span> <span class=mh>0x62950CBF</span><span class=p>,</span> <span class=mh>0x30F06FFA</span><span class=p>,</span>
+<span class=mh>0x34F710E0</span><span class=p>,</span> <span class=mh>0x28F417FB</span><span class=p>,</span> <span class=mh>0x350D2F95</span><span class=p>,</span> <span class=mh>0x5A361D5A</span><span class=p>,</span> <span class=mh>0x15CC060B</span><span class=p>,</span> <span class=mh>0x0AFD13CC</span><span class=p>,</span> <span class=mh>0x28603BCF</span><span class=p>,</span> <span class=mh>0x3371066B</span><span class=p>,</span>
+<span class=mh>0x30CD14E4</span><span class=p>,</span> <span class=mh>0x175D3A67</span><span class=p>,</span> <span class=mh>0x6DD66A13</span><span class=p>,</span> <span class=mh>0x2D3409F9</span><span class=p>,</span> <span class=mh>0x581E7B82</span><span class=p>,</span> <span class=mh>0x76526B99</span><span class=p>,</span> <span class=mh>0x5C8D5188</span><span class=p>,</span> <span class=mh>0x2C857971</span><span class=p>,</span>
+<span class=mh>0x15F51FC0</span><span class=p>,</span> <span class=mh>0x68CC0D11</span><span class=p>,</span> <span class=mh>0x49F55E5C</span><span class=p>,</span> <span class=mh>0x275E4364</span><span class=p>,</span> <span class=mh>0x2D1E0DBC</span><span class=p>,</span> <span class=mh>0x4CEE7CE3</span><span class=p>,</span> <span class=mh>0x32555840</span><span class=p>,</span> <span class=mh>0x112E2E08</span><span class=p>,</span>
+<span class=mh>0x6978065A</span><span class=p>,</span> <span class=mh>0x72921406</span><span class=p>,</span> <span class=mh>0x314578E7</span><span class=p>,</span> <span class=mh>0x175621B7</span><span class=p>,</span> <span class=mh>0x40771DBF</span><span class=p>,</span> <span class=mh>0x3FC238D6</span><span class=p>,</span> <span class=mh>0x4A31128A</span><span class=p>,</span> <span class=mh>0x2DAD036E</span><span class=p>,</span>
+<span class=mh>0x41A069D6</span><span class=p>,</span> <span class=mh>0x25400192</span><span class=p>,</span> <span class=mh>0x00DD4667</span><span class=p>,</span> <span class=mh>0x6AFC1F4F</span><span class=p>,</span> <span class=mh>0x571040CE</span><span class=p>,</span> <span class=mh>0x62FE66DF</span><span class=p>,</span> <span class=mh>0x41DB4B3E</span><span class=p>,</span> <span class=mh>0x3582231F</span><span class=p>,</span>
+<span class=mh>0x55F6079A</span><span class=p>,</span> <span class=mh>0x1CA70644</span><span class=p>,</span> <span class=mh>0x1B1643D2</span><span class=p>,</span> <span class=mh>0x3F7228C9</span><span class=p>,</span> <span class=mh>0x5F141070</span><span class=p>,</span> <span class=mh>0x3E1474AB</span><span class=p>,</span> <span class=mh>0x444B256E</span><span class=p>,</span> <span class=mh>0x537050D9</span><span class=p>,</span>
+<span class=mh>0x0F42094B</span><span class=p>,</span> <span class=mh>0x2FD820E6</span><span class=p>,</span> <span class=mh>0x778B2E5E</span><span class=p>,</span> <span class=mh>0x71176D02</span><span class=p>,</span> <span class=mh>0x7FEA7A69</span><span class=p>,</span> <span class=mh>0x5BB54628</span><span class=p>,</span> <span class=mh>0x19BA6C71</span><span class=p>,</span> <span class=mh>0x39763A99</span><span class=p>,</span>
+<span class=mh>0x178D54CD</span><span class=p>,</span> <span class=mh>0x01246E88</span><span class=p>,</span> <span class=mh>0x3313537E</span><span class=p>,</span> <span class=mh>0x2B8E2D17</span><span class=p>,</span> <span class=mh>0x2A3D10BE</span><span class=p>,</span> <span class=mh>0x59D10582</span><span class=p>,</span> <span class=mh>0x37A163DB</span><span class=p>,</span> <span class=mh>0x30D6489A</span><span class=p>,</span>
+<span class=mh>0x6A215C46</span><span class=p>,</span> <span class=mh>0x0E1C7A76</span><span class=p>,</span> <span class=mh>0x1FC760E7</span><span class=p>,</span> <span class=mh>0x79B80C65</span><span class=p>,</span> <span class=mh>0x27F459B4</span><span class=p>,</span> <span class=mh>0x799A7326</span><span class=p>,</span> <span class=mh>0x50BA1782</span><span class=p>,</span> <span class=mh>0x2A116D5C</span><span class=p>,</span>
+<span class=mh>0x63866E1B</span><span class=p>,</span> <span class=mh>0x3F920E3C</span><span class=p>,</span> <span class=mh>0x55023490</span><span class=p>,</span> <span class=mh>0x55B56089</span><span class=p>,</span> <span class=mh>0x2C391FD1</span><span class=p>,</span> <span class=mh>0x2F8035C2</span><span class=p>,</span> <span class=mh>0x64FD2B7A</span><span class=p>,</span> <span class=mh>0x4CE8759A</span><span class=p>,</span>
+<span class=mh>0x518504F0</span><span class=p>,</span> <span class=mh>0x799501A8</span><span class=p>,</span> <span class=mh>0x3F5B2CAD</span><span class=p>,</span> <span class=mh>0x38E60160</span><span class=p>,</span> <span class=mh>0x637641D8</span><span class=p>,</span> <span class=mh>0x33352A42</span><span class=p>,</span> <span class=mh>0x51A22C19</span><span class=p>,</span> <span class=mh>0x085C5851</span><span class=p>,</span>
+<span class=mh>0x032917AB</span><span class=p>,</span> <span class=mh>0x2B770AC7</span><span class=p>,</span> <span class=mh>0x30AC77B3</span><span class=p>,</span> <span class=mh>0x2BEC1907</span><span class=p>,</span> <span class=mh>0x035202D0</span><span class=p>,</span> <span class=mh>0x0FA933D3</span><span class=p>,</span> <span class=mh>0x61255DF3</span><span class=p>,</span> <span class=mh>0x22AD06BF</span><span class=p>,</span>
+<span class=mh>0x58B86971</span><span class=p>,</span> <span class=mh>0x5FCA0DE5</span><span class=p>,</span> <span class=mh>0x700D6456</span><span class=p>,</span> <span class=mh>0x56A973DB</span><span class=p>,</span> <span class=mh>0x5AB759FD</span><span class=p>,</span> <span class=mh>0x330E0BE2</span><span class=p>,</span> <span class=mh>0x5B3C0DDD</span><span class=p>,</span> <span class=mh>0x495D3C60</span><span class=p>,</span>
+<span class=mh>0x53BD59A6</span><span class=p>,</span> <span class=mh>0x4C5E6D91</span><span class=p>,</span> <span class=mh>0x49D9318D</span><span class=p>,</span> <span class=mh>0x103D5079</span><span class=p>,</span> <span class=mh>0x61CE42E3</span><span class=p>,</span> <span class=mh>0x7ED5121D</span><span class=p>,</span> <span class=mh>0x14E160ED</span><span class=p>,</span> <span class=mh>0x212D4EF2</span><span class=p>,</span>
+<span class=mh>0x270133F0</span><span class=p>,</span> <span class=mh>0x62435A96</span><span class=p>,</span> <span class=mh>0x1FA75E8B</span><span class=p>,</span> <span class=mh>0x6F092FBE</span><span class=p>,</span> <span class=mh>0x4A000D49</span><span class=p>,</span> <span class=mh>0x57AE1C70</span><span class=p>,</span> <span class=mh>0x004E2477</span><span class=p>,</span> <span class=mh>0x561E7E72</span><span class=p>,</span>
+<span class=mh>0x468C0033</span><span class=p>,</span> <span class=mh>0x5DCC2402</span><span class=p>,</span> <span class=mh>0x78507AC6</span><span class=p>,</span> <span class=mh>0x58AF24C7</span><span class=p>,</span> <span class=mh>0x0DF62D34</span><span class=p>,</span> <span class=mh>0x358A4708</span><span class=p>,</span> <span class=mh>0x3CFB1E11</span><span class=p>,</span> <span class=mh>0x2B71451C</span><span class=p>,</span>
+<span class=mh>0x77A75295</span><span class=p>,</span> <span class=mh>0x56890721</span><span class=p>,</span> <span class=mh>0x0FEF75F3</span><span class=p>,</span> <span class=mh>0x120F24F1</span><span class=p>,</span> <span class=mh>0x01990AE7</span><span class=p>,</span> <span class=mh>0x339C4452</span><span class=p>,</span> <span class=mh>0x27A15B8E</span><span class=p>,</span> <span class=mh>0x0BA7276D</span><span class=p>,</span>
+<span class=mh>0x60DC1B7B</span><span class=p>,</span> <span class=mh>0x4F4B7F82</span><span class=p>,</span> <span class=mh>0x67DB7007</span><span class=p>,</span> <span class=mh>0x4F4A57D9</span><span class=p>,</span> <span class=mh>0x621252E8</span><span class=p>,</span> <span class=mh>0x20532CFC</span><span class=p>,</span> <span class=mh>0x6A390306</span><span class=p>,</span> <span class=mh>0x18800423</span><span class=p>,</span>
+<span class=mh>0x19F3778A</span><span class=p>,</span> <span class=mh>0x462316F0</span><span class=p>,</span> <span class=mh>0x56AE0937</span><span class=p>,</span> <span class=mh>0x43C2675C</span><span class=p>,</span> <span class=mh>0x65CA45FD</span><span class=p>,</span> <span class=mh>0x0D604FF2</span><span class=p>,</span> <span class=mh>0x0BFD22CB</span><span class=p>,</span> <span class=mh>0x3AFE643B</span><span class=p>,</span>
+<span class=mh>0x3BF67FA6</span><span class=p>,</span> <span class=mh>0x44623579</span><span class=p>,</span> <span class=mh>0x184031F8</span><span class=p>,</span> <span class=mh>0x32174F97</span><span class=p>,</span> <span class=mh>0x4C6A092A</span><span class=p>,</span> <span class=mh>0x5FB50261</span><span class=p>,</span> <span class=mh>0x01650174</span><span class=p>,</span> <span class=mh>0x33634AF1</span><span class=p>,</span>
+<span class=mh>0x712D18F4</span><span class=p>,</span> <span class=mh>0x6E997169</span><span class=p>,</span> <span class=mh>0x5DAB7AFE</span><span class=p>,</span> <span class=mh>0x7C2B2EE8</span><span class=p>,</span> <span class=mh>0x6EDB75B4</span><span class=p>,</span> <span class=mh>0x5F836FB6</span><span class=p>,</span> <span class=mh>0x3C2A6DD6</span><span class=p>,</span> <span class=mh>0x292D05C2</span><span class=p>,</span>
+<span class=mh>0x052244DB</span><span class=p>,</span> <span class=mh>0x149A5F4F</span><span class=p>,</span> <span class=mh>0x5D486540</span><span class=p>,</span> <span class=mh>0x331D15EA</span><span class=p>,</span> <span class=mh>0x4F456920</span><span class=p>,</span> <span class=mh>0x483A699F</span><span class=p>,</span> <span class=mh>0x3B450F05</span><span class=p>,</span> <span class=mh>0x3B207C6C</span><span class=p>,</span>
+<span class=mh>0x749D70FE</span><span class=p>,</span> <span class=mh>0x417461F6</span><span class=p>,</span> <span class=mh>0x62B031F1</span><span class=p>,</span> <span class=mh>0x2750577B</span><span class=p>,</span> <span class=mh>0x29131533</span><span class=p>,</span> <span class=mh>0x588C3808</span><span class=p>,</span> <span class=mh>0x1AEF3456</span><span class=p>,</span> <span class=mh>0x0F3C00EC</span><span class=p>,</span>
+<span class=mh>0x7DA74742</span><span class=p>,</span> <span class=mh>0x4B797A6C</span><span class=p>,</span> <span class=mh>0x5EBB3287</span><span class=p>,</span> <span class=mh>0x786558B8</span><span class=p>,</span> <span class=mh>0x00ED4FF2</span><span class=p>,</span> <span class=mh>0x6269691E</span><span class=p>,</span> <span class=mh>0x24A2255F</span><span class=p>,</span> <span class=mh>0x62C11F7E</span><span class=p>,</span>
+<span class=mh>0x2F8A7DCD</span><span class=p>,</span> <span class=mh>0x643B17FE</span><span class=p>,</span> <span class=mh>0x778318B8</span><span class=p>,</span> <span class=mh>0x253B60FE</span><span class=p>,</span> <span class=mh>0x34BB63A3</span><span class=p>,</span> <span class=mh>0x5B03214F</span><span class=p>,</span> <span class=mh>0x5F1571F4</span><span class=p>,</span> <span class=mh>0x1A316E9F</span><span class=p>,</span>
+<span class=mh>0x7ACF2704</span><span class=p>,</span> <span class=mh>0x28896838</span><span class=p>,</span> <span class=mh>0x18614677</span><span class=p>,</span> <span class=mh>0x1BF569EB</span><span class=p>,</span> <span class=mh>0x0BA85EC9</span><span class=p>,</span> <span class=mh>0x6ACA6B46</span><span class=p>,</span> <span class=mh>0x1E43422A</span><span class=p>,</span> <span class=mh>0x514D5F0E</span><span class=p>,</span>
+<span class=mh>0x413E018C</span><span class=p>,</span> <span class=mh>0x307626E9</span><span class=p>,</span> <span class=mh>0x01ED1DFA</span><span class=p>,</span> <span class=mh>0x49F46F5A</span><span class=p>,</span> <span class=mh>0x461B642B</span><span class=p>,</span> <span class=mh>0x7D7007F2</span><span class=p>,</span> <span class=mh>0x13652657</span><span class=p>,</span> <span class=mh>0x6B160BC5</span><span class=p>,</span>
+<span class=mh>0x65E04849</span><span class=p>,</span> <span class=mh>0x1F526E1C</span><span class=p>,</span> <span class=mh>0x5A0251B6</span><span class=p>,</span> <span class=mh>0x2BD73F69</span><span class=p>,</span> <span class=mh>0x2DBF7ACD</span><span class=p>,</span> <span class=mh>0x51E63E80</span><span class=p>,</span> <span class=mh>0x5CF2670F</span><span class=p>,</span> <span class=mh>0x21CD0A03</span><span class=p>,</span>
+<span class=mh>0x5CFF0261</span><span class=p>,</span> <span class=mh>0x33AE061E</span><span class=p>,</span> <span class=mh>0x3BB6345F</span><span class=p>,</span> <span class=mh>0x5D814A75</span><span class=p>,</span> <span class=mh>0x257B5DF4</span><span class=p>,</span> <span class=mh>0x0A5C2C5B</span><span class=p>,</span> <span class=mh>0x16A45527</span><span class=p>,</span> <span class=mh>0x16F23945</span><span class=p>,</span>
+<span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span>
+<span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span><span class=p>,</span> <span class=mh>0x00000000</span> <span class=p>};</span>
+
+<span class=kt>int</span> <span class=kr>__fastcall</span> <span class=nf>EncodeName</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span> <span class=n>a1</span><span class=p>,</span><span class=kt>char</span> <span class=n>a3</span><span class=p>,</span><span class=kt>char</span> <span class=n>a4</span><span class=p>)</span>
+    
+<span class=p>{</span>
+    <span class=kt>int</span> <span class=n>v5</span><span class=p>;</span> <span class=c1>// ebp
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v6</span><span class=p>;</span> <span class=c1>// rax
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v7</span><span class=p>;</span> <span class=c1>// r13
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v8</span><span class=p>;</span> <span class=c1>// rbx
+</span><span class=c1></span>    <span class=kt>unsigned</span> <span class=kr>__int8</span> <span class=n>v9</span><span class=p>;</span> <span class=c1>// r14
+</span><span class=c1></span>    <span class=kt>unsigned</span> <span class=kr>__int8</span> <span class=n>v10</span><span class=p>;</span> <span class=c1>// si
+</span><span class=c1></span>    <span class=kt>unsigned</span> <span class=kr>__int8</span> <span class=n>v11</span><span class=p>;</span> <span class=c1>// r15
+</span><span class=c1></span>    <span class=kt>unsigned</span> <span class=kr>__int8</span> <span class=n>v12</span><span class=p>;</span> <span class=c1>// di
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v13</span><span class=p>;</span> <span class=c1>// eax
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v14</span><span class=p>;</span> <span class=c1>// r9
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v15</span><span class=p>;</span> <span class=c1>// er11
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v16</span><span class=p>;</span> <span class=c1>// r10
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v17</span><span class=p>;</span> <span class=c1>// ebp
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v18</span><span class=p>;</span> <span class=c1>// rcx
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>v19</span><span class=p>;</span> <span class=c1>// rax
+</span><span class=c1></span>
+    <span class=n>v5</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+    <span class=n>v6</span> <span class=o>=</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+    <span class=kt>int</span> <span class=n>lenOfname</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+    <span class=c1>// 计算Name字符串长度
+</span><span class=c1></span>    <span class=k>for</span> <span class=p>(;</span> <span class=n>a1</span><span class=p>[</span><span class=n>lenOfname</span><span class=p>];</span> <span class=n>lenOfname</span><span class=o>++</span><span class=p>);</span>
+    <span class=n>v7</span> <span class=o>=</span> <span class=n>lenOfname</span><span class=p>;</span>
+    <span class=n>v9</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+    <span class=n>v10</span> <span class=o>=</span> <span class=p>(</span><span class=mi>15</span> <span class=o>*</span> <span class=n>a4</span><span class=p>)</span><span class=o>&amp;</span><span class=mh>0xff</span><span class=p>;</span> <span class=c1>//v10为8位整型，因此通过&amp;0xff可取出低八位的数据
+</span><span class=c1></span>    <span class=n>v11</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+    <span class=n>v12</span> <span class=o>=</span> <span class=p>(</span><span class=mi>17</span> <span class=o>*</span> <span class=n>a3</span><span class=p>)</span><span class=o>&amp;</span><span class=mh>0xff</span><span class=p>;</span>
+    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>v7</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>v13</span> <span class=o>=</span> <span class=n>toupper</span><span class=p>(</span><span class=n>a1</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
+        <span class=n>v14</span> <span class=o>=</span> <span class=n>LockName</span><span class=p>[</span><span class=n>v12</span><span class=p>];</span>
+        <span class=n>v15</span> <span class=o>=</span> <span class=n>v5</span> <span class=o>+</span> <span class=n>LockName</span><span class=p>[</span><span class=n>v13</span><span class=p>];</span>
+        <span class=n>v16</span> <span class=o>=</span> <span class=n>LockName</span><span class=p>[</span><span class=n>v10</span><span class=p>];</span>
+        <span class=c1>//这里只写了a2==1的分支，是因为我们所执行的分支中a2只会等于1
+</span><span class=c1></span>        <span class=c1>// ida反编译得到的代码转化成了unsigned __int8，因此这里也要&amp;0xff取低八位
+</span><span class=c1></span>        <span class=n>v17</span> <span class=o>=</span> <span class=n>LockName</span><span class=p>[(</span><span class=n>v13</span> <span class=o>+</span> <span class=mi>13</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xff</span><span class=p>];</span>
+        <span class=n>v18</span> <span class=o>=</span> <span class=p>(</span><span class=n>v13</span> <span class=o>+</span> <span class=mi>47</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xff</span><span class=p>;</span>
+        <span class=n>v19</span> <span class=o>=</span> <span class=n>v9</span><span class=p>;</span>
+        <span class=n>v12</span> <span class=o>+=</span> <span class=mi>9</span><span class=p>;</span>
+        <span class=n>v10</span> <span class=o>+=</span> <span class=mi>13</span><span class=p>;</span>
+        <span class=n>v9</span> <span class=o>+=</span> <span class=mi>19</span><span class=p>;</span>
+        <span class=n>v11</span> <span class=o>+=</span> <span class=mi>7</span><span class=p>;</span>
+        <span class=n>v5</span> <span class=o>=</span> <span class=n>v16</span> <span class=o>+</span> <span class=n>v14</span> <span class=o>+</span> <span class=n>LockName</span><span class=p>[</span><span class=n>v19</span> <span class=p>]</span> <span class=o>+</span> <span class=n>LockName</span><span class=p>[</span><span class=n>v18</span> <span class=p>]</span> <span class=o>*</span> <span class=p>(</span><span class=n>v15</span> <span class=o>^</span> <span class=n>v17</span><span class=p>);</span>
+    <span class=p>}</span>
+
+    <span class=k>return</span> <span class=n>v5</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当我们把Name编码并将数据返回给v25后，就可以通过key[4 - 7]与v25的关系求出key[4 - 7]</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>char</span> <span class=n>key</span><span class=p>[</span><span class=mi>10</span><span class=p>];</span>
+<span class=n>key</span><span class=p>[</span><span class=mi>3</span><span class=p>]</span> <span class=o>=</span> <span class=mh>0xac</span><span class=p>;</span>
+<span class=c1>//int v23 = rand() % 0x3E8; //al_48 = v23,而v23需要在[0x1，0x3E7]之间,我觉得给个常数就够了，并不需要rand
+</span><span class=c1></span><span class=kt>int</span> <span class=n>v23</span> <span class=o>=</span> <span class=mh>0x89</span><span class=p>;</span> <span class=c1>//可使用该账号的人员数量
+</span><span class=c1>//int v29 = rand() + 0x49c8; //v29要大于v35 即49C7，也可以用一个满足要求的条件代替
+</span><span class=c1></span><span class=kt>int</span> <span class=n>v29</span> <span class=o>=</span> <span class=mh>0xffff</span><span class=p>;</span> <span class=c1>//一对Name和Password可使用的期限
+</span><span class=c1></span><span class=kt>char</span> <span class=n>Name</span><span class=p>[</span><span class=mi>100</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span> <span class=mi>0</span> <span class=p>};</span>
+<span class=n>printf</span><span class=p>(</span><span class=s>&#34;Name: &#34;</span><span class=p>);</span>
+<span class=n>scanf_s</span><span class=p>(</span><span class=s>&#34;%s&#34;</span><span class=p>,</span> <span class=n>Name</span><span class=p>,</span> <span class=mi>100</span><span class=p>);</span>
+<span class=kt>int</span> <span class=n>v25</span> <span class=o>=</span> <span class=n>EncodeName</span><span class=p>(</span><span class=n>Name</span><span class=p>,</span><span class=n>v29</span><span class=p>,</span><span class=n>v23</span><span class=p>);</span>
+<span class=c1>//通过 (v45 == (_BYTE)v25 &amp;&amp; (_BYTE)v14 == BYTE1(v25) &amp;&amp; v47 == BYTE2(v25) &amp;&amp; v48 == HIBYTE(v25)) = 1 关系求解key[4 - 7]
+</span><span class=c1></span><span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>4</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=n>key</span><span class=p>[</span><span class=mi>4</span> <span class=o>+</span> <span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=n>v25</span> <span class=o>&gt;&gt;</span> <span class=p>(</span><span class=n>i</span> <span class=o>*</span> <span class=mi>8</span><span class=p>))</span> <span class=o>&amp;</span> <span class=mh>0xff</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>求出key[4 - 7]后就可以把其余的key算出来了，我们先看第一个对key编码的算法，</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=n>a1</span> <span class=o>=</span> <span class=p>((</span><span class=n>v23</span><span class=o>*</span><span class=mh>0xb</span> <span class=o>^</span> <span class=mh>0x3421</span><span class=p>)</span> <span class=o>-</span> <span class=mi>19760</span><span class=p>)</span><span class=o>^</span><span class=mh>0x7892</span>
+<span class=n>a1</span> <span class=o>=</span> <span class=p>((</span><span class=n>key</span><span class=p>[</span><span class=mi>5</span><span class=p>]</span><span class=o>^</span><span class=n>key</span><span class=p>[</span><span class=mi>2</span><span class=p>])</span><span class=o>+</span><span class=p>((</span><span class=n>key</span><span class=p>[</span><span class=mi>7</span><span class=p>]</span><span class=o>^</span><span class=n>key</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span><span class=o>&lt;&lt;</span><span class=mi>8</span><span class=p>))</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>通过第一个等式我们可以直接求出a1</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=n>fircall_var</span> <span class=o>=</span> <span class=p>(((</span><span class=n>v23</span> <span class=o>*</span> <span class=mh>0xb</span><span class=p>)</span> <span class=o>^</span> <span class=mh>0x3421</span><span class=p>)</span> <span class=o>-</span> <span class=mi>19760</span><span class=p>)</span> <span class=o>^</span> <span class=mh>0x7892</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>观察第二个等式我们可以发现，key[5] ^ key[2] 为a1的低八位，且key[5]是已知的，而key[7] ^ key[1]则左移8位到了高八位，且key[7]已知，可通过如下方法求出key[2]与key[1]</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=n>key</span><span class=p>[</span><span class=mi>2</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=n>fircall_var</span> <span class=o>&amp;</span> <span class=mh>0xff</span><span class=p>)</span> <span class=o>^</span> <span class=n>key</span><span class=p>[</span><span class=mi>5</span><span class=p>];</span>
+<span class=n>key</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span> <span class=o>=</span> <span class=p>((</span><span class=n>fircall_var</span> <span class=o>&gt;&gt;</span> <span class=mi>8</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xff</span><span class=p>)</span> <span class=o>^</span> <span class=n>key</span><span class=p>[</span><span class=mi>7</span><span class=p>];</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>对待第二个对key编码的算法同理，这就不再赘述，直接放代码</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=n>seccall_var</span> <span class=o>=</span> <span class=p>((((</span><span class=n>v29</span> <span class=o>*</span> <span class=mh>0x11</span><span class=p>)</span> <span class=o>^</span> <span class=mh>0xffe53167</span> <span class=p>)</span><span class=o>+</span> <span class=mi>180597</span><span class=p>)</span> <span class=o>^</span> <span class=mh>0x22c078</span> <span class=o>^</span> <span class=mh>0x5b8c27</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xffffff</span><span class=p>;</span>
+<span class=n>key</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=n>seccall_var</span> <span class=o>&amp;</span> <span class=mh>0xff</span><span class=p>)</span> <span class=o>^</span> <span class=n>key</span><span class=p>[</span><span class=mi>6</span><span class=p>];</span>
+<span class=n>key</span><span class=p>[</span><span class=mi>8</span><span class=p>]</span> <span class=o>=</span> <span class=p>((</span><span class=n>seccall_var</span> <span class=o>&gt;&gt;</span> <span class=mi>8</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xff</span><span class=p>)</span> <span class=o>^</span> <span class=n>key</span><span class=p>[</span><span class=mi>4</span><span class=p>];</span>
+<span class=n>key</span><span class=p>[</span><span class=mi>9</span><span class=p>]</span> <span class=o>=</span> <span class=p>((</span><span class=n>seccall_var</span> <span class=o>&gt;&gt;</span> <span class=mi>16</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xff</span><span class=p>)</span> <span class=o>^</span> <span class=n>key</span><span class=p>[</span><span class=mi>5</span><span class=p>];</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么注册机代码编写就完成了，结果如下</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e6%b3%a8%e5%86%8c%e6%9c%ba%e7%bb%93%e6%9e%9c.png data-srcset="/010editorcracker/%E6%B3%A8%E5%86%8C%E6%9C%BA%E7%BB%93%E6%9E%9C.png, %e6%b3%a8%e5%86%8c%e6%9c%ba%e7%bb%93%e6%9e%9c.png 1.5x, /010editorcracker/%E6%B3%A8%E5%86%8C%E6%9C%BA%E7%BB%93%E6%9E%9C.png 2x" data-sizes=auto alt=/010editorcracker/%E6%B3%A8%E5%86%8C%E6%9C%BA%E7%BB%93%E6%9E%9C.png title=注册机结果></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e6%b3%a8%e5%86%8c%e7%bb%93%e6%9e%9c.png data-srcset="/010editorcracker/%E6%B3%A8%E5%86%8C%E7%BB%93%E6%9E%9C.png, %e6%b3%a8%e5%86%8c%e7%bb%93%e6%9e%9c.png 1.5x, /010editorcracker/%E6%B3%A8%E5%86%8C%E7%BB%93%E6%9E%9C.png 2x" data-sizes=auto alt=/010editorcracker/%E6%B3%A8%E5%86%8C%E7%BB%93%E6%9E%9C.png title=注册结果></p>
+<h4 id=0x03-忽略网络验证>0x03 忽略网络验证</h4>
+<p>我们会发现通过逆向得到的正确的Password 会失效，会弹出如下提示，</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%bd%91%e7%bb%9c%e9%aa%8c%e8%af%81%e8%ad%a6%e5%91%8a.png data-srcset="/010editorcracker/%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E8%AD%A6%E5%91%8A.png, %e7%bd%91%e7%bb%9c%e9%aa%8c%e8%af%81%e8%ad%a6%e5%91%8a.png 1.5x, /010editorcracker/%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E8%AD%A6%E5%91%8A.png 2x" data-sizes=auto alt=/010editorcracker/%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E8%AD%A6%E5%91%8A.png title=网络验证警告></p>
+<p>并且我们再次进入x64dbg中发现的关键函数会发现程序的执行分支改变了</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e9%aa%8c%e8%af%81%e5%a4%b1%e8%b4%a5%e5%90%8e.png data-srcset="/010editorcracker/%E9%AA%8C%E8%AF%81%E5%A4%B1%E8%B4%A5%E5%90%8E.png, %e9%aa%8c%e8%af%81%e5%a4%b1%e8%b4%a5%e5%90%8e.png 1.5x, /010editorcracker/%E9%AA%8C%E8%AF%81%E5%A4%B1%E8%B4%A5%E5%90%8E.png 2x" data-sizes=auto alt=/010editorcracker/%E9%AA%8C%E8%AF%81%E5%A4%B1%E8%B4%A5%E5%90%8E.png title=验证失败后></p>
+<p>程序在地址7FF79246AD83处并未发生跳转，并且eax = 113，退出该函数继续跟踪，我们会发现这样一个程序执行到了这样一个函数</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%bd%91%e7%bb%9c%e9%aa%8c%e8%af%81%e5%87%bd%e6%95%b0.png data-srcset="/010editorcracker/%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E5%87%BD%E6%95%B0.png, %e7%bd%91%e7%bb%9c%e9%aa%8c%e8%af%81%e5%87%bd%e6%95%b0.png 1.5x, /010editorcracker/%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/010editorcracker/%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E5%87%BD%E6%95%B0.png title=网络验证函数></p>
+<p>我们进入该函数，并且ida也跳转至该函数进行查看</p>
+<p>ida查找该函数也是先搜索程序提示的字符串，然后发现进入该分支需要v19 = 0，因此给v19赋值的函数就为我们在x64dbg发现的函数，进入该函数分析，找到返回值为0以及返回值大于0的分支</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=ida%e7%bd%91%e7%bb%9c%e9%aa%8c%e8%af%81%e9%83%a8%e5%88%86.png data-srcset="/010editorcracker/ida%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E9%83%A8%E5%88%86.png, ida%e7%bd%91%e7%bb%9c%e9%aa%8c%e8%af%81%e9%83%a8%e5%88%86.png 1.5x, /010editorcracker/ida%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E9%83%A8%E5%88%86.png 2x" data-sizes=auto alt=/010editorcracker/ida%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E9%83%A8%E5%88%86.png title=ida网络验证部分></p>
+<p>在该函数中关键的代码为下面几个if，</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=ida%e5%85%b3%e9%94%ae%e9%aa%8c%e8%af%81.png data-srcset="/010editorcracker/ida%E5%85%B3%E9%94%AE%E9%AA%8C%E8%AF%81.png, ida%e5%85%b3%e9%94%ae%e9%aa%8c%e8%af%81.png 1.5x, /010editorcracker/ida%E5%85%B3%E9%94%AE%E9%AA%8C%E8%AF%81.png 2x" data-sizes=auto alt=/010editorcracker/ida%E5%85%B3%E9%94%AE%E9%AA%8C%E8%AF%81.png title=ida关键验证></p>
+<p>第一个if条件为a2，但是我们发现a2传入的时候为0，且在函数内一直没被更改，因此第一个if并不执行，而return 0xffffffff 又是小于0的数，那么我们只需确保不会进入第二个if，并把0xffffffff 改为 0x1即可</p>
+<p>那么进入sub_14000AEED函数中，直接把返回值改为1，并把return 0xffffff改为0x1即可。</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=v47.png data-srcset="/010editorcracker/v47.png, v47.png 1.5x, /010editorcracker/v47.png 2x" data-sizes=auto alt=/010editorcracker/v47.png title=v47></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=0xffffff.png data-srcset="/010editorcracker/0xffffff.png, 0xffffff.png 1.5x, /010editorcracker/0xffffff.png 2x" data-sizes=auto alt=/010editorcracker/0xffffff.png title=0xffffff></p>
+<p>更改完成后继续跟踪会发现程序将运行到一个分支跳转处，若该分支不跳转则会出现网络验证失败的警告。我们单步调试发现此处跳转了，如果我们之前并不更改网络验证的返回值为大于0的数，那么此处不会发生跳转。</p>
+<p>我们往下看，在地址7FF792315587处call了7FF7921284F4函数，这个函数就是前面需要返回0xDB的关键函数，此时发生跳转后将会再次执行该函数。</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%bd%91%e7%bb%9c%e9%aa%8c%e8%af%81%e8%b7%b3%e8%bd%ac.png data-srcset="/010editorcracker/%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E8%B7%B3%E8%BD%AC.png, %e7%bd%91%e7%bb%9c%e9%aa%8c%e8%af%81%e8%b7%b3%e8%bd%ac.png 1.5x, /010editorcracker/%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E8%B7%B3%E8%BD%AC.png 2x" data-sizes=auto alt=/010editorcracker/%E7%BD%91%E7%BB%9C%E9%AA%8C%E8%AF%81%E8%B7%B3%E8%BD%AC.png title=网络验证跳转></p>
+<p>调试进入关键函数，会发现他仍然执行了mov eax,113的指令，如果继续运行程序，那么程序将会弹出Password是无效错误的警告。解决该问题的办法就是在这个地方直接返回0xDB，因此我们直接将mov eax,113 改为 mov eax,0xDB即可.</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%ac%ac%e4%ba%8c%e6%ac%a1%e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0.png data-srcset="/010editorcracker/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0.png, %e7%ac%ac%e4%ba%8c%e6%ac%a1%e5%85%b3%e9%94%ae%e5%87%bd%e6%95%b0.png 1.5x, /010editorcracker/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/010editorcracker/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0.png title=第二次关键函数></p>
+<p>打上补丁再次运行即可忽略网络验证，并继续使用了。</p>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-03-01</span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/010editorcracker/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/%E9%80%86%E5%90%91/>逆向</a>,&nbsp;<a href=/tags/%E7%A0%B4%E8%A7%A3/>破解</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/pe_structure_analysis/ class=prev rel=prev title=PE文件结构解析><i class="fas fa-angle-left fa-fw"></i>PE文件结构解析</a></div>
+</div>
+<div id=comments><div id=utterances></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>ShiDong</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer>
+</div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{utterances:{darkTheme:"github-dark",issueTerm:"pathname",label:"",lightTheme:"github-light",repo:"Mrsdwang/Mrsdwang.github.io"}},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1}}</script><script type=text/javascript src=/js/theme.min.js></script></body>
+</html>
