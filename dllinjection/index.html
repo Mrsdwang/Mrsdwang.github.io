@@ -14,7 +14,7 @@
 <meta name=twitter:title content="常用DLL注入技术解析">
 <meta name=twitter:description content="0x0 前言 纸上得来终觉浅，DLL注入光听书中说总是不过瘾，于是自己动手写一写代码。这也是我第一次写Windows编程，虽然都是C语言，但变量类型">
 <meta name=application-name content="INT80">
-<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/dllinjection/><link rel=prev href=http://int80.top/010editorcracker/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"常用DLL注入技术解析","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/dllinjection\/"},"genre":"posts","keywords":"逆向","wordcount":21409,"url":"http:\/\/int80.top\/dllinjection\/","datePublished":"2022-03-24T00:00:00+00:00","dateModified":"2022-03-24T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/dllinjection/><link rel=prev href=http://int80.top/010editorcracker/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"常用DLL注入技术解析","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/dllinjection\/"},"genre":"posts","keywords":"逆向","wordcount":21552,"url":"http:\/\/int80.top\/dllinjection\/","datePublished":"2022-03-24T00:00:00+00:00","dateModified":"2022-03-24T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
 <body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
 <div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
 <div class=header-wrapper>
@@ -56,8 +56,8 @@
 <div class=toc-content id=toc-content-auto></div>
 </div><article class="page single"><h1 class="single-title animated flipInX">常用DLL注入技术解析</h1><div class=post-meta>
 <div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2022-03-24>2022-03-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 21409 字
-<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 43 分钟&nbsp;</div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2022-03-24>2022-03-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 21552 字
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 44 分钟&nbsp;</div>
 </div><div class="details toc" id=toc-static kept>
 <div class="details-summary toc-title">
 <span>目录</span>
@@ -1512,7 +1512,7 @@
 <p><img class=lazyload src=/svg/loading.min.svg data-src=%e6%a3%80%e6%9f%a5IDT%e6%98%af%e5%90%a6%e8%bf%98%e6%9c%89%e7%a9%ba%e9%97%b4.png data-srcset="/dllinjection/%E6%A3%80%E6%9F%A5IDT%E6%98%AF%E5%90%A6%E8%BF%98%E6%9C%89%E7%A9%BA%E9%97%B4.png, %e6%a3%80%e6%9f%a5IDT%e6%98%af%e5%90%a6%e8%bf%98%e6%9c%89%e7%a9%ba%e9%97%b4.png 1.5x, /dllinjection/%E6%A3%80%E6%9F%A5IDT%E6%98%AF%E5%90%A6%E8%BF%98%E6%9C%89%E7%A9%BA%E9%97%B4.png 2x" data-sizes=auto alt=/dllinjection/%E6%A3%80%E6%9F%A5IDT%E6%98%AF%E5%90%A6%E8%BF%98%E6%9C%89%E7%A9%BA%E9%97%B4.png title=检查IDT是否还有空间></p>
 <p>可以看到，全0的IID结构体后紧接着就是其余的数据了，因此该IDT所在空间已经没有空间让我们添加目标DLL的IID结构体了，因此我们需要将IDT转移到足够大的空余区域。</p>
 <p>经过查看，发现在地址2240h以后有足够的区域，该区域在.data的virtualoffset + virtualsize里，因此能被加载至内存中。我们将IDT转移至该区域。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=.data.png data-srcset=".data.png, .data.png 1.5x, .data.png 2x" data-sizes=auto alt=.data.png title=data></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=data.png data-srcset="/dllinjection/data.png, data.png 1.5x, /dllinjection/data.png 2x" data-sizes=auto alt=/dllinjection/data.png title=data></p>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%bd%ac%e7%a7%bb%e5%90%8eIDT.png data-srcset="/dllinjection/%E8%BD%AC%E7%A7%BB%E5%90%8EIDT.png, %e8%bd%ac%e7%a7%bb%e5%90%8eIDT.png 1.5x, /dllinjection/%E8%BD%AC%E7%A7%BB%E5%90%8EIDT.png 2x" data-sizes=auto alt=/dllinjection/%E8%BD%AC%E7%A7%BB%E5%90%8EIDT.png title=转移后IDT></p>
 <p>因为我们更改了IDT的位置，因此在DATA_DIRTECTORY[1]中的virtualAddress和size也需要更改。2240h转为RVA为3040h，size需要加14。更改后如下图：</p>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=%e6%9b%b4%e6%94%b9%e5%90%8e%e7%9a%84IMPORT.png data-srcset="/dllinjection/%E6%9B%B4%E6%94%B9%E5%90%8E%E7%9A%84IMPORT.png, %e6%9b%b4%e6%94%b9%e5%90%8e%e7%9a%84IMPORT.png 1.5x, /dllinjection/%E6%9B%B4%E6%94%B9%E5%90%8E%E7%9A%84IMPORT.png 2x" data-sizes=auto alt=/dllinjection/%E6%9B%B4%E6%94%B9%E5%90%8E%E7%9A%84IMPORT.png title=更改后的IMPORT></p>
@@ -1837,7 +1837,7 @@
 <p>并且前面通过r15保存返回地址，在调试环境下却能成功注入，而脱离调试环境却不能成功还会造成程序闪退。我唯一能想到的原因就是因为存入的返回地址导致原程序需要的数据被修改或丢失。但是我们办法证明这个推测的正确性。</p>
 <p>因此该方法只能以失败告终。</p>
 <h4 id=0x8-总结>0x8 总结</h4>
-<p>这些技术都是好几年前的老技术了，现在很多检测与防御手段都可以轻松防御这些攻击手段。虽然技术老了，但是能学到的东西依然很多，技术本身很简单，但是亲自动手写代码，调试BUG，并在解决BUG的途中收获更多知识，才是学习的核心。反射式DLL注入是我收获最大的一项技术，这种技术需要对PE结构有非常详细的了解才能实现，这就促使我再次强化了PE文件的学习，并且还通过该方法掌握了重定位表的作用，线程劫持技术虽然没能实现成功，但是双调试器联调的经历确实非常宝贵的调试经验，个人的调试与分析汇编能力也得到进步提高。该项目会在后续有时间的时候不断完善更新，因为DLL注入技术还有非常多值得学习的。学海无涯，下次博客再见。</p>
+<p>不管是在Linux、安卓或是其他非主流操作系统，一个进程的运行离不开各种库，因此其核心思想都是相同的，无非是通过操作系统的各种机制将动态链接库或者静态库注入到目标进程，从而获取目标进程的控制权。这些技术都是好几年前的老技术了，现在很多检测与防御技术都可以轻松破解这些攻击手段。虽然技术老了，但是能学到的东西依然很多，技术本身很简单，但是亲自动手写代码，调试BUG，并在解决BUG的途中收获更多知识，才是学习的核心。反射式DLL注入是我收获最大的一项技术，这种技术需要对PE结构有非常详细的了解才能实现，这就促使我再次强化了PE文件的学习，并且还通过该方法掌握了重定位表的作用，线程劫持技术虽然没能实现成功，但是双调试器联调的经历也是非常宝贵的调试经验，个人的调试与分析汇编能力也得到了进步提高。在静态DLL注入中，也通过自己调试发现C++编译后的函数名会发生变化而导致的函数调用失败。该项目会在后续有时间的时候不断完善更新，因为DLL注入技术还有非常多值得学习的。学海无涯，下次博客再见。</p>
 </div><div class=post-footer id=post-footer>
 <div class=post-info>
 <div class=post-info-line>
