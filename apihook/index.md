@@ -406,7 +406,7 @@ Inline Hook的原理是通过修改目标函数的指令为jmp、call、ret等�
 
 1. 直接jmp Detour地址；
 2. push Detour地址 + ret进行跳转；
-3.  mov rax(eax)，Detour地址 + jmp rax(eax)；
+3. mov rax(eax)，Detour地址 + jmp rax(eax)；
 4. 更改掉call 的地址；
 5. Hotpatch 方式；
 
