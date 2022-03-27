@@ -832,13 +832,13 @@ UninstallVEH();
 
 具体对比图46以及图47
 
-![rdi+98所指堆栈地址](rdi+98所指堆栈地址.png)
+![所指堆栈地址](所指堆栈地址.png)
 
 <center style="font-size:14px;color:#181818;text-decoration:underline">图45.rdi+98所指堆栈地址</center> 
 
 进入该地址所保存的值查看
 
-![rdi+98所指堆栈地址保存的堆栈数据](rdi+98所指堆栈地址保存的堆栈数据.png)
+![所指堆栈地址保存的堆栈数据](所指堆栈地址保存的堆栈数据.png)
 
 <center style="font-size:14px;color:#181818;text-decoration:underline">图46.rdi+98所指堆栈地址保存的堆栈数据</center> 
 
