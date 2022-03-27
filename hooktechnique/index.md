@@ -848,9 +848,9 @@ UninstallVEH();
 
 <center style="font-size:14px;color:#181818;text-decoration:underline">图47.设置INT3断点后进入MessageBox函数的栈数据</center> 
 
-此时RIP指向的语句 add [rdi+98],8 正对应了代码中的 pContextRecord->Rsp += sizeof(ULONG_PTR)，执行语句后如图48，可与图45对比数据
+此时RIP指向的语句 add [rdi+98],8 正对应了代码中的 pContextRecord->Rsp += sizeof(ULONG_PTR)，执行语句后如图49，可与图45对比数据
 
-![原栈顶地址+8](原栈顶地址+8.png)
+![原栈顶地址加8](原栈顶地址加8.png)
 
 <center style="font-size:14px;color:#181818;text-decoration:underline">图49.原栈顶地址+8</center> 
 
