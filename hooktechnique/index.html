@@ -74,17 +74,17 @@
 <li><a href=#0x2-address-hook>0x2 Address Hook</a>
 <ul>
 <li><a href=#0x21-iat-hook>0x2.1 IAT Hook</a></li>
-</ul>
-</li>
 <li><a href=#0x22-eat-hook>0x2.2 EAT Hook</a></li>
 <li><a href=#0x23-virtualtable-hook>0x2.3 VirtualTable Hook</a></li>
+</ul>
+</li>
 <li><a href=#0x3-inline-hook>0x3 Inline Hook</a>
 <ul>
 <li><a href=#0x31-jmp-detour5字节>0x3.1 jmp Detour(5字节)</a></li>
-</ul>
-</li>
 <li><a href=#0x32-hotpatch>0x3.2 HotPatch</a></li>
 <li><a href=#0x33-inline-hook-x64>0x3.3 Inline Hook x64</a></li>
+</ul>
+</li>
 <li><a href=#0x4-基于异常处理的hook>0x4 基于异常处理的Hook</a></li>
 <li><a href=#0x5-总结>0x5 总结</a></li>
 </ul>
@@ -276,7 +276,7 @@
 <p><img class=lazyload src=/svg/loading.min.svg data-src=MessageBox%e8%b0%83%e7%94%a8%e5%a4%84%e7%9a%84%e6%94%b9%e5%8f%98.png data-srcset="/hooktechnique/MessageBox%E8%B0%83%E7%94%A8%E5%A4%84%E7%9A%84%E6%94%B9%E5%8F%98.png, MessageBox%e8%b0%83%e7%94%a8%e5%a4%84%e7%9a%84%e6%94%b9%e5%8f%98.png 1.5x, /hooktechnique/MessageBox%E8%B0%83%E7%94%A8%E5%A4%84%E7%9A%84%E6%94%B9%E5%8F%98.png 2x" data-sizes=auto alt=/hooktechnique/MessageBox%E8%B0%83%E7%94%A8%E5%A4%84%E7%9A%84%E6%94%B9%E5%8F%98.png title=MessageBox调用处的改变></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图10.IATHook改变后的代码</center>
 <p>综上，IAT Hook的技术可以有效改变程序执行流程。</p>
-<h4 id=0x22-eat-hook>0x2.2 EAT Hook</h4>
+<h5 id=0x22-eat-hook>0x2.2 EAT Hook</h5>
 <p>对比IAT Hook技术，EAT Hook就是更改目标DLL的导出函数的地址了。但是与IAT不同的是，EAT中的函数地址为相对DLL基址的RVA，因此我们写入Detour函数的地址时要减去DLL基址，再写入EAT中。</p>
 <p>EAT Hook存在一个问题，当目标进程加载之内存时，就会重建IAT，将里面的数据更新为DLL的函数地址，而重建的数据就是通过DLL的EAT获取函数地址。因此只有进程在重建IAT之前HOOK或是HOOK之后，目标进程再次通过GetProcAddress获取函数地址，才会受到该HOOK技术的影响。因此该方法解决了IAT HOOK技术不能HOOK动态调用的函数的问题。</p>
 <p>因此，测试用EXE文件中，需要通过GetProcAddress获取函数地址，并定义目标函数，通过函数地址进行调用目标函数才能测试是否HOOK成功</p>
@@ -377,7 +377,7 @@
 <center style=font-size:14px;color:#181818;text-decoration:underline>图12.EATHook中地址计算错误</center>
 <p>如图12所示，当DLL基址大于实际Detour地址时，计算出的Detour 相对DLL基址的RVA是负数，并且在转化为双字的时候，Detour的RVA值发生了变化，变成了一个正数。并且逆向去计算Detour绝对地址时得到的结果与实际Detour地址不同。因此对于这种情况EATHOOK是失败的，并且会导致程序执行流发生错误。</p>
 <p>因此在使用EAT的时候需要注意这个问题。</p>
-<h4 id=0x23-virtualtable-hook>0x2.3 VirtualTable Hook</h4>
+<h5 id=0x23-virtualtable-hook>0x2.3 VirtualTable Hook</h5>
 <p>在C++中存在虚函数以及重载的特性，对虚函数重载可以允许子类以相同的接口实现与基类不同的功能。实现这个特性就是通过一个叫虚地址表(Virtual Function Table)的东西来实现的。虚表中存储着虚函数的地址，最开始没有子类重载基类的虚函数时，该表存储的虚函数地址为基类中的虚函数地址，当子类重载基类的虚函数后，虚表存储的虚函数地址就会更改为子类重载后的函数地址。其实这个思路和HOOK的思路完全一样，也是替换地址。</p>
 <p>因此通过这个特性，我们可以更改虚表中存储的虚表地址为我们的Detour函数地址，当调用该虚函数时就能执行到Detour函数，从而获取进程的控制权了。</p>
 <p>存在虚函数成员的类中，类的第一个元素就是虚表的地址，即类起始地址就是虚表的地址。当HOOK代码通过DLL注入时，我们首先需要获得虚表的地址。我在VirtualTableHookTest代码中直接printf了虚表的地址，因此可以很方便的更改DLL写入的虚表地址。</p>
@@ -675,7 +675,7 @@
 <p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b032.png data-srcset="/hooktechnique/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B032.png, Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b032.png 1.5x, /hooktechnique/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B032.png 2x" data-sizes=auto alt=/hooktechnique/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B032.png title=Hook后MessageBox函数32></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图27.5字节Hook后32位MessageBox函数</center>
 <p>当前五指令替换后，并未产生指令碎屑，并且jmp跳转的也正是Detour函数。因为我们替换掉了建立栈帧的指令，如果继续执行原函数时不脱勾或者不执行trampoline函数保持原函数完整性，那么就会出错。因此在Hook的过程中最重要的就是保证指令运行的完整性。</p>
-<h4 id=0x32-hotpatch>0x3.2 HotPatch</h4>
+<h5 id=0x32-hotpatch>0x3.2 HotPatch</h5>
 <p>HotPatch(热补丁)修改的是7个字节的指令因此又称7字节代码修改技术。</p>
 <p>为什么会出现修改7字节的指令的技术？我们可以先看看几个32位环境下的Windows库函数的起始地址前的指令。</p>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=32%e4%bd%8dMessageBox.png data-srcset="/hooktechnique/32%E4%BD%8DMessageBox.png, 32%e4%bd%8dMessageBox.png 1.5x, /hooktechnique/32%E4%BD%8DMessageBox.png 2x" data-sizes=auto alt=/hooktechnique/32%E4%BD%8DMessageBox.png title=32位MessageBox></p>
@@ -780,7 +780,7 @@
 <center style=font-size:14px;color:#181818;text-decoration:underline>图32.7字节Hook后的64位MessageBox</center>
 <p>可以看到前7个字节已经正常替换为我们希望替换的两条jmp指令，并且Far jmp的目的地址也为Detour函数。因为64位环境下的库函数第一条指令为sub rsp,x ，该指令为4字节而不是2字节，所以7字节代码修改方法在64位环境进行Hook就出现了指令碎屑，如果按照Detour函数中直接通过原函数地址+2的方法调用该函数就会出现程序执行错误，因为原函数指令已经出现错误。</p>
 <p>要是想要64位环境也能使用该方法只能通过加入trampoline函数 将指令碎屑的问题解决(将碎屑改为NOP，并在trampoline函数写入原指令以及受指令替换所影响的指令)，并针对性的将调用该函数的地址调整为第一条不被指令替换所影响的原函数指令地址。</p>
-<h4 id=0x33-inline-hook-x64>0x3.3 Inline Hook x64</h4>
+<h5 id=0x33-inline-hook-x64>0x3.3 Inline Hook x64</h5>
 <p>该方法便是能作为例子解决64位环境下因地址长度，以及函数指令变化导致之前适用于32位却不能适用于64位环境的方法失效的问题。但是依然会出现指令碎屑的问题，但是在MessageBox这个例子中并不会发生。</p>
 <p>该方法与5字节的代码修改方法类似，也是将原指令改变成jmp指令，但是使用的jmp机器码为0xff25，并且使用14个字节，这是因为jmp指令长度为2，但是jmp目标地址只为4字节，而64位系统中地址为8字节，相对地址计算的大小很可能会大于4字节，正如在EAT Hook出现的问题那样，因此需要通过间接跳转来实现以8字节的绝对地址为目的地址的jmp。</p>
 <p>流程图:</p>

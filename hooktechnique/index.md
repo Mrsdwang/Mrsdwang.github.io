@@ -166,7 +166,7 @@ int WINAPI MyDetourFunc(
 
 综上，IAT Hook的技术可以有效改变程序执行流程。
 
-#### 0x2.2 EAT Hook
+##### 0x2.2 EAT Hook
 
 对比IAT Hook技术，EAT Hook就是更改目标DLL的导出函数的地址了。但是与IAT不同的是，EAT中的函数地址为相对DLL基址的RVA，因此我们写入Detour函数的地址时要减去DLL基址，再写入EAT中。
 
@@ -239,7 +239,7 @@ VirtualProtectEx(hProcess, mbi.BaseAddress, mbi.RegionSize, dwOldProcetect, &dwO
 
 因此在使用EAT的时候需要注意这个问题。
 
-#### 0x2.3 VirtualTable Hook
+##### 0x2.3 VirtualTable Hook
 
 在C++中存在虚函数以及重载的特性，对虚函数重载可以允许子类以相同的接口实现与基类不同的功能。实现这个特性就是通过一个叫虚地址表(Virtual Function Table)的东西来实现的。虚表中存储着虚函数的地址，最开始没有子类重载基类的虚函数时，该表存储的虚函数地址为基类中的虚函数地址，当子类重载基类的虚函数后，虚表存储的虚函数地址就会更改为子类重载后的函数地址。其实这个思路和HOOK的思路完全一样，也是替换地址。
 
@@ -497,7 +497,7 @@ Hook() //挂钩
 
 当前五指令替换后，并未产生指令碎屑，并且jmp跳转的也正是Detour函数。因为我们替换掉了建立栈帧的指令，如果继续执行原函数时不脱勾或者不执行trampoline函数保持原函数完整性，那么就会出错。因此在Hook的过程中最重要的就是保证指令运行的完整性。
 
-#### 0x3.2 HotPatch
+##### 0x3.2 HotPatch
 
 HotPatch(热补丁)修改的是7个字节的指令因此又称7字节代码修改技术。
 
@@ -590,7 +590,7 @@ pFunc = pFunc + 2; //pFunc为原函数起始地址 + 2即跳过Short jmp到被�
 
 要是想要64位环境也能使用该方法只能通过加入trampoline函数 将指令碎屑的问题解决(将碎屑改为NOP，并在trampoline函数写入原指令以及受指令替换所影响的指令)，并针对性的将调用该函数的地址调整为第一条不被指令替换所影响的原函数指令地址。
 
-#### 0x3.3 Inline Hook x64
+##### 0x3.3 Inline Hook x64
 
 该方法便是能作为例子解决64位环境下因地址长度，以及函数指令变化导致之前适用于32位却不能适用于64位环境的方法失效的问题。但是依然会出现指令碎屑的问题，但是在MessageBox这个例子中并不会发生。
 
