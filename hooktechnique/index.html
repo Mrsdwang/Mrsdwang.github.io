@@ -7,12 +7,14 @@
 <title>常用Hook技术解析 - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="常用Hook技术解析">
 <meta property="og:description" content="0x0 前言 既然前面我们都写了DLL注入工具，那当然得接着学习Hook技术了啊。使用我们写的DLL注入工具，在目标DLL里写上Hook代码，如此就">
 <meta property="og:type" content="article">
-<meta property="og:url" content="http://int80.top/apihook/"><meta property="article:section" content="posts">
+<meta property="og:url" content="http://int80.top/hooktechnique/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-03-27T00:00:00+00:00">
+<meta property="article:modified_time" content="2022-03-27T00:00:00+00:00">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="常用Hook技术解析">
 <meta name=twitter:description content="0x0 前言 既然前面我们都写了DLL注入工具，那当然得接着学习Hook技术了啊。使用我们写的DLL注入工具，在目标DLL里写上Hook代码，如此就">
 <meta name=application-name content="INT80">
-<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/apihook/><link rel=next href=http://int80.top/oslab1/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"常用Hook技术解析","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/apihook\/"},"genre":"posts","keywords":"逆向","wordcount":13547,"url":"http:\/\/int80.top\/apihook\/","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/hooktechnique/><link rel=prev href=http://int80.top/dllinjection/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"常用Hook技术解析","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/hooktechnique\/"},"genre":"posts","keywords":"逆向","wordcount":13547,"url":"http:\/\/int80.top\/hooktechnique\/","datePublished":"2022-03-27T00:00:00+00:00","dateModified":"2022-03-27T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
 <body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
 <div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
 <div class=header-wrapper>
@@ -54,7 +56,7 @@
 <div class=toc-content id=toc-content-auto></div>
 </div><article class="page single"><h1 class="single-title animated flipInX">常用Hook技术解析</h1><div class=post-meta>
 <div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=0001-01-01>0001-01-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13547 字
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2022-03-27>2022-03-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13547 字
 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 28 分钟&nbsp;</div>
 </div><div class="details toc" id=toc-static kept>
 <div class="details-summary toc-title">
@@ -95,10 +97,10 @@
 <p>既然前面我们都写了DLL注入工具，那当然得接着学习Hook技术了啊。使用我们写的DLL注入工具，在目标DLL里写上Hook代码，如此就能将DLL注入技术与Hook技术结合进行联合使用。</p>
 <p>因为HOOK技术是有针对性的，因此该项目以MessageBox函数为例进行编写，项目中需要更改的地方都放在一起并且已经进行标注，当使用的时候可以按照标注更改为目标HOOK函数的信息即可。</p>
 <p>代码中的标注如图1所示:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=example.png data-srcset="/apihook/example.png, example.png 1.5x, /apihook/example.png 2x" data-sizes=auto alt=/apihook/example.png title=example></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=example.png data-srcset="/hooktechnique/example.png, example.png 1.5x, /hooktechnique/example.png 2x" data-sizes=auto alt=/hooktechnique/example.png title=example></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图1.代码标注示例</center>
 <p>此项目一共实现了七种HOOK技术，如图2所示：</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=HOOKtech.png data-srcset="/apihook/HOOKtech.png, HOOKtech.png 1.5x, /apihook/HOOKtech.png 2x" data-sizes=auto alt=/apihook/HOOKtech.png title=HOOKtech></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=HOOKtech.png data-srcset="/hooktechnique/HOOKtech.png, HOOKtech.png 1.5x, /hooktechnique/HOOKtech.png 2x" data-sizes=auto alt=/hooktechnique/HOOKtech.png title=HOOKtech></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图2.Hook技术实现列表</center>
 <p>该博客也就围绕这7种HOOK技术进行解析，其中HookTest 与 VirtualTableHookTest分别为测试用的Hook的目标程序以及测试用的虚表Hook的目标程序。</p>
 <p>该项目参考《加密与解密》Hook技术章节代码而完成</p>
@@ -106,7 +108,7 @@
 <p><a href=https://github.com/Mrsdwang/HookTechniques target=_blank rel="noopener noreffer">HookTechniques</a></p>
 <h4 id=0x1-一些需要的概念>0x1 一些需要的概念</h4>
 <p>首先是通用的Hook流程，示意图如图3:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e6%b5%81%e7%a8%8b.png data-srcset="/apihook/Hook%E6%B5%81%E7%A8%8B.png, Hook%e6%b5%81%e7%a8%8b.png 1.5x, /apihook/Hook%E6%B5%81%E7%A8%8B.png 2x" data-sizes=auto alt=/apihook/Hook%E6%B5%81%E7%A8%8B.png title=Hook流程></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e6%b5%81%e7%a8%8b.png data-srcset="/hooktechnique/Hook%E6%B5%81%E7%A8%8B.png, Hook%e6%b5%81%e7%a8%8b.png 1.5x, /hooktechnique/Hook%E6%B5%81%E7%A8%8B.png 2x" data-sizes=auto alt=/hooktechnique/Hook%E6%B5%81%E7%A8%8B.png title=Hook流程></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图3.通用Hook流程</center>
 <p>从示意图我们可以很明确的得到一个信息，HOOK就是插入特定代码以干预程序的执行流程。在程序执行真正的目标函数前，先执行我们的代码，这样就获得了程序执行过程的决定权，这也就是HOOK的目的所在。</p>
 <p>图中的Detour(翻译为绕道)函数，就是我们插入用来干预原执行流程的代码。Trampoline(翻译为跳板)函数，作用是还原并执行因跳转去执行Detour函数导致目标函数中没有被执行的指令，这样可以最大程度避免程序执行出错。</p>
@@ -118,7 +120,7 @@
 <p>在PE文件中，一个DLL对应一个IMAGE_IMPORT_DESCRIPTOR结构体，而该结构体又存在一个IAT，因此一个DLL对应一个IAT，IAT用于保存该DLL的导出函数的地址。又因为在PE文件加载过程中就会完成IAT的重建，因此修改IAT并不会影响原DLL的导出函数的地址，即IAT Hook不能拦截LoadLibrary或GetProcAddress的调用方式。</p>
 <p>IAT Hook的原理很简单，遍历所有IMAGE_IMPORT_DESCRIPTOR结构体的Name成员，寻找属于目标函数所在的DLL的结构体，然后再遍历该结构体的IAT数组，寻找目标函数的地址，然后保存旧地址，更新新地址。</p>
 <p>流程图：</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=IATHook%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/apihook/IATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png, IATHook%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /apihook/IATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/apihook/IATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=IATHook流程图></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=IATHook%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/hooktechnique/IATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png, IATHook%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /hooktechnique/IATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/hooktechnique/IATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=IATHook流程图></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图4.IATHook流程图</center>
 <p>核心代码:</p>
 <div class=highlight><div class=chroma>
@@ -256,22 +258,22 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>我们通过x64dbg来查看IAT的变化，首先是DLL注入前，IAT的数据如图5所示:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e4%bf%ae%e6%94%b9%e5%89%8d.png data-srcset="/apihook/IAT%E4%BF%AE%E6%94%B9%E5%89%8D.png, IAT%e4%bf%ae%e6%94%b9%e5%89%8d.png 1.5x, /apihook/IAT%E4%BF%AE%E6%94%B9%E5%89%8D.png 2x" data-sizes=auto alt=/apihook/IAT%E4%BF%AE%E6%94%B9%E5%89%8D.png title=IAT修改前></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e4%bf%ae%e6%94%b9%e5%89%8d.png data-srcset="/hooktechnique/IAT%E4%BF%AE%E6%94%B9%E5%89%8D.png, IAT%e4%bf%ae%e6%94%b9%e5%89%8d.png 1.5x, /hooktechnique/IAT%E4%BF%AE%E6%94%B9%E5%89%8D.png 2x" data-sizes=auto alt=/hooktechnique/IAT%E4%BF%AE%E6%94%B9%E5%89%8D.png title=IAT修改前></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图5.IAT修改前</center>
 <p>我们跳转至IAT数组第一个地址处</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e4%bf%ae%e6%94%b9%e5%89%8d%e7%9a%84%e5%87%bd%e6%95%b0.png data-srcset="/apihook/IAT%E4%BF%AE%E6%94%B9%E5%89%8D%E7%9A%84%E5%87%BD%E6%95%B0.png, IAT%e4%bf%ae%e6%94%b9%e5%89%8d%e7%9a%84%e5%87%bd%e6%95%b0.png 1.5x, /apihook/IAT%E4%BF%AE%E6%94%B9%E5%89%8D%E7%9A%84%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/apihook/IAT%E4%BF%AE%E6%94%B9%E5%89%8D%E7%9A%84%E5%87%BD%E6%95%B0.png title=IAT修改前的函数></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e4%bf%ae%e6%94%b9%e5%89%8d%e7%9a%84%e5%87%bd%e6%95%b0.png data-srcset="/hooktechnique/IAT%E4%BF%AE%E6%94%B9%E5%89%8D%E7%9A%84%E5%87%BD%E6%95%B0.png, IAT%e4%bf%ae%e6%94%b9%e5%89%8d%e7%9a%84%e5%87%bd%e6%95%b0.png 1.5x, /hooktechnique/IAT%E4%BF%AE%E6%94%B9%E5%89%8D%E7%9A%84%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/hooktechnique/IAT%E4%BF%AE%E6%94%B9%E5%89%8D%E7%9A%84%E5%87%BD%E6%95%B0.png title=IAT修改前的函数></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图6.IAT修改前的函数</center>
 <p>可以看出目前该地址还是MessageBox的函数地址，现在我们将DLL注入，再次检查IAT</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e4%bf%ae%e6%94%b9%e5%90%8e.png data-srcset="/apihook/IAT%E4%BF%AE%E6%94%B9%E5%90%8E.png, IAT%e4%bf%ae%e6%94%b9%e5%90%8e.png 1.5x, /apihook/IAT%E4%BF%AE%E6%94%B9%E5%90%8E.png 2x" data-sizes=auto alt=/apihook/IAT%E4%BF%AE%E6%94%B9%E5%90%8E.png title=IAT修改后></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=IAT%e4%bf%ae%e6%94%b9%e5%90%8e.png data-srcset="/hooktechnique/IAT%E4%BF%AE%E6%94%B9%E5%90%8E.png, IAT%e4%bf%ae%e6%94%b9%e5%90%8e.png 1.5x, /hooktechnique/IAT%E4%BF%AE%E6%94%B9%E5%90%8E.png 2x" data-sizes=auto alt=/hooktechnique/IAT%E4%BF%AE%E6%94%B9%E5%90%8E.png title=IAT修改后></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图7.IAT修改后</center>
 <p>对比图5，我们发现IAT数组的第一个数据发生了变化，也就是我们改变了MessageBox函数的地址，我们查看该地址的数据，</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=IATDetour%e5%87%bd%e6%95%b0.png data-srcset="/apihook/IATDetour%E5%87%BD%E6%95%B0.png, IATDetour%e5%87%bd%e6%95%b0.png 1.5x, /apihook/IATDetour%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/apihook/IATDetour%E5%87%BD%E6%95%B0.png title=IATDetour函数></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=IATDetour%e5%87%bd%e6%95%b0.png data-srcset="/hooktechnique/IATDetour%E5%87%BD%E6%95%B0.png, IATDetour%e5%87%bd%e6%95%b0.png 1.5x, /hooktechnique/IATDetour%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/hooktechnique/IATDetour%E5%87%BD%E6%95%B0.png title=IATDetour函数></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图8.IATHook的Detour函数</center>
 <p>发现MessageBox函数的地址被改成了Detour函数的地址，该函数在最后又跳回到了原MessageBox函数，该函数地址保存在g_pOrgFunc全局变量中。</p>
 <p>我们还能看到测试用exe文件的代码，原来是Call MessageBox，现在却变成了Call My_Detour函数，对比着看图9与图10：</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=IATHOOK%e6%94%b9%e5%8f%98%e5%89%8d%e7%9a%84%e4%bb%a3%e7%a0%81.png data-srcset="/apihook/IATHOOK%E6%94%B9%E5%8F%98%E5%89%8D%E7%9A%84%E4%BB%A3%E7%A0%81.png, IATHOOK%e6%94%b9%e5%8f%98%e5%89%8d%e7%9a%84%e4%bb%a3%e7%a0%81.png 1.5x, /apihook/IATHOOK%E6%94%B9%E5%8F%98%E5%89%8D%E7%9A%84%E4%BB%A3%E7%A0%81.png 2x" data-sizes=auto alt=/apihook/IATHOOK%E6%94%B9%E5%8F%98%E5%89%8D%E7%9A%84%E4%BB%A3%E7%A0%81.png title=IATHOOK改变前的代码></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=IATHOOK%e6%94%b9%e5%8f%98%e5%89%8d%e7%9a%84%e4%bb%a3%e7%a0%81.png data-srcset="/hooktechnique/IATHOOK%E6%94%B9%E5%8F%98%E5%89%8D%E7%9A%84%E4%BB%A3%E7%A0%81.png, IATHOOK%e6%94%b9%e5%8f%98%e5%89%8d%e7%9a%84%e4%bb%a3%e7%a0%81.png 1.5x, /hooktechnique/IATHOOK%E6%94%B9%E5%8F%98%E5%89%8D%E7%9A%84%E4%BB%A3%E7%A0%81.png 2x" data-sizes=auto alt=/hooktechnique/IATHOOK%E6%94%B9%E5%8F%98%E5%89%8D%E7%9A%84%E4%BB%A3%E7%A0%81.png title=IATHOOK改变前的代码></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图9.IATHook改变前的代码</center>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=MessageBox%e8%b0%83%e7%94%a8%e5%a4%84%e7%9a%84%e6%94%b9%e5%8f%98.png data-srcset="/apihook/MessageBox%E8%B0%83%E7%94%A8%E5%A4%84%E7%9A%84%E6%94%B9%E5%8F%98.png, MessageBox%e8%b0%83%e7%94%a8%e5%a4%84%e7%9a%84%e6%94%b9%e5%8f%98.png 1.5x, /apihook/MessageBox%E8%B0%83%E7%94%A8%E5%A4%84%E7%9A%84%E6%94%B9%E5%8F%98.png 2x" data-sizes=auto alt=/apihook/MessageBox%E8%B0%83%E7%94%A8%E5%A4%84%E7%9A%84%E6%94%B9%E5%8F%98.png title=MessageBox调用处的改变></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=MessageBox%e8%b0%83%e7%94%a8%e5%a4%84%e7%9a%84%e6%94%b9%e5%8f%98.png data-srcset="/hooktechnique/MessageBox%E8%B0%83%E7%94%A8%E5%A4%84%E7%9A%84%E6%94%B9%E5%8F%98.png, MessageBox%e8%b0%83%e7%94%a8%e5%a4%84%e7%9a%84%e6%94%b9%e5%8f%98.png 1.5x, /hooktechnique/MessageBox%E8%B0%83%E7%94%A8%E5%A4%84%E7%9A%84%E6%94%B9%E5%8F%98.png 2x" data-sizes=auto alt=/hooktechnique/MessageBox%E8%B0%83%E7%94%A8%E5%A4%84%E7%9A%84%E6%94%B9%E5%8F%98.png title=MessageBox调用处的改变></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图10.IATHook改变后的代码</center>
 <p>综上，IAT Hook的技术可以有效改变程序执行流程。</p>
 <h4 id=0x22-eat-hook>0x2.2 EAT Hook</h4>
@@ -279,7 +281,7 @@
 <p>EAT Hook存在一个问题，当目标进程加载之内存时，就会重建IAT，将里面的数据更新为DLL的函数地址，而重建的数据就是通过DLL的EAT获取函数地址。因此只有进程在重建IAT之前HOOK或是HOOK之后，目标进程再次通过GetProcAddress获取函数地址，才会受到该HOOK技术的影响。因此该方法解决了IAT HOOK技术不能HOOK动态调用的函数的问题。</p>
 <p>因此，测试用EXE文件中，需要通过GetProcAddress获取函数地址，并定义目标函数，通过函数地址进行调用目标函数才能测试是否HOOK成功</p>
 <p>流程图:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=EATHook%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/apihook/EATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png, EATHook%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /apihook/EATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/apihook/EATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=EATHook流程图></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=EATHook%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/hooktechnique/EATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png, EATHook%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /hooktechnique/EATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/hooktechnique/EATHook%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=EATHook流程图></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图11.EATHook流程图</center>
 <p>核心代码:</p>
 <div class=highlight><div class=chroma>
@@ -371,7 +373,7 @@
 </div><p>这里还存在一个问题，因为EAT中的AddressOfFunctions数组存的是为双字大小的RVA，因此会受到一些限制。再64位系统中，如果目标DLL的基址大于Detour函数的地址，这样求Detour函数的RVA就会出现负数，也即四字的RVA，若转换成双字后，RVA的值发生了变化，就会导致记录的Detour函数的RVA+DLL基址得到错误的Detour地址，这样就会导致跳转至错误地址导致崩溃。</p>
 <p>举个例子：</p>
 <p>在EATHook中计算Detour RVA的地方添加printf打印出实际Detour地址，DLL基址，以及计算得到的Detour RVA的数据，并再反过来计算Detour地址。结果如下:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=EATHook%e5%9c%b0%e5%9d%80%e8%ae%a1%e7%ae%97%e9%94%99%e8%af%af.png data-srcset="/apihook/EATHook%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E9%94%99%E8%AF%AF.png, EATHook%e5%9c%b0%e5%9d%80%e8%ae%a1%e7%ae%97%e9%94%99%e8%af%af.png 1.5x, /apihook/EATHook%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E9%94%99%E8%AF%AF.png 2x" data-sizes=auto alt=/apihook/EATHook%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E9%94%99%E8%AF%AF.png title=EATHook地址计算错误></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=EATHook%e5%9c%b0%e5%9d%80%e8%ae%a1%e7%ae%97%e9%94%99%e8%af%af.png data-srcset="/hooktechnique/EATHook%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E9%94%99%E8%AF%AF.png, EATHook%e5%9c%b0%e5%9d%80%e8%ae%a1%e7%ae%97%e9%94%99%e8%af%af.png 1.5x, /hooktechnique/EATHook%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E9%94%99%E8%AF%AF.png 2x" data-sizes=auto alt=/hooktechnique/EATHook%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E9%94%99%E8%AF%AF.png title=EATHook地址计算错误></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图12.EATHook中地址计算错误</center>
 <p>如图12所示，当DLL基址大于实际Detour地址时，计算出的Detour 相对DLL基址的RVA是负数，并且在转化为双字的时候，Detour的RVA值发生了变化，变成了一个正数。并且逆向去计算Detour绝对地址时得到的结果与实际Detour地址不同。因此对于这种情况EATHOOK是失败的，并且会导致程序执行流发生错误。</p>
 <p>因此在使用EAT的时候需要注意这个问题。</p>
@@ -380,7 +382,7 @@
 <p>因此通过这个特性，我们可以更改虚表中存储的虚表地址为我们的Detour函数地址，当调用该虚函数时就能执行到Detour函数，从而获取进程的控制权了。</p>
 <p>存在虚函数成员的类中，类的第一个元素就是虚表的地址，即类起始地址就是虚表的地址。当HOOK代码通过DLL注入时，我们首先需要获得虚表的地址。我在VirtualTableHookTest代码中直接printf了虚表的地址，因此可以很方便的更改DLL写入的虚表地址。</p>
 <p>流程图：</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8Hook%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/apihook/%E8%99%9A%E8%A1%A8Hook%E6%B5%81%E7%A8%8B%E5%9B%BE.png, %e8%99%9a%e8%a1%a8Hook%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /apihook/%E8%99%9A%E8%A1%A8Hook%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/apihook/%E8%99%9A%E8%A1%A8Hook%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=虚表Hook流程图></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8Hook%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/hooktechnique/%E8%99%9A%E8%A1%A8Hook%E6%B5%81%E7%A8%8B%E5%9B%BE.png, %e8%99%9a%e8%a1%a8Hook%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /hooktechnique/%E8%99%9A%E8%A1%A8Hook%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/hooktechnique/%E8%99%9A%E8%A1%A8Hook%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=虚表Hook流程图></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图13.vfTableHook流程图</center>
 <p>核心代码:</p>
 <div class=highlight><div class=chroma>
@@ -540,32 +542,32 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>在windbg中即可获得虚表地址</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=Windbg%e8%8e%b7%e5%8f%96%e8%99%9a%e8%a1%a8%e5%9c%b0%e5%9d%80.png data-srcset="/apihook/Windbg%E8%8E%B7%E5%8F%96%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png, Windbg%e8%8e%b7%e5%8f%96%e8%99%9a%e8%a1%a8%e5%9c%b0%e5%9d%80.png 1.5x, /apihook/Windbg%E8%8E%B7%E5%8F%96%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png 2x" data-sizes=auto alt=/apihook/Windbg%E8%8E%B7%E5%8F%96%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png title=Windbg获取虚表地址></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Windbg%e8%8e%b7%e5%8f%96%e8%99%9a%e8%a1%a8%e5%9c%b0%e5%9d%80.png data-srcset="/hooktechnique/Windbg%E8%8E%B7%E5%8F%96%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png, Windbg%e8%8e%b7%e5%8f%96%e8%99%9a%e8%a1%a8%e5%9c%b0%e5%9d%80.png 1.5x, /hooktechnique/Windbg%E8%8E%B7%E5%8F%96%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png 2x" data-sizes=auto alt=/hooktechnique/Windbg%E8%8E%B7%E5%8F%96%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png title=Windbg获取虚表地址></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图14.Windbg中获取虚表地址</center>
 <p>通过图14的结果可以看到test对象的起始地址即为_VFN_table，即虚表地址。测试用Exe也打印出了虚表的地址，如图15所示，两者相同，因此windbg获取到的虚表地址正确。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=print%e7%9a%84%e8%99%9a%e8%a1%a8%e5%9c%b0%e5%9d%80.png data-srcset="/apihook/print%E7%9A%84%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png, print%e7%9a%84%e8%99%9a%e8%a1%a8%e5%9c%b0%e5%9d%80.png 1.5x, /apihook/print%E7%9A%84%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png 2x" data-sizes=auto alt=/apihook/print%E7%9A%84%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png title=print的虚表地址></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=print%e7%9a%84%e8%99%9a%e8%a1%a8%e5%9c%b0%e5%9d%80.png data-srcset="/hooktechnique/print%E7%9A%84%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png, print%e7%9a%84%e8%99%9a%e8%a1%a8%e5%9c%b0%e5%9d%80.png 1.5x, /hooktechnique/print%E7%9A%84%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png 2x" data-sizes=auto alt=/hooktechnique/print%E7%9A%84%E8%99%9A%E8%A1%A8%E5%9C%B0%E5%9D%80.png title=print的虚表地址></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图15.测试Exe文件打印的虚表地址</center>
 <p>在Windbg从内存窗口查看该地址的数据，得到图16的信息</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%9b%ae%e6%a0%87%e8%99%9a%e8%a1%a8.png data-srcset="/apihook/%E7%9B%AE%E6%A0%87%E8%99%9A%E8%A1%A8.png, %e7%9b%ae%e6%a0%87%e8%99%9a%e8%a1%a8.png 1.5x, /apihook/%E7%9B%AE%E6%A0%87%E8%99%9A%E8%A1%A8.png 2x" data-sizes=auto alt=/apihook/%E7%9B%AE%E6%A0%87%E8%99%9A%E8%A1%A8.png title=目标虚表></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%9b%ae%e6%a0%87%e8%99%9a%e8%a1%a8.png data-srcset="/hooktechnique/%E7%9B%AE%E6%A0%87%E8%99%9A%E8%A1%A8.png, %e7%9b%ae%e6%a0%87%e8%99%9a%e8%a1%a8.png 1.5x, /hooktechnique/%E7%9B%AE%E6%A0%87%E8%99%9A%E8%A1%A8.png 2x" data-sizes=auto alt=/hooktechnique/%E7%9B%AE%E6%A0%87%E8%99%9A%E8%A1%A8.png title=目标虚表></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图16.HOOK前的虚表数据</center>
 <p>可以看到该虚表中只有3个虚函数的地址，这与我们定义的基类里面的虚函数数量相同。又因为DLL的代码Hook的是虚表中保存的第一个函数地址，因此查看第一个函数地址是什么函数的。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e5%87%bd%e6%95%b0%e5%9c%b0%e5%9d%80.png data-srcset="/apihook/%E8%99%9A%E8%A1%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80.png, %e8%99%9a%e8%a1%a8%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e5%87%bd%e6%95%b0%e5%9c%b0%e5%9d%80.png 1.5x, /apihook/%E8%99%9A%E8%A1%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80.png 2x" data-sizes=auto alt=/apihook/%E8%99%9A%E8%A1%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80.png title=虚表的第一个函数地址></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e5%87%bd%e6%95%b0%e5%9c%b0%e5%9d%80.png data-srcset="/hooktechnique/%E8%99%9A%E8%A1%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80.png, %e8%99%9a%e8%a1%a8%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e5%87%bd%e6%95%b0%e5%9c%b0%e5%9d%80.png 1.5x, /hooktechnique/%E8%99%9A%E8%A1%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80.png 2x" data-sizes=auto alt=/hooktechnique/%E8%99%9A%E8%A1%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80.png title=虚表的第一个函数地址></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图17.HOOK前目标虚表保存的第一个函数地址是Add函数的</center>
 <p>虚表将Add虚函数地址保存在第一个位置处，这与测试用Exe文件中基类里虚函数定义的顺序相同。</p>
 <p>此时将虚表地址填入DLL中，</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=DLL%e4%b8%ad%e4%bf%ae%e6%94%b9%e8%99%9a%e8%a1%a8%e7%9a%84%e4%bb%a3%e7%a0%81.png data-srcset="/apihook/DLL%E4%B8%AD%E4%BF%AE%E6%94%B9%E8%99%9A%E8%A1%A8%E7%9A%84%E4%BB%A3%E7%A0%81.png, DLL%e4%b8%ad%e4%bf%ae%e6%94%b9%e8%99%9a%e8%a1%a8%e7%9a%84%e4%bb%a3%e7%a0%81.png 1.5x, /apihook/DLL%E4%B8%AD%E4%BF%AE%E6%94%B9%E8%99%9A%E8%A1%A8%E7%9A%84%E4%BB%A3%E7%A0%81.png 2x" data-sizes=auto alt=/apihook/DLL%E4%B8%AD%E4%BF%AE%E6%94%B9%E8%99%9A%E8%A1%A8%E7%9A%84%E4%BB%A3%E7%A0%81.png title=DLL中修改虚表的代码></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=DLL%e4%b8%ad%e4%bf%ae%e6%94%b9%e8%99%9a%e8%a1%a8%e7%9a%84%e4%bb%a3%e7%a0%81.png data-srcset="/hooktechnique/DLL%E4%B8%AD%E4%BF%AE%E6%94%B9%E8%99%9A%E8%A1%A8%E7%9A%84%E4%BB%A3%E7%A0%81.png, DLL%e4%b8%ad%e4%bf%ae%e6%94%b9%e8%99%9a%e8%a1%a8%e7%9a%84%e4%bb%a3%e7%a0%81.png 1.5x, /hooktechnique/DLL%E4%B8%AD%E4%BF%AE%E6%94%B9%E8%99%9A%E8%A1%A8%E7%9A%84%E4%BB%A3%E7%A0%81.png 2x" data-sizes=auto alt=/hooktechnique/DLL%E4%B8%AD%E4%BF%AE%E6%94%B9%E8%99%9A%E8%A1%A8%E7%9A%84%E4%BB%A3%E7%A0%81.png title=DLL中修改虚表的代码></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图18.DLL中修改虚表的地方</center>
 <p>重新生成DLL后，在测试用Exe文件中第二次调用ptest->Add()代码处打上断点，然后注入DLL。</p>
 <p>当DLL注入后，虚表保存的函数地址发生了改变，如图19所示，可以与图16对比查看</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8%e6%94%b9%e5%8f%98%e5%90%8e.png data-srcset="/apihook/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E.png, %e8%99%9a%e8%a1%a8%e6%94%b9%e5%8f%98%e5%90%8e.png 1.5x, /apihook/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E.png 2x" data-sizes=auto alt=/apihook/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E.png title=虚表改变后></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8%e6%94%b9%e5%8f%98%e5%90%8e.png data-srcset="/hooktechnique/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E.png, %e8%99%9a%e8%a1%a8%e6%94%b9%e5%8f%98%e5%90%8e.png 1.5x, /hooktechnique/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E.png 2x" data-sizes=auto alt=/hooktechnique/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E.png title=虚表改变后></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图19.Hook后的虚表数据</center>
 <p>查看改变后的函数地址是哪个函数的</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8%e6%94%b9%e5%8f%98%e5%90%8e%e7%9a%84%e5%87%bd%e6%95%b0.png data-srcset="/apihook/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E%E7%9A%84%E5%87%BD%E6%95%B0.png, %e8%99%9a%e8%a1%a8%e6%94%b9%e5%8f%98%e5%90%8e%e7%9a%84%e5%87%bd%e6%95%b0.png 1.5x, /apihook/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E%E7%9A%84%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/apihook/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E%E7%9A%84%E5%87%BD%E6%95%B0.png title=虚表改变后的函数></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8%e6%94%b9%e5%8f%98%e5%90%8e%e7%9a%84%e5%87%bd%e6%95%b0.png data-srcset="/hooktechnique/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E%E7%9A%84%E5%87%BD%E6%95%B0.png, %e8%99%9a%e8%a1%a8%e6%94%b9%e5%8f%98%e5%90%8e%e7%9a%84%e5%87%bd%e6%95%b0.png 1.5x, /hooktechnique/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E%E7%9A%84%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/hooktechnique/%E8%99%9A%E8%A1%A8%E6%94%B9%E5%8F%98%E5%90%8E%E7%9A%84%E5%87%BD%E6%95%B0.png title=虚表改变后的函数></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图20.Hook后的虚表存放的第一个函数地址是DetourFun函数的</center>
 <p>当DLL注入后对虚表Hook成功，将程序执行完成可以发现，再次调用Add函数，执行流程从打印“Test::Add"变成了先弹出窗口再打印。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8HOOK%e5%90%8e%e7%9a%84%e7%bb%93%e6%9e%9c.png data-srcset="/apihook/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C.png, %e8%99%9a%e8%a1%a8HOOK%e5%90%8e%e7%9a%84%e7%bb%93%e6%9e%9c.png 1.5x, /apihook/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C.png 2x" data-sizes=auto alt=/apihook/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C.png title=虚表HOOK后的结果></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8HOOK%e5%90%8e%e7%9a%84%e7%bb%93%e6%9e%9c.png data-srcset="/hooktechnique/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C.png, %e8%99%9a%e8%a1%a8HOOK%e5%90%8e%e7%9a%84%e7%bb%93%e6%9e%9c.png 1.5x, /hooktechnique/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C.png 2x" data-sizes=auto alt=/hooktechnique/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C.png title=虚表HOOK后的结果></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图21.Hook虚表后的结果1</center>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8HOOK%e5%90%8e%e7%9a%84%e7%bb%93%e6%9e%9c2.png data-srcset="/apihook/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C2.png, %e8%99%9a%e8%a1%a8HOOK%e5%90%8e%e7%9a%84%e7%bb%93%e6%9e%9c2.png 1.5x, /apihook/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C2.png 2x" data-sizes=auto alt=/apihook/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C2.png title=虚表HOOK后的结果2></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%99%9a%e8%a1%a8HOOK%e5%90%8e%e7%9a%84%e7%bb%93%e6%9e%9c2.png data-srcset="/hooktechnique/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C2.png, %e8%99%9a%e8%a1%a8HOOK%e5%90%8e%e7%9a%84%e7%bb%93%e6%9e%9c2.png 1.5x, /hooktechnique/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C2.png 2x" data-sizes=auto alt=/hooktechnique/%E8%99%9A%E8%A1%A8HOOK%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C2.png title=虚表HOOK后的结果2></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图22.Hook虚表后的结果2</center>
 <p>综上，当C++程序中存在虚函数时，我们便可以通过虚表Hook技术获取程序控制权。</p>
 <h4 id=0x3-inline-hook>0x3 Inline Hook</h4>
@@ -581,7 +583,7 @@
 <h5 id=0x31-jmp-detour5字节>0x3.1 jmp Detour(5字节)</h5>
 <p>最简单以及最直观的Inline Hook方法就是直接将目标函数的第一条指令更改为jmp Detour地址指令，在执行Detour函数时，首先恢复目标函数被更改的指令，然后再执行目的代码，最后再挂钩便于重复HOOK。</p>
 <p>流程图:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=InlineHook5%e5%ad%97%e8%8a%82.png data-srcset="/apihook/InlineHook5%E5%AD%97%E8%8A%82.png, InlineHook5%e5%ad%97%e8%8a%82.png 1.5x, /apihook/InlineHook5%E5%AD%97%E8%8A%82.png 2x" data-sizes=auto alt=/apihook/InlineHook5%E5%AD%97%E8%8A%82.png title=InlineHook5字节></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=InlineHook5%e5%ad%97%e8%8a%82.png data-srcset="/hooktechnique/InlineHook5%E5%AD%97%E8%8A%82.png, InlineHook5%e5%ad%97%e8%8a%82.png 1.5x, /hooktechnique/InlineHook5%E5%AD%97%E8%8A%82.png 2x" data-sizes=auto alt=/hooktechnique/InlineHook5%E5%AD%97%E8%8A%82.png title=InlineHook5字节></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图23.5字节InlineHook流程图</center>
 <p>核心代码:</p>
 <div class=highlight><div class=chroma>
@@ -657,35 +659,35 @@
 </div><p>在5字节的Inline Hook方法中，我并没有直接定义Trampoline函数，而是通过先脱钩再执行目的代码的方法来代替trampoline函数的功能，但是挂钩再脱钩的方法比执行trampoline函数更麻烦也更容易出错，特别是在多线程的程序中，我们需要给目标函数挂钩，当一个线程调用挂钩的目标函数后会脱钩，此时另一个线程在脱钩后再次调用目标函数，此时后调用的线程就不会执行Detour函数，那么执行流程就出现了错误。</p>
 <p>我们通过x64dbg进行调试观察该Hook方式。</p>
 <p>首先是64位进程，Hook前 MessageBox函数指令如下图24所示:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%89%8dMessageBox%e5%87%bd%e6%95%b0.png data-srcset="/apihook/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B0.png, Hook%e5%89%8dMessageBox%e5%87%bd%e6%95%b0.png 1.5x, /apihook/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/apihook/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B0.png title=Hook前MessageBox函数></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%89%8dMessageBox%e5%87%bd%e6%95%b0.png data-srcset="/hooktechnique/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B0.png, Hook%e5%89%8dMessageBox%e5%87%bd%e6%95%b0.png 1.5x, /hooktechnique/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/hooktechnique/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B0.png title=Hook前MessageBox函数></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图24.5字节Hook前64位MessageBox函数</center>
 <p>把DLL注入进目标进程中，进行挂钩，此时Hook后的MessageBox函数指令如下图25所示:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b0.png data-srcset="/apihook/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B0.png, Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b0.png 1.5x, /apihook/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/apihook/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B0.png title=Hook后MessageBox函数></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b0.png data-srcset="/hooktechnique/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B0.png, Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b0.png 1.5x, /hooktechnique/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/hooktechnique/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B0.png title=Hook后MessageBox函数></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图25.5字节Hook后64位MessageBox函数</center>
 <p>在地址7FFFB5B2AC10中，sub rsp,28指令变成了 jmp指令，并且jmp的地址正是Detour函数。</p>
 <p>同时我们还会发现原7FFFB5B2AC14地址的xor r11d,r11d 变成了7FFFB5B2AC15地址的xor ebx,ebx，这是因为原来函数的起始地址为4字节，写入5字节的jmp指令打乱了原指令的字节对齐，导致产生了指令碎屑。但是因为我们执行原函数时已经脱勾还原，因此不会影响程序运行。如果我们使用trampoline函数，我们需要用nop将指令碎屑替代，并且将因更改指令，而变成指令碎屑的指令也写入trampoline函数中执行，以保证程序的完整性。</p>
 <p>我们再看32位进程下该Hook技术的执行过程。</p>
 <p>32位和64位环境下的MessageBox函数指令不相同，32位的指令如图26所示</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%89%8dMessageBox%e5%87%bd%e6%95%b032.png data-srcset="/apihook/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B032.png, Hook%e5%89%8dMessageBox%e5%87%bd%e6%95%b032.png 1.5x, /apihook/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B032.png 2x" data-sizes=auto alt=/apihook/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B032.png title=Hook前MessageBox函数32></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%89%8dMessageBox%e5%87%bd%e6%95%b032.png data-srcset="/hooktechnique/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B032.png, Hook%e5%89%8dMessageBox%e5%87%bd%e6%95%b032.png 1.5x, /hooktechnique/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B032.png 2x" data-sizes=auto alt=/hooktechnique/Hook%E5%89%8DMessageBox%E5%87%BD%E6%95%B032.png title=Hook前MessageBox函数32></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图26.5字节Hook前32位MessageBox函数</center>
 <p>32位的MessageBox函数的前三行指令总长为5，这也是为什么会出现jmp Detour地址这种5字节的Inline Hook技术，因为最开始就是针对32位环境下的Windows系统库函数，一些库函数的起始指令就和MessageBox相同，mov edi,edi无意义直接，后两条指令就是建立栈帧，刚好5字节，因此可以不产生指令碎屑的替换。</p>
 <p>将DLL注入后，再次查看指令的变化</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b032.png data-srcset="/apihook/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B032.png, Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b032.png 1.5x, /apihook/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B032.png 2x" data-sizes=auto alt=/apihook/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B032.png title=Hook后MessageBox函数32></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b032.png data-srcset="/hooktechnique/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B032.png, Hook%e5%90%8eMessageBox%e5%87%bd%e6%95%b032.png 1.5x, /hooktechnique/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B032.png 2x" data-sizes=auto alt=/hooktechnique/Hook%E5%90%8EMessageBox%E5%87%BD%E6%95%B032.png title=Hook后MessageBox函数32></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图27.5字节Hook后32位MessageBox函数</center>
 <p>当前五指令替换后，并未产生指令碎屑，并且jmp跳转的也正是Detour函数。因为我们替换掉了建立栈帧的指令，如果继续执行原函数时不脱勾或者不执行trampoline函数保持原函数完整性，那么就会出错。因此在Hook的过程中最重要的就是保证指令运行的完整性。</p>
 <h4 id=0x32-hotpatch>0x3.2 HotPatch</h4>
 <p>HotPatch(热补丁)修改的是7个字节的指令因此又称7字节代码修改技术。</p>
 <p>为什么会出现修改7字节的指令的技术？我们可以先看看几个32位环境下的Windows库函数的起始地址前的指令。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=32%e4%bd%8dMessageBox.png data-srcset="/apihook/32%E4%BD%8DMessageBox.png, 32%e4%bd%8dMessageBox.png 1.5x, /apihook/32%E4%BD%8DMessageBox.png 2x" data-sizes=auto alt=/apihook/32%E4%BD%8DMessageBox.png title=32位MessageBox></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=32%e4%bd%8dMessageBox.png data-srcset="/hooktechnique/32%E4%BD%8DMessageBox.png, 32%e4%bd%8dMessageBox.png 1.5x, /hooktechnique/32%E4%BD%8DMessageBox.png 2x" data-sizes=auto alt=/hooktechnique/32%E4%BD%8DMessageBox.png title=32位MessageBox></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图28.32位MessageBox函数</center>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=32%e4%bd%8dLoadLibrary.png data-srcset="/apihook/32%E4%BD%8DLoadLibrary.png, 32%e4%bd%8dLoadLibrary.png 1.5x, /apihook/32%E4%BD%8DLoadLibrary.png 2x" data-sizes=auto alt=/apihook/32%E4%BD%8DLoadLibrary.png title=32位LoadLibrary></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=32%e4%bd%8dLoadLibrary.png data-srcset="/hooktechnique/32%E4%BD%8DLoadLibrary.png, 32%e4%bd%8dLoadLibrary.png 1.5x, /hooktechnique/32%E4%BD%8DLoadLibrary.png 2x" data-sizes=auto alt=/hooktechnique/32%E4%BD%8DLoadLibrary.png title=32位LoadLibrary></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图29.32位LoadLibrary函数</center>
 <p>可以看到这两个函数起始地址前都至少有5个0xCC的int3 指令，再加上两个字节的 mov edi,edi指令，一共7个字节。这7个字节对于原函数来说都是无意义的，更改这几个字节不会影响原函数指令的完整性就不会导致进程执行流异常或者崩溃，因此7字节的代码修改方法要比5字节的修改方法稳定得多。函数前留下无意义的指令就是为了能方便通过Hook打上补丁，又因为是在进程运行时打补丁，所以才被称为HotPatch(热补丁)。</p>
 <p>但7字节代码修改方法要求也比5字节高，目标函数中必须在函数起始地址前存在5个无意义指令。</p>
 <p>7个字节中，前5个字节是使用的Far jmp指令(E9 xxxxxxxx)，用于跳转至Detour函数，后两个字节使用的是Short jmp指令(EB F9)，用于跳转至前面的Far jmp指令。</p>
 <p>为什么这里short jmp指令的相对地址写成了固定的F9？这是因为目标地址相对当前地址是固定的。根据相对地址的计算公式 相对地址 = 目标地址 - 当前地址 - 指令长度 => 相对地址 = (pFunc-5) - pFunc - 2 = -7 = 0xF9。</p>
 <p>流程图：</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=InlineHook7%e5%ad%97%e8%8a%82.png data-srcset="/apihook/InlineHook7%E5%AD%97%E8%8A%82.png, InlineHook7%e5%ad%97%e8%8a%82.png 1.5x, /apihook/InlineHook7%E5%AD%97%E8%8A%82.png 2x" data-sizes=auto alt=/apihook/InlineHook7%E5%AD%97%E8%8A%82.png title=InlineHook7字节></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=InlineHook7%e5%ad%97%e8%8a%82.png data-srcset="/hooktechnique/InlineHook7%E5%AD%97%E8%8A%82.png, InlineHook7%e5%ad%97%e8%8a%82.png 1.5x, /hooktechnique/InlineHook7%E5%AD%97%E8%8A%82.png 2x" data-sizes=auto alt=/hooktechnique/InlineHook7%E5%AD%97%E8%8A%82.png title=InlineHook7字节></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图30.InlineHook7字节流程图</center>
 <p>核心代码:</p>
 <div class=highlight><div class=chroma>
@@ -769,12 +771,12 @@
 </div><p>使用7字节代码修改方法，再次回到原函数继续执行时只需要将原函数起始地址+2，再通过地址调用原函数即可，这样执行的效果与调用原API效果相同。</p>
 <p>通过x64dbg进行调试，查看该Hook技术的实现过程。</p>
 <p>把DLL注入进测试用EXE，让其执行HOOK</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=7%e5%ad%97%e8%8a%82Hook%e5%90%8e%e7%9a%84MessageBox%e5%87%bd%e6%95%b0.png data-srcset="/apihook/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%84MessageBox%E5%87%BD%E6%95%B0.png, 7%e5%ad%97%e8%8a%82Hook%e5%90%8e%e7%9a%84MessageBox%e5%87%bd%e6%95%b0.png 1.5x, /apihook/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%84MessageBox%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/apihook/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%84MessageBox%E5%87%BD%E6%95%B0.png title=7字节Hook后的MessageBox函数></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=7%e5%ad%97%e8%8a%82Hook%e5%90%8e%e7%9a%84MessageBox%e5%87%bd%e6%95%b0.png data-srcset="/hooktechnique/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%84MessageBox%E5%87%BD%E6%95%B0.png, 7%e5%ad%97%e8%8a%82Hook%e5%90%8e%e7%9a%84MessageBox%e5%87%bd%e6%95%b0.png 1.5x, /hooktechnique/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%84MessageBox%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/hooktechnique/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%84MessageBox%E5%87%BD%E6%95%B0.png title=7字节Hook后的MessageBox函数></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图31.7字节Hook后的32位MessageBox</center>
 <p>对比图28，可以发现5个int3指令和mov edi,edi 都被替换成两个jmp指令了，并且Far jmp的目的地址正是我们的Detour函数。</p>
 <p>我们再看下该方法在64位环境下的执行情况。</p>
 <p>64位环境下的MessageBox函数代码已经截图为图24，我们直接看HOOK后的情况</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=7%e5%ad%97%e8%8a%82Hook%e5%90%8e%e7%9a%8464%e4%bd%8dMessageBox%e5%87%bd%e6%95%b0.png data-srcset="/apihook/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%8464%E4%BD%8DMessageBox%E5%87%BD%E6%95%B0.png, 7%e5%ad%97%e8%8a%82Hook%e5%90%8e%e7%9a%8464%e4%bd%8dMessageBox%e5%87%bd%e6%95%b0.png 1.5x, /apihook/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%8464%E4%BD%8DMessageBox%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/apihook/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%8464%E4%BD%8DMessageBox%E5%87%BD%E6%95%B0.png title=7字节Hook后的64位MessageBox函数></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=7%e5%ad%97%e8%8a%82Hook%e5%90%8e%e7%9a%8464%e4%bd%8dMessageBox%e5%87%bd%e6%95%b0.png data-srcset="/hooktechnique/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%8464%E4%BD%8DMessageBox%E5%87%BD%E6%95%B0.png, 7%e5%ad%97%e8%8a%82Hook%e5%90%8e%e7%9a%8464%e4%bd%8dMessageBox%e5%87%bd%e6%95%b0.png 1.5x, /hooktechnique/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%8464%E4%BD%8DMessageBox%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/hooktechnique/7%E5%AD%97%E8%8A%82Hook%E5%90%8E%E7%9A%8464%E4%BD%8DMessageBox%E5%87%BD%E6%95%B0.png title=7字节Hook后的64位MessageBox函数></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图32.7字节Hook后的64位MessageBox</center>
 <p>可以看到前7个字节已经正常替换为我们希望替换的两条jmp指令，并且Far jmp的目的地址也为Detour函数。因为64位环境下的库函数第一条指令为sub rsp,x ，该指令为4字节而不是2字节，所以7字节代码修改方法在64位环境进行Hook就出现了指令碎屑，如果按照Detour函数中直接通过原函数地址+2的方法调用该函数就会出现程序执行错误，因为原函数指令已经出现错误。</p>
 <p>要是想要64位环境也能使用该方法只能通过加入trampoline函数 将指令碎屑的问题解决(将碎屑改为NOP，并在trampoline函数写入原指令以及受指令替换所影响的指令)，并针对性的将调用该函数的地址调整为第一条不被指令替换所影响的原函数指令地址。</p>
@@ -782,7 +784,7 @@
 <p>该方法便是能作为例子解决64位环境下因地址长度，以及函数指令变化导致之前适用于32位却不能适用于64位环境的方法失效的问题。但是依然会出现指令碎屑的问题，但是在MessageBox这个例子中并不会发生。</p>
 <p>该方法与5字节的代码修改方法类似，也是将原指令改变成jmp指令，但是使用的jmp机器码为0xff25，并且使用14个字节，这是因为jmp指令长度为2，但是jmp目标地址只为4字节，而64位系统中地址为8字节，相对地址计算的大小很可能会大于4字节，正如在EAT Hook出现的问题那样，因此需要通过间接跳转来实现以8字节的绝对地址为目的地址的jmp。</p>
 <p>流程图:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=InlineHook64%e4%bd%8d%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/apihook/InlineHook64%E4%BD%8D%E6%B5%81%E7%A8%8B%E5%9B%BE.png, InlineHook64%e4%bd%8d%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /apihook/InlineHook64%E4%BD%8D%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/apihook/InlineHook64%E4%BD%8D%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=InlineHook64位流程图></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=InlineHook64%e4%bd%8d%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/hooktechnique/InlineHook64%E4%BD%8D%E6%B5%81%E7%A8%8B%E5%9B%BE.png, InlineHook64%e4%bd%8d%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /hooktechnique/InlineHook64%E4%BD%8D%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/hooktechnique/InlineHook64%E4%BD%8D%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=InlineHook64位流程图></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图33.64位InlineHook流程图</center>
 <p>核心代码:</p>
 <div class=highlight><div class=chroma>
@@ -856,7 +858,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>64位Hook前的MessageBox函数的指令截图为图24了，接下来我们将DLL注入进行Hook，并比较两者发生的变化。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=64%e4%bd%8dInlineHook%e5%90%8e%e7%9a%84MessageBox.png data-srcset="/apihook/64%E4%BD%8DInlineHook%E5%90%8E%E7%9A%84MessageBox.png, 64%e4%bd%8dInlineHook%e5%90%8e%e7%9a%84MessageBox.png 1.5x, /apihook/64%E4%BD%8DInlineHook%E5%90%8E%E7%9A%84MessageBox.png 2x" data-sizes=auto alt=/apihook/64%E4%BD%8DInlineHook%E5%90%8E%E7%9A%84MessageBox.png title=64位InlineHook后的MessageBox></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=64%e4%bd%8dInlineHook%e5%90%8e%e7%9a%84MessageBox.png data-srcset="/hooktechnique/64%E4%BD%8DInlineHook%E5%90%8E%E7%9A%84MessageBox.png, 64%e4%bd%8dInlineHook%e5%90%8e%e7%9a%84MessageBox.png 1.5x, /hooktechnique/64%E4%BD%8DInlineHook%E5%90%8E%E7%9A%84MessageBox.png 2x" data-sizes=auto alt=/hooktechnique/64%E4%BD%8DInlineHook%E5%90%8E%E7%9A%84MessageBox.png title=64位InlineHook后的MessageBox></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图34.64位InlineHook后的MessageBox</center>
 <p>在以上代码有两个比较明显的问题，首先是为什么要在jmp指令(0xff25)起始地址 + 6 处写入目的地址，而不是 + 2 处直接写在jmp指令后呢？前面我们也说了 jmp指令加上目的地址总共6字节长，其中只有4字节存放目的地址，因此是不足够容纳64位的8字节长地址。如果直接在jmp指令起始地址+2处写入目的地址，那么该指令就会以该地址的低4字节作为目的地址跳转，就会出现错误。</p>
 <p>如果0xff25后面接4个全0字节，此时jmp指令就会取下一地址的值作为目的地址，这样就可以实现8字节长的地址作为目的地址进行跳转了。具体看图34中的第一条和第二条指令。第一条指令中目的地址为全0，但却获取了下一地址的值。再跳转至第二条指令存放的数据作为地址的地方，检查发现为Detour函数地址。</p>
@@ -882,22 +884,22 @@
 </div>
 </div><p>这样的思路并没有错误，但在64位环境下就会因为位数问题导致错误。</p>
 <p>具体看我举的这个例子</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%89%8d%e7%9a%84cmp%e6%8c%87%e4%bb%a4.png data-srcset="/apihook/Hook%E5%89%8D%E7%9A%84cmp%E6%8C%87%E4%BB%A4.png, Hook%e5%89%8d%e7%9a%84cmp%e6%8c%87%e4%bb%a4.png 1.5x, /apihook/Hook%E5%89%8D%E7%9A%84cmp%E6%8C%87%E4%BB%A4.png 2x" data-sizes=auto alt=/apihook/Hook%E5%89%8D%E7%9A%84cmp%E6%8C%87%E4%BB%A4.png title=Hook前的cmp指令></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Hook%e5%89%8d%e7%9a%84cmp%e6%8c%87%e4%bb%a4.png data-srcset="/hooktechnique/Hook%E5%89%8D%E7%9A%84cmp%E6%8C%87%E4%BB%A4.png, Hook%e5%89%8d%e7%9a%84cmp%e6%8c%87%e4%bb%a4.png 1.5x, /hooktechnique/Hook%E5%89%8D%E7%9A%84cmp%E6%8C%87%E4%BB%A4.png 2x" data-sizes=auto alt=/hooktechnique/Hook%E5%89%8D%E7%9A%84cmp%E6%8C%87%E4%BB%A4.png title=Hook前的cmp指令></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图35.Hook前的cmp指令</center>
 <p>图35为cmp指令Hook前的样子，目的地址为7FFFB5B632F0，相对地址为386D2。</p>
 <p>接着注入DLL，再去查看Trampoline函数中计算出来的相对地址。我将计算相对地址的过程打印，可以用来对比是否是因为位数截断的原因导致内存访问错误。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=64%e4%bd%8dInlineHook%e7%9a%84Trampoline%e5%87%bd%e6%95%b0.png data-srcset="/apihook/64%E4%BD%8DInlineHook%E7%9A%84Trampoline%E5%87%BD%E6%95%B0.png, 64%e4%bd%8dInlineHook%e7%9a%84Trampoline%e5%87%bd%e6%95%b0.png 1.5x, /apihook/64%E4%BD%8DInlineHook%E7%9A%84Trampoline%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/apihook/64%E4%BD%8DInlineHook%E7%9A%84Trampoline%E5%87%BD%E6%95%B0.png title=64位InlineHook的Trampoline函数></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=64%e4%bd%8dInlineHook%e7%9a%84Trampoline%e5%87%bd%e6%95%b0.png data-srcset="/hooktechnique/64%E4%BD%8DInlineHook%E7%9A%84Trampoline%E5%87%BD%E6%95%B0.png, 64%e4%bd%8dInlineHook%e7%9a%84Trampoline%e5%87%bd%e6%95%b0.png 1.5x, /hooktechnique/64%E4%BD%8DInlineHook%E7%9A%84Trampoline%E5%87%BD%E6%95%B0.png 2x" data-sizes=auto alt=/hooktechnique/64%E4%BD%8DInlineHook%E7%9A%84Trampoline%E5%87%BD%E6%95%B0.png title=64位InlineHook的Trampoline函数></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图36.64位InlineHook的Trampoline函数</center>
 <p>可以看到 Trampoline计算出来的相对地址为23A823E2，指向的目的地址为26FB5B632F0。我们检测一下该地址是否合法</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%9b%ae%e7%9a%84%e5%9c%b0%e5%9d%80%e9%9d%9e%e6%b3%95.png data-srcset="/apihook/%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80%E9%9D%9E%E6%B3%95.png, %e7%9b%ae%e7%9a%84%e5%9c%b0%e5%9d%80%e9%9d%9e%e6%b3%95.png 1.5x, /apihook/%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80%E9%9D%9E%E6%B3%95.png 2x" data-sizes=auto alt=/apihook/%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80%E9%9D%9E%E6%B3%95.png title=目的地址非法></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%9b%ae%e7%9a%84%e5%9c%b0%e5%9d%80%e9%9d%9e%e6%b3%95.png data-srcset="/hooktechnique/%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80%E9%9D%9E%E6%B3%95.png, %e7%9b%ae%e7%9a%84%e5%9c%b0%e5%9d%80%e9%9d%9e%e6%b3%95.png 1.5x, /hooktechnique/%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80%E9%9D%9E%E6%B3%95.png 2x" data-sizes=auto alt=/hooktechnique/%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80%E9%9D%9E%E6%B3%95.png title=目的地址非法></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图37.目的地址非法</center>
 <p>我们没办法跳至目的地址，因此该地址并不存在于目标进程的拥有的内存空间中。因此计算出的相对地址结果错误。</p>
 <p>再检查下计算过程，</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%9b%b8%e5%af%b9%e5%9c%b0%e5%9d%80%e8%ae%a1%e7%ae%97%e8%bf%87%e7%a8%8b.png data-srcset="/apihook/%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B.png, %e7%9b%b8%e5%af%b9%e5%9c%b0%e5%9d%80%e8%ae%a1%e7%ae%97%e8%bf%87%e7%a8%8b.png 1.5x, /apihook/%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B.png 2x" data-sizes=auto alt=/apihook/%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B.png title=相对地址计算过程></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e7%9b%b8%e5%af%b9%e5%9c%b0%e5%9d%80%e8%ae%a1%e7%ae%97%e8%bf%87%e7%a8%8b.png data-srcset="/hooktechnique/%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B.png, %e7%9b%b8%e5%af%b9%e5%9c%b0%e5%9d%80%e8%ae%a1%e7%ae%97%e8%bf%87%e7%a8%8b.png 1.5x, /hooktechnique/%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B.png 2x" data-sizes=auto alt=/hooktechnique/%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B.png title=相对地址计算过程></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图38.相对地址计算过程</center>
 <p>对比图35，第一个printf打印出的目的地址计算结果是正确的。对比图36，第二个printf打印计算出来的相对地址也和Trampoline函数中的cmp指令中的相对地址值相同。</p>
 <p>那问题出现在哪呢？第二个printf打印出的被减数与减数可以很明显看出来计算结果也会是8字节的，但是因为截断导致数值发生了变化。正确的计算结果如下</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e6%ad%a3%e7%a1%ae%e7%9a%84%e8%ae%a1%e7%ae%97%e7%bb%93%e6%9e%9c.png data-srcset="/apihook/%E6%AD%A3%E7%A1%AE%E7%9A%84%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C.png, %e6%ad%a3%e7%a1%ae%e7%9a%84%e8%ae%a1%e7%ae%97%e7%bb%93%e6%9e%9c.png 1.5x, /apihook/%E6%AD%A3%E7%A1%AE%E7%9A%84%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C.png 2x" data-sizes=auto alt=/apihook/%E6%AD%A3%E7%A1%AE%E7%9A%84%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C.png title=正确的计算结果></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e6%ad%a3%e7%a1%ae%e7%9a%84%e8%ae%a1%e7%ae%97%e7%bb%93%e6%9e%9c.png data-srcset="/hooktechnique/%E6%AD%A3%E7%A1%AE%E7%9A%84%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C.png, %e6%ad%a3%e7%a1%ae%e7%9a%84%e8%ae%a1%e7%ae%97%e7%bb%93%e6%9e%9c.png 1.5x, /hooktechnique/%E6%AD%A3%E7%A1%AE%E7%9A%84%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C.png 2x" data-sizes=auto alt=/hooktechnique/%E6%AD%A3%E7%A1%AE%E7%9A%84%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C.png title=正确的计算结果></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图39.正确的计算结果</center>
 <p>当把正确的结果截断4字节就会发现与得到的计算结果相同，因此该想法的错误是因为相对地址的计算结果大于4字节，从而导致数据丢失，进而计算出了错误的目的地址。</p>
 <p>那该如何解决这个问题呢，我能想到的办法就是先从原目的地址处获取用来比较的数据，写入我们申请的内存空间中空闲的地址处，然后将目的地址改为该地址。虽然比较麻烦，但这样就可以解决问题了。</p>
@@ -921,20 +923,20 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>这里pFun+30为申请的内存空间中空闲的地址。将相对地址如此重定位之后，我们再查看Trampoline的cmp指令是否正常</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e4%bf%ae%e6%94%b9%e5%90%8e%e7%9a%84%e7%9b%b8%e5%af%b9%e5%9c%b0%e5%9d%80%e9%87%8d%e5%ae%9a%e4%bd%8d.png data-srcset="/apihook/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D.png, %e4%bf%ae%e6%94%b9%e5%90%8e%e7%9a%84%e7%9b%b8%e5%af%b9%e5%9c%b0%e5%9d%80%e9%87%8d%e5%ae%9a%e4%bd%8d.png 1.5x, /apihook/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D.png 2x" data-sizes=auto alt=/apihook/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D.png title=修改后的相对地址重定位></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e4%bf%ae%e6%94%b9%e5%90%8e%e7%9a%84%e7%9b%b8%e5%af%b9%e5%9c%b0%e5%9d%80%e9%87%8d%e5%ae%9a%e4%bd%8d.png data-srcset="/hooktechnique/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D.png, %e4%bf%ae%e6%94%b9%e5%90%8e%e7%9a%84%e7%9b%b8%e5%af%b9%e5%9c%b0%e5%9d%80%e9%87%8d%e5%ae%9a%e4%bd%8d.png 1.5x, /hooktechnique/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D.png 2x" data-sizes=auto alt=/hooktechnique/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E7%9B%B8%E5%AF%B9%E5%9C%B0%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D.png title=修改后的相对地址重定位></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图40.修改后的相对地址重定位结果</center>
 <p>很明显cmp中的目标地址指向的正是申请内存空间中第30个地址处，因此内存访问合法。</p>
 <p>64位系统中Hook出现的问题比32位更多，主要体现在指令碎屑以及地址长度位8字节截断后导致的数据错误。在Hook的时候应该小心这些问题。</p>
 <h4 id=0x4-基于异常处理的hook>0x4 基于异常处理的Hook</h4>
 <p>要想通过异常处理的机制来进行Hook，我们需要先了解Windows的异常处理机制，Windows用户态异常处理流程图如图41所示</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=Windows%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e6%9c%ba%e5%88%b6.png data-srcset="/apihook/Windows%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.png, Windows%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e6%9c%ba%e5%88%b6.png 1.5x, /apihook/Windows%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.png 2x" data-sizes=auto alt=/apihook/Windows%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.png title=Windows异常处理机制></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=Windows%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e6%9c%ba%e5%88%b6.png data-srcset="/hooktechnique/Windows%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.png, Windows%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e6%9c%ba%e5%88%b6.png 1.5x, /hooktechnique/Windows%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.png 2x" data-sizes=auto alt=/hooktechnique/Windows%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.png title=Windows异常处理机制></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图41.Windows用户态异常处理流程</center>
 <p>当程序执行过程中出现了异常时，系统内核的异常处理过程nt!KiDispatchException就会开始工作。在没有内核调试器存在且异常程序没有被调试的情况下，系统就会把异常处理过程转交给用户态的异常处理过程ntdll!RtlDispatchException，然后该异常处理过程根据图41的顺序查找系统是否安装了异常处理程序(例如SEH，VEH，TopLevelExceptionHandle)，如果安装了就会调用异常处理过程进行处理。</p>
 <p>实际应用中，SEH的使用有较多限制，SEH是基于线程、非全局、基于栈的异常处理程序，我们可以通过TEB(线程环境块)结构体的第一个成员NtTib结构体中的第一个成员，即TEB.NtTib.ExceptionList成员获取进程的SEH链。SEH的添加方式是基于栈的，当需要添加新的SEH时就会将新的SEH地址push入栈，然后再将原SEH链中的首个SEHpush入栈，再将RSP(ESP)的值赋给GS[0] (FS[0])寄存器，也就是TEB的第一个成员NtTib结构体中的第一个成员ExceptionList中。综上SEH是只能处理自己线程的异常，所以使用的限制较多。</p>
 <p>VEH是基于进程、全局并且优先于SEH处理的。其并不依赖于某一线程，在本进程中任何线程出现异常都可以被VEH处理。因此我们在进程中任意一处主动触发异常时，就能保证异常能进入异常处理程序中，这样极大方便了HOOK。</p>
 <p>当使用VEH异常处理机制HOOK时，首先需要注册一个VEH异常处理程序，然后在要Hook的函数中设置INT3断点，当要Hook的函数被调用时就会触发中断导致异常，此时进程就会跳转至异常处理程序，我们只需要在异常处理程序添加我们的目的代码即可。</p>
 <p>流程图:</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=VEH%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/apihook/VEH%E6%B5%81%E7%A8%8B%E5%9B%BE.png, VEH%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /apihook/VEH%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/apihook/VEH%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=VEH流程图></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=VEH%e6%b5%81%e7%a8%8b%e5%9b%be.png data-srcset="/hooktechnique/VEH%E6%B5%81%E7%A8%8B%E5%9B%BE.png, VEH%e6%b5%81%e7%a8%8b%e5%9b%be.png 1.5x, /hooktechnique/VEH%E6%B5%81%E7%A8%8B%E5%9B%BE.png 2x" data-sizes=auto alt=/hooktechnique/VEH%E6%B5%81%E7%A8%8B%E5%9B%BE.png title=VEH流程图></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图42.VEH流程图</center>
 <p>核心代码：</p>
 <div class=highlight><div class=chroma>
@@ -1065,29 +1067,29 @@
 </div>
 </div><p>我们通过x64dbg来观察该Hook技术的实际执行流程。</p>
 <p>原64位环境的MessageBox函数的代码截图为图24，在注入DLL后对比两者的区别</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=VEHHook%e8%ae%be%e7%bd%ae%e6%96%ad%e7%82%b9.png data-srcset="/apihook/VEHHook%E8%AE%BE%E7%BD%AE%E6%96%AD%E7%82%B9.png, VEHHook%e8%ae%be%e7%bd%ae%e6%96%ad%e7%82%b9.png 1.5x, /apihook/VEHHook%E8%AE%BE%E7%BD%AE%E6%96%AD%E7%82%B9.png 2x" data-sizes=auto alt=/apihook/VEHHook%E8%AE%BE%E7%BD%AE%E6%96%AD%E7%82%B9.png title=VEHHook设置断点></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=VEHHook%e8%ae%be%e7%bd%ae%e6%96%ad%e7%82%b9.png data-srcset="/hooktechnique/VEHHook%E8%AE%BE%E7%BD%AE%E6%96%AD%E7%82%B9.png, VEHHook%e8%ae%be%e7%bd%ae%e6%96%ad%e7%82%b9.png 1.5x, /hooktechnique/VEHHook%E8%AE%BE%E7%BD%AE%E6%96%AD%E7%82%B9.png 2x" data-sizes=auto alt=/hooktechnique/VEHHook%E8%AE%BE%E7%BD%AE%E6%96%AD%E7%82%B9.png title=VEHHook设置断点></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图43.VEHHook设置断点</center>
 <p>对比图24和图43可知，当对目标函数设置INT3断点时，因机器码为一个字节0xcc所以只是把原函数第一条指令的机器码前缀给替换掉，指令从sub rsp,38变成了sub esp,38。我们从这里也可以获取一个信息，机器码前缀有48时修饰的是64位的寄存器，无48前缀则是32位的。</p>
 <p>我们触发设置的INT3断点后再继续分析，</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=VEH%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8f.png data-srcset="/apihook/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F.png, VEH%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8f.png 1.5x, /apihook/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F.png 2x" data-sizes=auto alt=/apihook/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F.png title=VEH异常处理程序></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=VEH%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8f.png data-srcset="/hooktechnique/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F.png, VEH%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8f.png 1.5x, /hooktechnique/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F.png 2x" data-sizes=auto alt=/hooktechnique/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F.png title=VEH异常处理程序></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图44.VEH异常处理程序</center>
 <p>在RIP当前所指的位置(被标黑的地址处)之前的两个jne对应为项目代码里的判断语句，jne与call之间的都是为继续调用MessageBox函数而保存的参数，其中mov rdi, [rcx+8]的语句就是代码中的uRsp = (ULONG_PTR*)pContextRecord->Rsp。而在RIP所指的语句，rdi+98的值为堆栈地址，该堆栈地址所存的就是调用MessageBox函数时的栈顶地址。</p>
 <p>具体对比图46以及图47</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=rdi+98%e6%89%80%e6%8c%87%e5%a0%86%e6%a0%88%e5%9c%b0%e5%9d%80.png data-srcset="/apihook/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80.png, rdi+98%e6%89%80%e6%8c%87%e5%a0%86%e6%a0%88%e5%9c%b0%e5%9d%80.png 1.5x, /apihook/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80.png 2x" data-sizes=auto alt=/apihook/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80.png title=rdi+98所指堆栈地址></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=rdi+98%e6%89%80%e6%8c%87%e5%a0%86%e6%a0%88%e5%9c%b0%e5%9d%80.png data-srcset="/hooktechnique/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80.png, rdi+98%e6%89%80%e6%8c%87%e5%a0%86%e6%a0%88%e5%9c%b0%e5%9d%80.png 1.5x, /hooktechnique/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80.png 2x" data-sizes=auto alt=/hooktechnique/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80.png title=rdi+98所指堆栈地址></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图45.rdi+98所指堆栈地址</center>
 <p>进入该地址所保存的值查看</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=rdi+98%e6%89%80%e6%8c%87%e5%a0%86%e6%a0%88%e5%9c%b0%e5%9d%80%e4%bf%9d%e5%ad%98%e7%9a%84%e5%a0%86%e6%a0%88%e6%95%b0%e6%8d%ae.png data-srcset="/apihook/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80%E4%BF%9D%E5%AD%98%E7%9A%84%E5%A0%86%E6%A0%88%E6%95%B0%E6%8D%AE.png, rdi+98%e6%89%80%e6%8c%87%e5%a0%86%e6%a0%88%e5%9c%b0%e5%9d%80%e4%bf%9d%e5%ad%98%e7%9a%84%e5%a0%86%e6%a0%88%e6%95%b0%e6%8d%ae.png 1.5x, /apihook/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80%E4%BF%9D%E5%AD%98%E7%9A%84%E5%A0%86%E6%A0%88%E6%95%B0%E6%8D%AE.png 2x" data-sizes=auto alt=/apihook/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80%E4%BF%9D%E5%AD%98%E7%9A%84%E5%A0%86%E6%A0%88%E6%95%B0%E6%8D%AE.png title=rdi+98所指堆栈地址保存的堆栈数据></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=rdi+98%e6%89%80%e6%8c%87%e5%a0%86%e6%a0%88%e5%9c%b0%e5%9d%80%e4%bf%9d%e5%ad%98%e7%9a%84%e5%a0%86%e6%a0%88%e6%95%b0%e6%8d%ae.png data-srcset="/hooktechnique/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80%E4%BF%9D%E5%AD%98%E7%9A%84%E5%A0%86%E6%A0%88%E6%95%B0%E6%8D%AE.png, rdi+98%e6%89%80%e6%8c%87%e5%a0%86%e6%a0%88%e5%9c%b0%e5%9d%80%e4%bf%9d%e5%ad%98%e7%9a%84%e5%a0%86%e6%a0%88%e6%95%b0%e6%8d%ae.png 1.5x, /hooktechnique/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80%E4%BF%9D%E5%AD%98%E7%9A%84%E5%A0%86%E6%A0%88%E6%95%B0%E6%8D%AE.png 2x" data-sizes=auto alt=/hooktechnique/rdi+98%E6%89%80%E6%8C%87%E5%A0%86%E6%A0%88%E5%9C%B0%E5%9D%80%E4%BF%9D%E5%AD%98%E7%9A%84%E5%A0%86%E6%A0%88%E6%95%B0%E6%8D%AE.png title=rdi+98所指堆栈地址保存的堆栈数据></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图46.rdi+98所指堆栈地址保存的堆栈数据</center>
 <p>图47为调用MessageBox函数时的堆栈数据</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%ae%be%e7%bd%aeINT3%e6%96%ad%e7%82%b9%e5%90%8e%e8%bf%9b%e5%85%a5MessageBox%e5%87%bd%e6%95%b0%e7%9a%84%e6%a0%88%e6%95%b0%e6%8d%ae.png data-srcset="/apihook/%E8%AE%BE%E7%BD%AEINT3%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5MessageBox%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png, %e8%ae%be%e7%bd%aeINT3%e6%96%ad%e7%82%b9%e5%90%8e%e8%bf%9b%e5%85%a5MessageBox%e5%87%bd%e6%95%b0%e7%9a%84%e6%a0%88%e6%95%b0%e6%8d%ae.png 1.5x, /apihook/%E8%AE%BE%E7%BD%AEINT3%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5MessageBox%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png 2x" data-sizes=auto alt=/apihook/%E8%AE%BE%E7%BD%AEINT3%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5MessageBox%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png title=设置INT3断点后进入MessageBox函数的栈数据></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%ae%be%e7%bd%aeINT3%e6%96%ad%e7%82%b9%e5%90%8e%e8%bf%9b%e5%85%a5MessageBox%e5%87%bd%e6%95%b0%e7%9a%84%e6%a0%88%e6%95%b0%e6%8d%ae.png data-srcset="/hooktechnique/%E8%AE%BE%E7%BD%AEINT3%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5MessageBox%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png, %e8%ae%be%e7%bd%aeINT3%e6%96%ad%e7%82%b9%e5%90%8e%e8%bf%9b%e5%85%a5MessageBox%e5%87%bd%e6%95%b0%e7%9a%84%e6%a0%88%e6%95%b0%e6%8d%ae.png 1.5x, /hooktechnique/%E8%AE%BE%E7%BD%AEINT3%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5MessageBox%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png 2x" data-sizes=auto alt=/hooktechnique/%E8%AE%BE%E7%BD%AEINT3%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5MessageBox%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png title=设置INT3断点后进入MessageBox函数的栈数据></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图47.设置INT3断点后进入MessageBox函数的栈数据</center>
 <p>此时RIP指向的语句 add [rdi+98],8 正对应了代码中的 pContextRecord->Rsp += sizeof(ULONG_PTR)，执行语句后如图48，可与图45对比数据</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%8e%9f%e6%a0%88%e9%a1%b6%e5%9c%b0%e5%9d%80+8.png data-srcset="/apihook/%E5%8E%9F%E6%A0%88%E9%A1%B6%E5%9C%B0%E5%9D%80+8.png, %e5%8e%9f%e6%a0%88%e9%a1%b6%e5%9c%b0%e5%9d%80+8.png 1.5x, /apihook/%E5%8E%9F%E6%A0%88%E9%A1%B6%E5%9C%B0%E5%9D%80+8.png 2x" data-sizes=auto alt=/apihook/%E5%8E%9F%E6%A0%88%E9%A1%B6%E5%9C%B0%E5%9D%80+8.png title=原栈顶地址+8></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e5%8e%9f%e6%a0%88%e9%a1%b6%e5%9c%b0%e5%9d%80+8.png data-srcset="/hooktechnique/%E5%8E%9F%E6%A0%88%E9%A1%B6%E5%9C%B0%E5%9D%80+8.png, %e5%8e%9f%e6%a0%88%e9%a1%b6%e5%9c%b0%e5%9d%80+8.png 1.5x, /hooktechnique/%E5%8E%9F%E6%A0%88%E9%A1%B6%E5%9C%B0%E5%9D%80+8.png 2x" data-sizes=auto alt=/hooktechnique/%E5%8E%9F%E6%A0%88%E9%A1%B6%E5%9C%B0%E5%9D%80+8.png title=原栈顶地址+8></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图49.原栈顶地址+8</center>
 <p>后面的指令就把调用MessageBox函数时保存的返回地址存在rdi+F8中，最后在ret指令停下来，我们发现此时的栈数据与触发断点后进入VEH异常处理程序时的相同，因此其会继续按流程回到触发异常前的状态，又因为对返回地址做了处理，就是在程序代码中的这一句，pContextRecord->Rip = uRsp[0];，所以当处理完异常状态后，恢复进程继续执行的第一条指令就是执行RIP指向的地址处的指令，程序就会直接返回到MessageBox的返回地址处。</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=VEH%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8fRET%e6%89%a7%e8%a1%8c%e5%89%8d%e7%9a%84%e5%a0%86%e6%95%b0%e6%8d%ae.png data-srcset="/apihook/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8FRET%E6%89%A7%E8%A1%8C%E5%89%8D%E7%9A%84%E5%A0%86%E6%95%B0%E6%8D%AE.png, VEH%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8fRET%e6%89%a7%e8%a1%8c%e5%89%8d%e7%9a%84%e5%a0%86%e6%95%b0%e6%8d%ae.png 1.5x, /apihook/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8FRET%E6%89%A7%E8%A1%8C%E5%89%8D%E7%9A%84%E5%A0%86%E6%95%B0%E6%8D%AE.png 2x" data-sizes=auto alt=/apihook/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8FRET%E6%89%A7%E8%A1%8C%E5%89%8D%E7%9A%84%E5%A0%86%E6%95%B0%E6%8D%AE.png title=VEH异常处理程序RET执行前的堆数据></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=VEH%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8fRET%e6%89%a7%e8%a1%8c%e5%89%8d%e7%9a%84%e5%a0%86%e6%95%b0%e6%8d%ae.png data-srcset="/hooktechnique/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8FRET%E6%89%A7%E8%A1%8C%E5%89%8D%E7%9A%84%E5%A0%86%E6%95%B0%E6%8D%AE.png, VEH%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8fRET%e6%89%a7%e8%a1%8c%e5%89%8d%e7%9a%84%e5%a0%86%e6%95%b0%e6%8d%ae.png 1.5x, /hooktechnique/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8FRET%E6%89%A7%E8%A1%8C%E5%89%8D%E7%9A%84%E5%A0%86%E6%95%B0%E6%8D%AE.png 2x" data-sizes=auto alt=/hooktechnique/VEH%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8FRET%E6%89%A7%E8%A1%8C%E5%89%8D%E7%9A%84%E5%A0%86%E6%95%B0%E6%8D%AE.png title=VEH异常处理程序RET执行前的堆数据></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图50.VEH异常处理程序RET执行前的堆数据</center>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%a7%a6%e5%8f%91%e6%96%ad%e7%82%b9%e5%90%8e%e8%bf%9b%e5%85%a5VEH%e6%97%b6%e7%9a%84%e6%a0%88%e6%95%b0%e6%8d%ae.png data-srcset="/apihook/%E8%A7%A6%E5%8F%91%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5VEH%E6%97%B6%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png, %e8%a7%a6%e5%8f%91%e6%96%ad%e7%82%b9%e5%90%8e%e8%bf%9b%e5%85%a5VEH%e6%97%b6%e7%9a%84%e6%a0%88%e6%95%b0%e6%8d%ae.png 1.5x, /apihook/%E8%A7%A6%E5%8F%91%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5VEH%E6%97%B6%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png 2x" data-sizes=auto alt=/apihook/%E8%A7%A6%E5%8F%91%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5VEH%E6%97%B6%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png title=触发断点后进入VEH时的栈数据></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=%e8%a7%a6%e5%8f%91%e6%96%ad%e7%82%b9%e5%90%8e%e8%bf%9b%e5%85%a5VEH%e6%97%b6%e7%9a%84%e6%a0%88%e6%95%b0%e6%8d%ae.png data-srcset="/hooktechnique/%E8%A7%A6%E5%8F%91%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5VEH%E6%97%B6%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png, %e8%a7%a6%e5%8f%91%e6%96%ad%e7%82%b9%e5%90%8e%e8%bf%9b%e5%85%a5VEH%e6%97%b6%e7%9a%84%e6%a0%88%e6%95%b0%e6%8d%ae.png 1.5x, /hooktechnique/%E8%A7%A6%E5%8F%91%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5VEH%E6%97%B6%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png 2x" data-sizes=auto alt=/hooktechnique/%E8%A7%A6%E5%8F%91%E6%96%AD%E7%82%B9%E5%90%8E%E8%BF%9B%E5%85%A5VEH%E6%97%B6%E7%9A%84%E6%A0%88%E6%95%B0%E6%8D%AE.png title=触发断点后进入VEH时的栈数据></p>
 <center style=font-size:14px;color:#181818;text-decoration:underline>图51.触发断点后进入VEH时的栈数据</center>
 <p>图51的栈顶地址指向的地址就是在做异常处理过程的收尾工作的代码地址，我暂时对这部分知识还很陌生，因此只能推测其再做判断异常是否处理完成，然后根据处理结果判断是根据记录的上下文继续执行进程，或是将异常上交给上一层的处理机制。</p>
 <p>在这个例子中，ret后我跟着这部分异常处理收尾代码跑，不是很长，最后就会回到调用MessageBox时保存的返回地址处。</p>
@@ -1098,13 +1100,13 @@
 <div class=post-info>
 <div class=post-info-line>
 <div class=post-info-mod>
-<span>更新于 0001-01-01</span>
+<span>更新于 2022-03-27</span>
 </div>
 <div class=post-info-license></div>
 </div>
 <div class=post-info-line>
 <div class=post-info-md><span>
-<a class=link-to-markdown href=/apihook/index.md target=_blank>阅读原始文档</a>
+<a class=link-to-markdown href=/hooktechnique/index.md target=_blank>阅读原始文档</a>
 </span></div>
 <div class=post-info-share>
 <span></span>
@@ -1117,8 +1119,7 @@
 <span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
 </section>
 </div>
-<div class=post-nav>
-<a href=/oslab1/ class=next rel=next title=操作系统的引导>操作系统的引导<i class="fas fa-angle-right fa-fw"></i></a></div>
+<div class=post-nav><a href=/dllinjection/ class=prev rel=prev title=常用DLL注入技术解析><i class="fas fa-angle-left fa-fw"></i>常用DLL注入技术解析</a></div>
 </div>
 <div id=comments><div id=utterances></div><noscript>
 Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.
