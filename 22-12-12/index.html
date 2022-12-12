@@ -1,0 +1,254 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>ELF文件延迟绑定过程与获取外部动态库函数对应的plt表项地址 - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="ELF文件延迟绑定过程与获取外部动态库函数对应的plt表项地址">
+<meta property="og:description" content="0x0 前言 在之前做的一些项目中对ELF文件中的函数进行Hook后要调用外部动态链接库函数，因此需要获取外部动态链接库的函数对应在plt表中的地址">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://int80.top/22-12-12/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-12-12T00:00:00+00:00">
+<meta property="article:modified_time" content="2022-12-12T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="ELF文件延迟绑定过程与获取外部动态库函数对应的plt表项地址">
+<meta name=twitter:description content="0x0 前言 在之前做的一些项目中对ELF文件中的函数进行Hook后要调用外部动态链接库函数，因此需要获取外部动态链接库的函数对应在plt表中的地址">
+<meta name=application-name content="INT80">
+<meta name=apple-mobile-web-app-title content="INT80"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/22-12-12/><link rel=prev href=http://int80.top/cve-2021-22986/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"ELF文件延迟绑定过程与获取外部动态库函数对应的plt表项地址","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/22-12-12\/"},"genre":"posts","keywords":"ELF文件","wordcount":5855,"url":"http:\/\/int80.top\/22-12-12\/","datePublished":"2022-12-12T00:00:00+00:00","dateModified":"2022-12-12T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> Posts </a><a class=menu-item href=/tags/> Tags </a><a class=menu-item href=/categories/> categories </a><a class=menu-item href=/aboutme/> About Me </a><a class=menu-item href=/search/><i class="fas fa-fw fa-search"></i> search </a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/ title>Posts</a><a class=menu-item href=/tags/ title>Tags</a><a class=menu-item href=/categories/ title>categories</a><a class=menu-item href=/aboutme/ title>About Me</a><a class=menu-item href=/search/ title><i class="fas fa-fw fa-search"></i>search</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container>
+<div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">ELF文件延迟绑定过程与获取外部动态库函数对应的plt表项地址</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2022-12-12>2022-12-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5855 字
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href=#0x0-前言>0x0 前言</a></li>
+<li><a href=#0x1-elf文件结构简述>0x1 ELF文件结构简述</a>
+<ul>
+<li><a href=#0x10-elf文件两种视图>0x10 ELF文件两种视图</a></li>
+<li><a href=#0x11-节>0x11 节</a></li>
+<li><a href=#0x12-延迟绑定>0x12 延迟绑定</a></li>
+<li><a href=#0x13-重定位表>0x13 重定位表</a></li>
+</ul>
+</li>
+<li><a href=#0x2-获取elf文件内部函数地址>0x2 获取ELF文件内部函数地址</a></li>
+<li><a href=#0x3-获取elf文件外部动态链接库函数地址>0x3 获取ELF文件外部动态链接库函数地址</a></li>
+<li><a href=#实现代码>实现代码</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div><div class=content id=content><h4 id=0x0-前言>0x0 前言</h4>
+<p>在之前做的一些项目中对ELF文件中的函数进行Hook后要调用外部动态链接库函数，因此需要获取外部动态链接库的函数对应在plt表中的地址。对于ELF文件内部函数，其偏移地址可以直接从文件的二进制数据中获取，因为此类函数的偏移都已经写在了文件中；但是对于外部动态库的函数，则没办法直接获取，因为动态库采用了动态链接、延迟绑定技术，只有在第一次调用该函数，该函数的真实地址才会被写入文件中，在此之前记录该函数地址的数据仅为无意义的占位符。</p>
+<p>而该问题的答案并没能直接在网上直接搜索得到，因此在思索得到结果后，写下该博客进行记录。</p>
+<h4 id=0x1-elf文件结构简述>0x1 ELF文件结构简述</h4>
+<p>若要解决获取函数地址的问题，那么自然需要对ELF文件结构有所了解。</p>
+<p>但是在这里，就不对ELF文件进行特别详细的解析，因为对于文件结构，都是做好了规范的死东西，可以从任何一个资料上获取每个字段、每个数据的意义。因此，这里就简要说明一些值得注意的东西。</p>
+<h5 id=0x10-elf文件两种视图>0x10 ELF文件两种视图</h5>
+<p>ELF文件格式规范，将ELF文件分成共享目标文件(shared object file)、可执行文件(executable file)和可重定位文件(relocatable file)。ELF文件的作用也就是用于构建动态链接库或可执行文件，主要体现在链接过程；以及可执行文件用于运行程序，动态链接库参与程序的运行，体现在运行过程，其中动态链接库则属于共享目标文件。根据该ELF文件的特性，ELF文件则可分成两种视图(view)，链接视图(Linking View)与运行视图(Execution View)。</p>
+<p>对于这两种视图，我觉得这样理解会更加容易。链接视图则是ELF文件存储在磁盘时的结构，而运行视图则是ELF文件载入内存后，在内存中的结构。这与PE文件是类似的，PE文件在磁盘与在内存中的结构并不完全相同。</p>
+<p>由 图1-1 ELF文件的两种视图，可以看到两种视图的区别。两种视图仅在节区上发生了变化，由section变成了segment。segment是由一个或者多个类型(sh_type数据)相同的section组成。那为什么这样做呢？当文件从磁盘载入到内存的时候，会根据这部分代码的属性，也就是该部分代码具有读写执行中的哪些权限，分别进行载入处理，若把相同属性的节区组织到一起同时载入，加载器的工作量则减少了，一定程度提高程序载入效率。</p>
+<div>
+<center>
+<img src=ELF文件的两种视图.png alt=ELF文件的两种视图.png style=100%>
+<br>
+图 1-1 ELF文件的两种视图
+</center>
+</div>
+<h5 id=0x11-节>0x11 节</h5>
+<p>接下来将简述Hook程序所使用到的节，及使用的原因。</p>
+<p>(1) .shstrtab节。要获取多个节区的数据时，需要确定当前遍历到的节头对应的是什么节区，因此需要比较节头的保存的节的名字。对于.shstrtab节来说，其对应的节头在节头表位置固定，即在位于节头表的末尾。该节区保存了所有节的名字，并且保存的顺序与节对应的节头在节头表的顺序相同。因此需要利用.shstrtab节区的数据来遍历节头表。</p>
+<p>(2) .dynsym节。该节保存了与动态链接相关的导入导出函数相关的信息，例如导出函数的起始地址以及函数名字符串在.dynstr节的偏移等。可以通过该节寻找到导出函数的地址，当Hook动态链接库的函数时，就可以通过该节区获取目标导出函数。</p>
+<p>(3) .dynstr节。该节保存了动态符号的字符串表，配合.dynsym节遍历查找目标导出函数。</p>
+<p>(4) .plt与.got节。这两节主要是获取plt表以及got表的起始地址，在Hook程序中需要计算外部导入函数的相对虚拟地址时将会使用到plt表的起始地址，而在调用外部导入函数时则需要将got表的起始地址保存到ebx中，才能正确调用。</p>
+<p>(5) .rel.plt节。该节保存了与plt表的符号的重定位信息，因为ELF文件的延迟绑定机制，无法直接获取外部导入函数的起始地址，因此需要通过重定位表来定位外部导入函数其在plt表的索引，再通过call targetfunc@plt则可以实现对外部导入函数的调用。</p>
+<p>在对.rel.plt节的表述中，就已经透露了获取外部动态库的函数地址的方法。下面会详细的说明</p>
+<h5 id=0x12-延迟绑定>0x12 延迟绑定</h5>
+<p>ELF文件为了实现动态链接，使用了两个表。Got表(Global Offset Table)全称为全局偏移表；plt表(Procedure Linkage Table)全称为过程链接表。这两表在ELF文件进行动态链接与延迟重定位的过程中起到关键的作用。在介绍got表与plt表之前先简述何为动态链接与延迟重定位。</p>
+<p>通过将程序使用的模块从程序中拆分出来形成独立的模块，在程序运行并需要使用这些独立的模块时，再将这些模块与程序链接在一起。通过动态链接技术，这些模块导入内存一次便可以供多个程序共享，从而减小了内存的开销，这些模块也被称为动态链接库。该技术的出现就解决了静态链接导致的程序与内存臃肿的问题。但动态链接技术也导致了新的问题，若程序在运行时需要使用动态链接库，那么就会对整个动态链接库进行重定位操作，但是程序并不会在此刻使用到动态链接库的全部数据，因此会导致不必要的性能开销，同时程序运行时会链接大量的动态库，这就会导致程序运行变慢。为了解决这个问题，就提出了延迟重定位技术，该技术又称为延迟绑定。其原理就是通过额外的代码与数据与动态链接库中需要重定位的数据建立联系，那么程序需要哪个数据，就仅对该数据进行重定位，由此解决了不必要的性能开销导致程序运行速度下降的问题。</p>
+<p>在编译过程中编译器是无法获知外部的符号存在于何处的，到了链接阶段，程序可以知道外部符号存在于哪个文件里，如果符号存在于可重定位文件中，即静态链接，链接过程中由于符号地址确定因此可以直接重定位；但如果在共享目标文件中，即动态链接，则因为链接阶段是无法修改编译得到的汇编指令，所以链接阶段无法进行重定位。因此为了解决动态链接重定位的问题，ELF文件由链接器生成了保存外部导入的函数的地址的数据段，与一小段用来获取外部导入的函数的地址的代码。而got表就是用来存放外部导入的函数的地址的数据表，即该表会把位置独立的地址重定向到绝对地址，plt表则是存放了用于获取外部导入的函数的地址的代码，即该表会把位置独立的函数调用重定向到绝对地址。</p>
+<p>那么在ELF文件中，如果调用外部动态链接库中的函数程序会如何实现呢？</p>
+<p>如 图1-2 ELF文件中外部函数的调用过程所示，当程序调用外部导入函数时，call的其实是该外部函数在其对应的plt表项的位置，然后再从其对应的plt表项中跳转到该函数对应的got表项位置，从got表获取该函数的地址后，就可以跳转至该函数的起始地址处了(因为动态链接库被载入内存后也会和载入该库的程序使用同一片虚拟内存)。ELF文件寻找外部函数起始地址的过程需要利用plt表以及got表。</p>
+<div>
+<center>
+<img src=ELF文件中外部函数的调用过程.png alt=ELF文件中外部函数的调用过程.png style=100%>
+<br>
+图 1-2 ELF文件中外部函数的调用过程
+</center>
+</div>
+<p>那么这就引出一个问题，plt表长啥样呢？怎么跳转到plt表了后就可以找到got表呢？</p>
+<p>如 图1-3 Plt表结构所示，plt表是由plt表项组成的数组，每个plt表项大小为16字节，除了plt[0]项，其余的项结构都相同。对于plt[0]这一项来说，其第一条指令将got[1]处存放的地址入栈，第二条指令则是跳转到got[2]项中存放的地址执行。对于plt[n]项来说，其保存了某个函数链接时所需要的指令，从plt[1]项与got[3]开始，plt与got表就开始一一对应，即plt[1]对应got[3]，plt[n]对应got[n+2]，n>=1。Plt[n]的第一条指令会跳转到该plt表项对应的got表项处存放的地址执行，第二条指令入栈的值用来作为_dl_runtime_resolve()函数的参数。第三条指令则是跳转到.PLT[0]执行项里保存的两条指令。plt[n]中的前两条指令可以交换顺序，也就是可以先push，再jmp，因为push的数字会在jmp 到plt[0]之后才会使用到，那么got表则跳转回对应的plt的第三条指令而不是原来的第二条指令了。</p>
+<div>
+<center>
+<img src=Plt表结构.png alt=Plt表结构.png style=100%>
+<br>
+图 1-3 Plt表结构
+</center>
+</div>
+<p>那么问题又来了，那got表长啥样啊，got表又做了什么呢？</p>
+<p>如 图1-4 Got表的结构所示。got表每个表项为4字节大小。got表的第一项保存了.dynamic节区的地址，第二项保存了link_map链表描述符的地址，该链表保存了程序需要用到的所有动态链接库的信息，例如库的名字以及地址等，通过遍历比较库的名字确定是否是目标函数所存在的库。动态链接器也将使用link_map链表描述符的地址进行符号解析。got[1]项保存的地址在plt[0]中被入栈，同样是作为_dl_runtime_resolve()函数的参数。第三项保存的则是_dl_runtime_resolve函数的地址，在plt[0]项的第二条指令会跳转到got[2]保存的地址去执行_dl_runtime_resolve函数。</p>
+<p>当执行完_dl_runtime_resolve()函数后，目标函数的真实地址将被找到，并且会将该地址写入目标函数对应的got表项中。下一次再次调用目标函数时则将直接跳转到got表存放的地址执行函数，不用再进行重定位。因此可以看到图1-4中在延迟绑定之后，数据变成了函数地址，而不是plt[n]的第二条指令的地址了。</p>
+<div>
+<center>
+<img src=got表结构.png alt=got表结构.png style=100%>
+<br>
+图 1-4 got表结构
+</center>
+</div>
+<p>还记得plt[n]中push的数字吗？目标函数对应的plt表项中的第二条指令入栈的数字表示该函数在.rel.plt节区的偏移，而.rel.plt节区中，每个项的offset成员则是其got表项的地址，_dl_runtime_resolve()函数则可以通过该信息回写got表。</p>
+<p>综上，可以得到 图1-5 延迟绑定过程。当程序调用外部导入函数时，程序会进入该函数对应的plt表项执行指令。指令的执行首先会让程序跳转到对应的got表项保存的地址，若此时是第一次调用则会跳转到对应的plt表项的第二条指令，否则将直接跳转到目标函数起始地址处。Plt表项的第二条指令将该函数所对应的位于.rel.plt节区的项的偏移入栈，然后跳转到plt[0]项中将link_map地址入栈，再跳转到_dl_runtime_resolve函数起始地址开始执行该函数，该函数会调用目标函数，并将目标函数的真实地址写入目标函数对应的got表中(此步骤会依赖.rel.plt节区中的数据)。最后执行完目标函数后返回到调用目标函数指令的下条指令上。</p>
+<div>
+<center>
+<img src=延迟绑定过程.png alt=延迟绑定过程.png style=100%>
+<br>
+图 1-5 延迟绑定过程
+</center>
+</div>
+<h5 id=0x13-重定位表>0x13 重定位表</h5>
+<p>在ELF文件中，以".rel"开头的都属于重定位段，他是一个Elf32_Rel结构数组，每个项对应一个重定位入口。.rel.plt是对函数引用进行修正，在该博客中则需要使用.rel.plt段来获取外部函数地址。</p>
+<p>如 图1-6 Elf32_Rel结构所示，重定位表的每个项都有两个成员，分别为offset和info。对于offset成员来说，其是重定位入口的偏移地址，即该符号对应的got表项地址，因此当重定位后将外部函数的真实地址回写到对应的got表项则是依赖于该数据，info成员则是表示该重定位入口的类型，该成员大小为4个字节，高24位表示该符号在符号表中的下标，低8位为info数据。</p>
+<div>
+<center>
+<img src=elf32_rel结构.png alt=elf32_rel结构.png style=100%>
+<br>
+图 1-6 elf32_rel结构.png
+</center>
+</div>
+<p>那么以上就是要弄清楚如何从ELF文件中获取外部动态链接库函数地址所需的前提知识了。</p>
+<h4 id=0x2-获取elf文件内部函数地址>0x2 获取ELF文件内部函数地址</h4>
+<p>ELF文件内部地址很容易获取，因此简略的说一下。</p>
+<p>如 图2-1 内部函数在符号表中保存的地址数据所示，对于存在符号表的ELF文件，那么内部函数可以在符号表(symtab)中获取，动态符号例如导出函数还可以在动态符号表(dynsym)获取其地址。</p>
+<div>
+<center>
+<img src=内部函数在符号表中保存的地址数据.png alt=内部函数在符号表中保存的地址数据.png style=100%>
+<br>
+图 2-1 内部函数在符号表中保存的地址数据
+</center>
+</div>
+<p>如 图2-2 存储在.data节区中的内部函数地址数据所示，如果ELF文件中没有符号表，那么除了导出函数的函数地址可以从动态符号表获取，其余内部函数只能从.data节区的数据获取内部函数地址，例如图中的 dd offset sub_5F488的数据就是sub_5F488的函数地址。</p>
+<div>
+<center>
+<img src=存储在data节区中的内部函数地址数据.png alt=存储在data节区中的内部函数地址数据.png style=100%>
+<br>
+图 2-2 存储在.data节区中的内部函数地址数据
+</center>
+</div>
+<h4 id=0x3-获取elf文件外部动态链接库函数地址>0x3 获取ELF文件外部动态链接库函数地址</h4>
+<p>在0x12的延迟绑定分析中，程序调用外部函数则是通过call该函数对应的plt表项地址来实现的。因此关键问题是如何获取外部动态链接库函数对应plt表项的地址。</p>
+<p>在分析plt表的过程中，注意到push的数字与plt表项的索引有着对应关系，从plt[1]开始，该项的push的数字则为0，plt[2]中push的为8，依次push的就是(n-1)*8了。前面也提到了，push的数字为该函数在.rel.plt重定位表中的偏移，因此只要定位到了外部导入函数对应的重定位表数据，就可以倒推出对应的plt表的位置。如 图3-1 plt表与重定位表对应示例所示，readlink对应的plt[1] push了0，而该函数在.rel.plt表的第一项；sem_trywait对应plt[2] push了8，该函数在.rel.plt表的第二项。</p>
+<div>
+<center>
+<img src=plt表与重定位表对应示例.png alt=plt表与重定位表对应示例.png style=100%>
+<br>
+图 3-1 plt表与重定位表对应示例
+</center>
+</div>
+<p>那么如何定位该外部函数位于重定位表的哪个位置呢？</p>
+<p>在前面我们提到重定位表中的Elf32_Rel结构的info成员的高24位代表该符号在符号表的下标，那么通过该下标就可以获取该符号的名称，那么与函数名进行对比即可定位到目标外部导入函数了。实现的方法如 图3-2 通过重定位数据对比符号名称所示，首先获取info成员高24位数据，通过它获取符号表的名称，在与外部导入函数名称对比即可判断该重定位项是否是目标外部导入函数的。</p>
+<div>
+<center>
+<img src=通过重定位数据对比符号名称.png alt=通过重定位数据对比符号名称.png style=100%>
+<br>
+图 3-2 通过重定位数据对比符号名称
+</center>
+</div>
+<p>当确定了该重定位项就是目标外部导入函数的之后，就可以计算该项在重定位表的偏移了，然后根据重定位表偏移 = (n-1)*8算出n，在用plt表起始地址 + n*0x10即可获得到对应的plt表项的地址了。</p>
+<p>如 图3-3 计算对应的plt表项地址所示，首先获取重定位表第一项的offset数据，然后在获取目标外部导入函数的offset数据，然后作差除以4，那么结果就是该重定位项在重定位表的偏移了。因为重定位向的offset数据为目标外部导入函数在got表的地址，而got表与plt表有对应关系，自然也与重定位表也有对应关系。got表与重定位表的对应关系则是got[n] &lt;&ndash;> .rel.plt[n-3]，n>3。got表项大小为4，因此 n-3 = (address of got[n] - address of got[4])/4 刚好为该重定位项在重定位表的偏移。那么最后就通过plt表起始地址 + n*0x10算出目标外部导入函数所在plt表项的地址了。</p>
+<div>
+<center>
+<img src=计算对应的plt表项地址.png alt=计算对应的plt表项地址.png style=100%>
+<br>
+图 3-3 计算对应的plt表项地址
+</center>
+</div>
+<h4 id=实现代码>实现代码</h4>
+<p><a href=https://github.com/Mrsdwang/elfhook/blob/main/elfhook.c target=_blank rel="noopener noreffer">实现代码</a></p>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-12-12</span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/22-12-12/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/elf%E6%96%87%E4%BB%B6/>ELF文件</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/cve-2021-22986/ class=prev rel=prev title=CVE-2021-22986><i class="fas fa-angle-left fa-fw"></i>CVE-2021-22986</a></div>
+</div>
+<div id=comments><div id=utterances></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>ShiDong</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer>
+</div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{utterances:{darkTheme:"github-dark",issueTerm:"pathname",label:"",lightTheme:"github-light",repo:"Mrsdwang/Mrsdwang.github.io"}},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1}}</script><script type=text/javascript src=/js/theme.min.js></script></body>
+</html>
