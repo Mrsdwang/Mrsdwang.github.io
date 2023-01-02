@@ -1,4 +1,4 @@
-# 136字节大小的so文件如何执行藏匿于程序头的汇编指令？
+# 136字节大小的so文件如何执行藏匿于程序头的汇编指令
 
 
 #### 0x0 前言
@@ -211,14 +211,15 @@ int main(){
     </center>
 </div>
 
-----------------
+**----------------**
+
 这里解释一下link_map结构体的作用。link_map结构体用于描述so文件信息，其中l_next与l_prev成员将多个so库链接起来，因此也是链表形式。其余的成员都用于保存so文件的各种数据。这里需要特别关注如下的成员：
 
 l_addr保存的是so文件加载的基地址，l_ld保存的是dynamic段加载地址，l_name为该。
 
 l_info[DT_NUM + DT_THISPROCNUM + DT_VERSIONTAGNUM + DT_EXTRANUM + DT_VALNUM + DT_ADDRNUM]这个数组保存了Dynamic段的信息，之后会使用到，到时就会知道保存了哪些信息。
 
------------------
+**----------------**
 
 接着查看main_map的数据，如图1-6所示，main_map也为link_map结构，并且由l_name成员可知，main_map描述的正是目标so文件。l_addr为基址在图中是十进制显示，转化为十六进制就是0x7ffff7f7c2000。
 
@@ -312,7 +313,7 @@ case PT_DYNAMIC:
     }
 ```
 
----------------------
+**----------------**
 
 这里需要补充一下dynamic段的数据的组成。
 dynamic段的内容为结构体数组，结构体的声明如下。d_tag大小为8字节，d_val or d_ptr也为8字节，因此每个结构体为16字节。dynamic段就有该结构体组成的数组构成。
@@ -328,7 +329,7 @@ typedef struct {
 extern Elf32_Dyn _DYNAMIC[];
 ```
 
-----------------------
+**----------------**
 
 那么再回到上面的代码,l->l_addr + l->l_info[DT_INIT]->d_un.d_ptr计算刚好是.init节载入到内存后的地址。
 

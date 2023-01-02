@@ -4,15 +4,15 @@
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=robots content="noodp">
 <meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
-<title>136字节大小的so文件如何执行藏匿于程序头的汇编指令？ - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="136字节大小的so文件如何执行藏匿于程序头的汇编指令？">
+<title>136字节大小的so文件如何执行藏匿于程序头的汇编指令 - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="136字节大小的so文件如何执行藏匿于程序头的汇编指令">
 <meta property="og:description" content="0x0 前言 在之前复现CVE-2021-3060时，搜索到POC，在里面发现了POC作者使用了如 图0-1 所示的so文件配合openssl的engi">
 <meta property="og:type" content="article">
 <meta property="og:url" content="http://int80.top/23-1-2/"><meta property="article:section" content="posts">
 <meta name=twitter:card content="summary">
-<meta name=twitter:title content="136字节大小的so文件如何执行藏匿于程序头的汇编指令？">
+<meta name=twitter:title content="136字节大小的so文件如何执行藏匿于程序头的汇编指令">
 <meta name=twitter:description content="0x0 前言 在之前复现CVE-2021-3060时，搜索到POC，在里面发现了POC作者使用了如 图0-1 所示的so文件配合openssl的engi">
 <meta name=application-name content="花满楼">
-<meta name=apple-mobile-web-app-title content="花满楼"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/23-1-2/><link rel=next href=http://int80.top/oslab1/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"136字节大小的so文件如何执行藏匿于程序头的汇编指令？","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/23-1-2\/"},"genre":"posts","keywords":"ELF文件","wordcount":5667,"url":"http:\/\/int80.top\/23-1-2\/","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<meta name=apple-mobile-web-app-title content="花满楼"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/23-1-2/><link rel=next href=http://int80.top/oslab1/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"136字节大小的so文件如何执行藏匿于程序头的汇编指令","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/23-1-2\/"},"genre":"posts","keywords":"ELF文件","wordcount":5671,"url":"http:\/\/int80.top\/23-1-2\/","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
 <body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
 <div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
 <div class=header-wrapper>
@@ -52,9 +52,9 @@
 <div class=toc id=toc-auto>
 <h2 class=toc-title>目录</h2>
 <div class=toc-content id=toc-content-auto></div>
-</div><article class="page single"><h1 class="single-title animated flipInX">136字节大小的so文件如何执行藏匿于程序头的汇编指令？</h1><div class=post-meta>
+</div><article class="page single"><h1 class="single-title animated flipInX">136字节大小的so文件如何执行藏匿于程序头的汇编指令</h1><div class=post-meta>
 <div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=0001-01-01>0001-01-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5667 字
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=0001-01-01>0001-01-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5671 字
 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
 </div><div class="details toc" id=toc-static kept>
 <div class="details-summary toc-title">
@@ -294,11 +294,11 @@
 图 1-5 调用call_init需要的值
 </center>
 </div>
-<hr>
+<p><strong>&mdash;&mdash;&mdash;&mdash;&mdash;-</strong></p>
 <p>这里解释一下link_map结构体的作用。link_map结构体用于描述so文件信息，其中l_next与l_prev成员将多个so库链接起来，因此也是链表形式。其余的成员都用于保存so文件的各种数据。这里需要特别关注如下的成员：</p>
 <p>l_addr保存的是so文件加载的基地址，l_ld保存的是dynamic段加载地址，l_name为该。</p>
 <p>l_info[DT_NUM + DT_THISPROCNUM + DT_VERSIONTAGNUM + DT_EXTRANUM + DT_VALNUM + DT_ADDRNUM]这个数组保存了Dynamic段的信息，之后会使用到，到时就会知道保存了哪些信息。</p>
-<hr>
+<p><strong>&mdash;&mdash;&mdash;&mdash;&mdash;-</strong></p>
 <p>接着查看main_map的数据，如图1-6所示，main_map也为link_map结构，并且由l_name成员可知，main_map描述的正是目标so文件。l_addr为基址在图中是十进制显示，转化为十六进制就是0x7ffff7f7c2000。</p>
 <div>
 <center>
@@ -427,7 +427,7 @@
     <span class=p>}</span>
 </code></pre></td></tr></table>
 </div>
-</div><hr>
+</div><p><strong>&mdash;&mdash;&mdash;&mdash;&mdash;-</strong></p>
 <p>这里需要补充一下dynamic段的数据的组成。
 dynamic段的内容为结构体数组，结构体的声明如下。d_tag大小为8字节，d_val or d_ptr也为8字节，因此每个结构体为16字节。dynamic段就有该结构体组成的数组构成。</p>
 <div class=highlight><div class=chroma>
@@ -452,7 +452,7 @@ dynamic段的内容为结构体数组，结构体的声明如下。d_tag大小�
 <span class=k>extern</span> <span class=n>Elf32_Dyn</span> <span class=n>_DYNAMIC</span><span class=p>[];</span>
 </code></pre></td></tr></table>
 </div>
-</div><hr>
+</div><p><strong>&mdash;&mdash;&mdash;&mdash;&mdash;-</strong></p>
 <p>那么再回到上面的代码,l->l_addr + l->l_info[DT_INIT]->d_un.d_ptr计算刚好是.init节载入到内存后的地址。</p>
 <div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
