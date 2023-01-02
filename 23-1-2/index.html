@@ -1,0 +1,535 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>136字节大小的so文件如何执行藏匿于程序头的汇编指令？ - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="136字节大小的so文件如何执行藏匿于程序头的汇编指令？">
+<meta property="og:description" content="0x0 前言 在之前复现CVE-2021-3060时，搜索到POC，在里面发现了POC作者使用了如 图0-1 所示的so文件配合openssl的engi">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://int80.top/23-1-2/"><meta property="article:section" content="posts">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="136字节大小的so文件如何执行藏匿于程序头的汇编指令？">
+<meta name=twitter:description content="0x0 前言 在之前复现CVE-2021-3060时，搜索到POC，在里面发现了POC作者使用了如 图0-1 所示的so文件配合openssl的engi">
+<meta name=application-name content="花满楼">
+<meta name=apple-mobile-web-app-title content="花满楼"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/23-1-2/><link rel=next href=http://int80.top/oslab1/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"136字节大小的so文件如何执行藏匿于程序头的汇编指令？","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/23-1-2\/"},"genre":"posts","keywords":"ELF文件","wordcount":5667,"url":"http:\/\/int80.top\/23-1-2\/","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> Posts </a><a class=menu-item href=/tags/> Tags </a><a class=menu-item href=/categories/> Categories </a><a class=menu-item href=/aboutme/> About Me </a><a class=menu-item href=/search/><i class="fas fa-fw fa-search"></i> search </a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/ title>Posts</a><a class=menu-item href=/tags/ title>Tags</a><a class=menu-item href=/categories/ title>Categories</a><a class=menu-item href=/aboutme/ title>About Me</a><a class=menu-item href=/search/ title><i class="fas fa-fw fa-search"></i>search</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container>
+<div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">136字节大小的so文件如何执行藏匿于程序头的汇编指令？</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=0001-01-01>0001-01-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5667 字
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href=#0x0-前言>0x0 前言</a></li>
+<li><a href=#0x1-分析思路>0x1 分析思路</a>
+<ul>
+<li><a href=#0x10-为什么能确定这段汇编指令被视作init节的内容>0x10 为什么能确定这段汇编指令被视作.init节的内容？</a></li>
+<li><a href=#0x11-这个so文件是如何设计让这段汇编代码刚好为init节呢>0x11 这个so文件是如何设计让这段汇编代码刚好为.init节呢？</a></li>
+</ul>
+</li>
+<li><a href=#0x2-额外的问题>0x2 额外的问题</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div><div class=content id=content><h4 id=0x0-前言>0x0 前言</h4>
+<p>在之前复现CVE-2021-3060时，搜索到<a href="https://forum.spacehey.com/topic?id=83646" target=_blank rel="noopener noreffer">POC</a>，在里面发现了POC作者使用了如 图0-1 所示的so文件配合openssl的engine参数进行了root权限的获取。</p>
+<div>
+<center>
+<img src=目标so文件.png alt=目标so文件.png style=100%>
+<br>
+图 0-1 目标so文件
+</center>
+</div>
+<p>在图0-1中被白框框住的数据为汇编指令，其汇编指令内容如下 图0-2 所示，该汇编指令的作用就是通过execve的系统调用运行/tmp/hax脚本。</p>
+<div>
+<center>
+<img src=汇编指令.png alt=汇编指令.png style=100%>
+<br>
+图 0-2 so文件中的汇编指令
+</center>
+</div>
+<p>图 0-1 的so文件并不是通过gcc或者其他编译器编译生成，而是直接通过webshell使用echo指令将数据写入空白文件生成。</p>
+<p>这里以如 图 0-3 所示的hax脚本内容进行演示</p>
+<div>
+<center>
+<img src=hax.png alt=hax.png style=100%>
+<br>
+图 0-3 hax脚本内容
+</center>
+</div>
+<p>因为POC是通过openssl的engine参数加载的so，经过调试发现openssl的engine参数最终会调用dlopen来将so文件载入，因此下面的演示会通过openssl以及如下代码进行演示。如下代码会编译成runlib可执行程序，目标so文件命名为lib.so。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;dlfcn.h&gt; </span><span class=cp>
+</span><span class=cp></span>
+<span class=kt>int</span> <span class=nf>main</span><span class=p>(){</span>
+    <span class=kt>void</span> <span class=o>*</span><span class=n>handle</span><span class=p>;</span>
+
+    <span class=n>handle</span> <span class=o>=</span> <span class=n>dlopen</span><span class=p>(</span><span class=s>&#34;/home/kali/lib.so&#34;</span><span class=p>,</span><span class=n>RTLD_LAZY</span><span class=p>);</span>
+
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用openssl的engine参数载入目标so文件，与通过dlopen函数载入目标so文件的效果如下 图 0-4 所示，因此通过dlopen函数载入该so文件可以执行 图 0-1 白框内的汇编代码。</p>
+<div>
+<center>
+<img src=演示结果.png alt=演示结果.png style=100%>
+<br>
+图 0-4 so文件的汇编指令执行的演示结果
+</center>
+</div>
+<p>那么就引出了该博客的核心问题，为什么使用dlopen函数可以执行该so文件中的汇编指令？</p>
+<p>对于so文件来说，第一次被载入后会执行.init节的代码指令，程序执行完成后会执行.fini节的代码指令。但该畸形so文件并不存在.init节，并且唯一存在的节头类型为NULL，虽然该节头的文件偏移数据刚好为0x3A，也即图0-1中白框汇编指令的起始地址，但NULL类型的节，其数据被视为无意义的。同时，该so文件的ELF文件头的e_entry数据，也即程序入口的虚拟地址为0x2，也与汇编指令的无关。</p>
+<p>那么dlopen是如何能够执行这段汇编指令的？</p>
+<h4 id=0x1-分析思路>0x1 分析思路</h4>
+<p>首先直接给出结论，dlopen在载入so文件时，会调用call_init执行.init节的代码。这个so文件里的汇编指令会被执行也就是利用了该机制。</p>
+<p>那么问题就来了，为什么能确定dlopen将这段汇编指令视作.init节的内容呢？并且这个so文件又是如何做到能让这段汇编指令被dlopen视为.init节的代码呢？</p>
+<h5 id=0x10-为什么能确定这段汇编指令被视作init节的内容>0x10 为什么能确定这段汇编指令被视作.init节的内容？</h5>
+<p>由于dlopen源码存在调用链，整体的代码量比较大，并且较为复杂，那么首先就是确认dlopen函数执行后进入的哪个函数将so文件的汇编执行了，然后逆着分析经过的哪些函数获取了so文件中的哪些必要的数据。</p>
+<p>因为已经给so文件中的汇编指令的第一个字节改为0xCC，因此直接让程序跑到中断处，再查看backtrace即可，如图1-1所示。</p>
+<div>
+<center>
+<img src=bt.png alt=bt.png style=100%>
+<br>
+图 1-1 backtrace
+</center>
+</div>
+<p>由图1-1可知，进入call_init后，so文件中的汇编指令就会被执行了，如图1-2所示，此时程序执行到了int 3中断处，并且RIP寄存器指向的指令的二进制数据刚好为图0-1白框内的数据。</p>
+<div>
+<center>
+<img src=0xcc.png alt=0xcc.png style=100%>
+<br>
+图 1-2 程序中断后的现场
+</center>
+</div>
+<p>那么接下来就是分析call_init和_dl_init两个函数的源码，分析这两个函数做了什么事情。</p>
+<p>首先，在_dl_init函数的调试中，程序会进入call_init，但_dl_init源码中存在两处调用了call_init，因此需要确定调用的是何处的call_init，用来确定_dl_init的执行路径。</p>
+<p>跟踪_dl_init源码中的preinit_array和preinit_array_size变量发现，这两个变量影响了_dl_init函数的主要执行路径，因此在动态调试时需要关注这两个变量的数据。这两个变量影响的代码如下所示</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C data-lang=C>  <span class=n>ElfW</span><span class=p>(</span><span class=n>Dyn</span><span class=p>)</span> <span class=o>*</span><span class=n>preinit_array</span> <span class=o>=</span> <span class=n>main_map</span><span class=o>-&gt;</span><span class=n>l_info</span><span class=p>[</span><span class=n>DT_PREINIT_ARRAY</span><span class=p>];</span>
+  <span class=n>ElfW</span><span class=p>(</span><span class=n>Dyn</span><span class=p>)</span> <span class=o>*</span><span class=n>preinit_array_size</span> <span class=o>=</span> <span class=n>main_map</span><span class=o>-&gt;</span><span class=n>l_info</span><span class=p>[</span><span class=n>DT_PREINIT_ARRAYSZ</span><span class=p>];</span>
+  <span class=k>struct</span> <span class=n>r_debug</span> <span class=o>*</span><span class=n>r</span><span class=p>;</span>
+  <span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>i</span><span class=p>;</span>
+
+  <span class=k>if</span> <span class=p>(</span><span class=n>__builtin_expect</span> <span class=p>(</span><span class=n>GL</span><span class=p>(</span><span class=n>dl_initfirst</span><span class=p>)</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>,</span> <span class=mi>0</span><span class=p>))</span>
+    <span class=p>{</span>
+      <span class=n>call_init</span> <span class=p>(</span><span class=n>GL</span><span class=p>(</span><span class=n>dl_initfirst</span><span class=p>),</span> <span class=n>argc</span><span class=p>,</span> <span class=n>argv</span><span class=p>,</span> <span class=n>env</span><span class=p>);</span>
+      <span class=n>GL</span><span class=p>(</span><span class=n>dl_initfirst</span><span class=p>)</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
+    <span class=p>}</span>
+
+ <span class=cm>/* Don&#39;t do anything if there is no preinit array.  */</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>__builtin_expect</span> <span class=p>(</span><span class=n>preinit_array</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span>
+      <span class=o>&amp;&amp;</span> <span class=n>preinit_array_size</span> <span class=o>!=</span> <span class=nb>NULL</span>
+      <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=n>i</span> <span class=o>=</span> <span class=n>preinit_array_size</span><span class=o>-&gt;</span><span class=n>d_un</span><span class=p>.</span><span class=n>d_val</span> <span class=o>/</span> <span class=k>sizeof</span> <span class=p>(</span><span class=n>ElfW</span><span class=p>(</span><span class=n>Addr</span><span class=p>)))</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>)</span>
+    <span class=p>{</span>
+      <span class=n>ElfW</span><span class=p>(</span><span class=n>Addr</span><span class=p>)</span> <span class=o>*</span><span class=n>addrs</span><span class=p>;</span>
+      <span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>cnt</span><span class=p>;</span>
+
+      <span class=k>if</span> <span class=p>(</span><span class=n>__builtin_expect</span> <span class=p>(</span><span class=n>GLRO</span><span class=p>(</span><span class=n>dl_debug_mask</span><span class=p>)</span> <span class=o>&amp;</span> <span class=n>DL_DEBUG_IMPCALLS</span><span class=p>,</span> <span class=mi>0</span><span class=p>))</span>
+	<span class=n>_dl_debug_printf</span> <span class=p>(</span><span class=s>&#34;</span><span class=se>\n</span><span class=s>calling preinit: %s</span><span class=se>\n\n</span><span class=s>&#34;</span><span class=p>,</span>
+			  <span class=n>main_map</span><span class=o>-&gt;</span><span class=n>l_name</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+			  <span class=o>?</span> <span class=n>main_map</span><span class=o>-&gt;</span><span class=nl>l_name</span> <span class=p>:</span> <span class=n>rtld_progname</span><span class=p>);</span>
+
+      <span class=n>addrs</span> <span class=o>=</span> <span class=p>(</span><span class=n>ElfW</span><span class=p>(</span><span class=n>Addr</span><span class=p>)</span> <span class=o>*</span><span class=p>)</span> <span class=p>(</span><span class=n>preinit_array</span><span class=o>-&gt;</span><span class=n>d_un</span><span class=p>.</span><span class=n>d_ptr</span> <span class=o>+</span> <span class=n>main_map</span><span class=o>-&gt;</span><span class=n>l_addr</span><span class=p>);</span>
+      <span class=k>for</span> <span class=p>(</span><span class=n>cnt</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>cnt</span> <span class=o>&lt;</span> <span class=n>i</span><span class=p>;</span> <span class=o>++</span><span class=n>cnt</span><span class=p>)</span>
+	<span class=p>((</span><span class=n>init_t</span><span class=p>)</span> <span class=n>addrs</span><span class=p>[</span><span class=n>cnt</span><span class=p>])</span> <span class=p>(</span><span class=n>argc</span><span class=p>,</span> <span class=n>argv</span><span class=p>,</span> <span class=n>env</span><span class=p>);</span>
+    <span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的代码做的事情就是从main_map中获取.preinit节的信息，并存放在preinit_array中。dl_initfirst变量在_dl_map_object_from_fd函数中被赋值，表示需要被预先初始化的共享库，存在则调用call_init来执行该库的初始化函数。接着获取preinit_array对应的初始化函数的地址addrs，并调用执行。</p>
+<p>接着重新调试dlopen，并在_dl_init函数打上断点，并查看main_map与preinit_array的数据。</p>
+<p>如图1-3所示，首先是preinit_array和preinit_array_size的数据皆为0，因此在_dl_init函数中就不会去调用preinit相关的初始化函数，因此只会调用会执行so文件中的汇编指令的call_init函数。同时经过调试dl_initfirst变量无法直接在gdb使用print命令查看，提示该符号不存在上下文中，因此从汇编代码获取该值为0，因此也不会调用最开始的call_init函数。</p>
+<div>
+<center>
+<img src=preinit.png alt=preinit.png style=100%>
+<br>
+图 1-3 preinit_array变量数据
+</center>
+</div>
+<p>继续分析</p>
+<p>因为源码与汇编执行不同步，因此我采取了汇编与反编译得到的c代码进行对比分析。</p>
+<p>如图1-4所示，_dl_init执行的call call_init指令附近存在sub rbx，8 ，并且由ida反编译得到C代码存在v11 -= 8的语句，并且ida将汇编与反编译的C代码同步显示时，call call_init指令与result = call_init()语句刚好同步高亮，因此可以确定_dl_init调用的call_init函数位于源码中的while循环中。第一个调用的call_init与变量dl_initfirst有关，而汇编执行的路径并没有执行到该语句对应的汇编指令。</p>
+<div>
+<center>
+<img src=call_init.png alt=call_init.png style=100%>
+<br>
+图 1-4 call_init调用确定
+</center>
+</div>
+<p>对应到_dl_init的源码就是如下代码所示</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c> <span class=cm>/* Stupid users forced the ELF specification to be changed.  It now
+</span><span class=cm>     says that the dynamic loader is responsible for determining the
+</span><span class=cm>     order in which the constructors have to run.  The constructors
+</span><span class=cm>     for all dependencies of an object must run before the constructor
+</span><span class=cm>     for the object itself.  Circular dependencies are left unspecified.
+</span><span class=cm>
+</span><span class=cm>     This is highly questionable since it puts the burden on the dynamic
+</span><span class=cm>     loader which has to find the dependencies at runtime instead of
+</span><span class=cm>     letting the user do it right.  Stupidity rules!  */</span>
+
+  <span class=n>i</span> <span class=o>=</span> <span class=n>main_map</span><span class=o>-&gt;</span><span class=n>l_searchlist</span><span class=p>.</span><span class=n>r_nlist</span><span class=p>;</span>
+  <span class=k>while</span> <span class=p>(</span><span class=n>i</span><span class=o>--</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>)</span>
+    <span class=n>call_init</span> <span class=p>(</span><span class=n>main_map</span><span class=o>-&gt;</span><span class=n>l_initfini</span><span class=p>[</span><span class=n>i</span><span class=p>],</span> <span class=n>argc</span><span class=p>,</span> <span class=n>argv</span><span class=p>,</span> <span class=n>env</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里根据注释的意思就是，获取main_map中依赖的共享库数量，然后循环调用call_init函数来执行依赖库中的初始化函数。</p>
+<p>在动态调试时，已经确定了在此处调用call_init后，就会去执行so文件中的汇编指令，因此需要注意main_map的数据。</p>
+<p>如图1-5所示，main_map->l_searchlist.r_nlist值为1，main_map->l_initfini[i]为0x5555555592c0，并且为link_map结构体。</p>
+<div>
+<center>
+<img src=initfini.png alt=initfini.png style=100%>
+<br>
+图 1-5 调用call_init需要的值
+</center>
+</div>
+<hr>
+<p>这里解释一下link_map结构体的作用。link_map结构体用于描述so文件信息，其中l_next与l_prev成员将多个so库链接起来，因此也是链表形式。其余的成员都用于保存so文件的各种数据。这里需要特别关注如下的成员：</p>
+<p>l_addr保存的是so文件加载的基地址，l_ld保存的是dynamic段加载地址，l_name为该。</p>
+<p>l_info[DT_NUM + DT_THISPROCNUM + DT_VERSIONTAGNUM + DT_EXTRANUM + DT_VALNUM + DT_ADDRNUM]这个数组保存了Dynamic段的信息，之后会使用到，到时就会知道保存了哪些信息。</p>
+<hr>
+<p>接着查看main_map的数据，如图1-6所示，main_map也为link_map结构，并且由l_name成员可知，main_map描述的正是目标so文件。l_addr为基址在图中是十进制显示，转化为十六进制就是0x7ffff7f7c2000。</p>
+<div>
+<center>
+<img src=main_map.png alt=main_map.png style=100%>
+<br>
+图 1-6 main_map部分成员
+</center>
+</div>
+<p>在_dl_init函数中调用call_init函数的代码中，传入call_init的参数为main_map->l_initfini[0]，在图1-5中，打印的main_map->l_initfini[0]值为0x5555555592c0，这地址正好为main_map的地址，如图1-7所示，因此call_init执行的正是lib.so的初始化函数，也就是目标so文件lib.so的.init节的代码。</p>
+<div>
+<center>
+<img src=call_init的是自身so.png alt=call_init的是自身so.png style=100%>
+<br>
+图 1-7 main_map地址与l_initfini指向的地址相同
+</center>
+</div>
+<p>有的朋友可能到这还有个疑问，你怎么知道call_init会执行.init节的代码呢？</p>
+<p>请接着看0x11节的内容。</p>
+<h5 id=0x11-这个so文件是如何设计让这段汇编代码刚好为init节呢>0x11 这个so文件是如何设计让这段汇编代码刚好为.init节呢？</h5>
+<p>首先我们直接看call_init函数的关键函数，如下代码所示，其中l就是mian_map->l_initfini[0]，也即main_map本身。该段代码首先判断l->l_info[DT_INIT]是否为空，不为空则使用so文件载入内存的基址加上l->l_info[DT_INIT]->d_un.d_ptr，也就是加上.init节的起始地址。因此init保存了.init节的起始地址，并紧接着就调用了.init节的代码。那么重点就是l_info的数据是如何获取了。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C data-lang=C><span class=k>if</span> <span class=p>(</span><span class=n>l</span><span class=o>-&gt;</span><span class=n>l_info</span><span class=p>[</span><span class=n>DT_INIT</span><span class=p>]</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>)</span>
+    <span class=p>{</span>
+      <span class=n>init_t</span> <span class=n>init</span> <span class=o>=</span> <span class=p>(</span><span class=n>init_t</span><span class=p>)</span> <span class=n>DL_DT_INIT_ADDRESS</span>
+	<span class=p>(</span><span class=n>l</span><span class=p>,</span> <span class=n>l</span><span class=o>-&gt;</span><span class=n>l_addr</span> <span class=o>+</span> <span class=n>l</span><span class=o>-&gt;</span><span class=n>l_info</span><span class=p>[</span><span class=n>DT_INIT</span><span class=p>]</span><span class=o>-&gt;</span><span class=n>d_un</span><span class=p>.</span><span class=n>d_ptr</span><span class=p>);</span>
+
+      <span class=cm>/* Call the function.  */</span>
+      <span class=n>init</span> <span class=p>(</span><span class=n>argc</span><span class=p>,</span> <span class=n>argv</span><span class=p>,</span> <span class=n>env</span><span class=p>);</span>
+    <span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>第一个问题就是，dlopen是如何找到.init节的起始地址呢？也就是l_info中的数据？</p>
+<p>在dlopen的调用链中，调用的函数_dl_map_object_from_fd会根据程序头表的类型进行不同的处理，如下代码所示对于Dynamic段的处理就是获取其p_vaddr赋值给l->l_ld，此时l->l_ld保存的就是Dynamic段的虚拟起始地址。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C data-lang=C><span class=k>case</span> <span class=nl>PT_DYNAMIC</span><span class=p>:</span>
+	<span class=n>l</span><span class=o>-&gt;</span><span class=n>l_ld</span> <span class=o>=</span> <span class=p>(</span><span class=kt>void</span> <span class=o>*</span><span class=p>)</span> <span class=n>ph</span><span class=o>-&gt;</span><span class=n>p_vaddr</span><span class=p>;</span>
+	<span class=n>l</span><span class=o>-&gt;</span><span class=n>l_ldnum</span> <span class=o>=</span> <span class=n>ph</span><span class=o>-&gt;</span><span class=n>p_memsz</span> <span class=o>/</span> <span class=k>sizeof</span> <span class=p>(</span><span class=n>ElfW</span><span class=p>(</span><span class=n>Dyn</span><span class=p>));</span>
+	<span class=k>break</span><span class=p>;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>在_dl_map_object_from_fd函数中调用了elf_get_dynamic_info函数，该函数对dynamic段的数据进行了读取。如下代码所示，首先将Dynamic段的起始地址l->ld给dyn指针，然后判断dynamic段中的每个项的d_tag数据是否满足下面的if条件，如果满足则将dyn变量，也即该项的起始地址(因为dyn++，因此每次++，都会指向下一个项)写入以该项的d_tag数据作为索引的l->l_info的数组中。</p>
+<p>以.init段为例，.init段的d_tag为12，而DT_NUM定义为34，因此满足第一个if的条件，因此为info[0xC] = .init节的起始地址。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C data-lang=C>  <span class=n>ElfW</span><span class=p>(</span><span class=n>Dyn</span><span class=p>)</span> <span class=o>*</span><span class=n>dyn</span> <span class=o>=</span> <span class=n>l</span><span class=o>-&gt;</span><span class=n>l_ld</span><span class=p>;</span>
+  <span class=n>ElfW</span><span class=p>(</span><span class=n>Dyn</span><span class=p>)</span> <span class=o>**</span><span class=n>info</span><span class=p>;</span>
+
+<span class=cp>#ifndef RTLD_BOOTSTRAP
+</span><span class=cp></span>  <span class=k>if</span> <span class=p>(</span><span class=n>dyn</span> <span class=o>==</span> <span class=nb>NULL</span><span class=p>)</span>
+    <span class=k>return</span><span class=p>;</span>
+<span class=cp>#endif
+</span><span class=cp></span>
+  <span class=n>info</span> <span class=o>=</span> <span class=n>l</span><span class=o>-&gt;</span><span class=n>l_info</span><span class=p>;</span>
+
+  <span class=k>while</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span> <span class=o>!=</span> <span class=n>DT_NULL</span><span class=p>)</span>
+    <span class=p>{</span>
+      <span class=k>if</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span> <span class=o>&lt;</span> <span class=n>DT_NUM</span><span class=p>)</span>
+	<span class=n>info</span><span class=p>[</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span><span class=p>]</span> <span class=o>=</span> <span class=n>dyn</span><span class=p>;</span>
+      <span class=k>else</span> <span class=nf>if</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span> <span class=o>&gt;=</span> <span class=n>DT_LOPROC</span> <span class=o>&amp;&amp;</span>
+	       <span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span> <span class=o>&lt;</span> <span class=n>DT_LOPROC</span> <span class=o>+</span> <span class=n>DT_THISPROCNUM</span><span class=p>)</span>
+	<span class=n>info</span><span class=p>[</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span> <span class=o>-</span> <span class=n>DT_LOPROC</span> <span class=o>+</span> <span class=n>DT_NUM</span><span class=p>]</span> <span class=o>=</span> <span class=n>dyn</span><span class=p>;</span>
+      <span class=k>else</span> <span class=nf>if</span> <span class=p>((</span><span class=n>Elf32_Word</span><span class=p>)</span> <span class=n>DT_VERSIONTAGIDX</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span><span class=p>)</span> <span class=o>&lt;</span> <span class=n>DT_VERSIONTAGNUM</span><span class=p>)</span>
+	<span class=n>info</span><span class=p>[</span><span class=n>VERSYMIDX</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span><span class=p>)]</span> <span class=o>=</span> <span class=n>dyn</span><span class=p>;</span>
+      <span class=k>else</span> <span class=nf>if</span> <span class=p>((</span><span class=n>Elf32_Word</span><span class=p>)</span> <span class=n>DT_EXTRATAGIDX</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span><span class=p>)</span> <span class=o>&lt;</span> <span class=n>DT_EXTRANUM</span><span class=p>)</span>
+	<span class=n>info</span><span class=p>[</span><span class=n>DT_EXTRATAGIDX</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span><span class=p>)</span> <span class=o>+</span> <span class=n>DT_NUM</span> <span class=o>+</span> <span class=n>DT_THISPROCNUM</span>
+	     <span class=o>+</span> <span class=n>DT_VERSIONTAGNUM</span><span class=p>]</span> <span class=o>=</span> <span class=n>dyn</span><span class=p>;</span>
+      <span class=k>else</span> <span class=nf>if</span> <span class=p>((</span><span class=n>Elf32_Word</span><span class=p>)</span> <span class=n>DT_VALTAGIDX</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span><span class=p>)</span> <span class=o>&lt;</span> <span class=n>DT_VALNUM</span><span class=p>)</span>
+	<span class=n>info</span><span class=p>[</span><span class=n>DT_VALTAGIDX</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span><span class=p>)</span> <span class=o>+</span> <span class=n>DT_NUM</span> <span class=o>+</span> <span class=n>DT_THISPROCNUM</span>
+	     <span class=o>+</span> <span class=n>DT_VERSIONTAGNUM</span> <span class=o>+</span> <span class=n>DT_EXTRANUM</span><span class=p>]</span> <span class=o>=</span> <span class=n>dyn</span><span class=p>;</span>
+      <span class=k>else</span> <span class=nf>if</span> <span class=p>((</span><span class=n>Elf32_Word</span><span class=p>)</span> <span class=n>DT_ADDRTAGIDX</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span><span class=p>)</span> <span class=o>&lt;</span> <span class=n>DT_ADDRNUM</span><span class=p>)</span>
+	<span class=n>info</span><span class=p>[</span><span class=n>DT_ADDRTAGIDX</span> <span class=p>(</span><span class=n>dyn</span><span class=o>-&gt;</span><span class=n>d_tag</span><span class=p>)</span> <span class=o>+</span> <span class=n>DT_NUM</span> <span class=o>+</span> <span class=n>DT_THISPROCNUM</span>
+	     <span class=o>+</span> <span class=n>DT_VERSIONTAGNUM</span> <span class=o>+</span> <span class=n>DT_EXTRANUM</span> <span class=o>+</span> <span class=n>DT_VALNUM</span><span class=p>]</span> <span class=o>=</span> <span class=n>dyn</span><span class=p>;</span>
+      <span class=o>++</span><span class=n>dyn</span><span class=p>;</span>
+    <span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><hr>
+<p>这里需要补充一下dynamic段的数据的组成。
+dynamic段的内容为结构体数组，结构体的声明如下。d_tag大小为8字节，d_val or d_ptr也为8字节，因此每个结构体为16字节。dynamic段就有该结构体组成的数组构成。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C data-lang=C><span class=k>typedef</span> <span class=k>struct</span> <span class=p>{</span>
+    <span class=n>Elf32_Sword</span> <span class=n>d_tag</span><span class=p>;</span>
+    <span class=k>union</span> <span class=p>{</span>
+        <span class=n>Elf32_Word</span> <span class=n>d_val</span><span class=p>;</span>
+        <span class=n>Elf32_Addr</span> <span class=n>d_ptr</span><span class=p>;</span>
+    <span class=p>}</span> <span class=n>d_un</span><span class=p>;</span>
+<span class=p>}</span> <span class=n>Elf32_Dyn</span><span class=p>;</span>
+<span class=k>extern</span> <span class=n>Elf32_Dyn</span> <span class=n>_DYNAMIC</span><span class=p>[];</span>
+</code></pre></td></tr></table>
+</div>
+</div><hr>
+<p>那么再回到上面的代码,l->l_addr + l->l_info[DT_INIT]->d_un.d_ptr计算刚好是.init节载入到内存后的地址。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C data-lang=C> <span class=n>init_t</span> <span class=n>init</span> <span class=o>=</span> <span class=p>(</span><span class=n>init_t</span><span class=p>)</span> <span class=n>DL_DT_INIT_ADDRESS</span>
+	<span class=p>(</span><span class=n>l</span><span class=p>,</span> <span class=n>l</span><span class=o>-&gt;</span><span class=n>l_addr</span> <span class=o>+</span> <span class=n>l</span><span class=o>-&gt;</span><span class=n>l_info</span><span class=p>[</span><span class=n>DT_INIT</span><span class=p>]</span><span class=o>-&gt;</span><span class=n>d_un</span><span class=p>.</span><span class=n>d_ptr</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们现在再回到该so的二进制数据进行查看dynamic段的数据，如图1-8所示，可以看到dynamic段的p_vaddr为0x58，以0x58开始，每16字节为一个Elf32_Dyn项，那么第二项的前8个字节d_tag为0xC，代表了.init节，后8个字节为0x3A，正好是汇编代码起始的地址。</p>
+<div>
+<center>
+<img src=dynamic.png alt=dynamic.png style=100%>
+<br>
+图 1-8 dynamic段数据
+</center>
+</div>
+<p>因为目标so文件是畸形的，无法使用IDA以ELF格式打开，因此我把一个正常的so文件的dynamic段的数据按照目标so的dynamic段的数据修改后得到图1-9所示，可以看到0xC正好是DT_INIT，0x5为DT_STRTAB，0x6为DT_SYMTAB，这三个类型对于so文件来说都是必须存在的。</p>
+<div>
+<center>
+<img src=dynamic段的内容.png alt=dynamic段的内容.png style=100%>
+<br>
+图 1-9 dynamic段的内容
+</center>
+</div>
+<p>为了更进一步证明结论，再次回到gdb将关键数据进行打印。如图1-10所示，目标so载入内存后的基址l_addr为0x7ffff7f7c2000，dynamic段的虚拟地址为0x7ffff7fc2058，这与图1-9中的dynamic段的p_vaddr=0x58是相同的。main_map->l_info[DT_INIT(0xC)]保存的值为0x7ffff7fc2068，在图1-9中的dynamic段内容的第二项起始地址正是0x68。该项的d_tag为0xC也即.init段，d_ptr为0x3A，正好是汇编指令起始的地址。</p>
+<div>
+<center>
+<img src=gdb的关键数据.png alt=gdb的关键数据.png style=100%>
+<br>
+图 1-10 程序运行时关键数据的值
+</center>
+</div>
+<p>综上，通过dlopen函数打开目标so文件会执行藏匿于0x3A的汇编指令，正是因为该so文件的设计让汇编指令正好为.init段的内容，因此会被执行。</p>
+<h4 id=0x2-额外的问题>0x2 额外的问题</h4>
+<p>最开始的问题确实是为什么这个so文件的汇编指令会被执行，但是在证明的过程中，又引出了其他的问题。为什么我更改dynamic段的文件偏移p_offset的值为0x58后再次载入该so文件会出错，为什么dynamic段的d_tag=0x5项的d_ptr更改为其他的值就会出错，这个项指向的地址根本是无意义的啊。同理d_tag=0x6的d_ptr指向的地址为0x0，同样更改后载入该so文件也会出错。为什么就不能替换成dynamic段其他必要的类型的项呢？</p>
+<p>这些问题同样需要解决。稍后一段时间我会再次去调试，尝试解决。噢还得验证是否可以作为模板使用，因为汇编指令只从0x3A到0x4F，如果更长呢？使用jmp跳到最后面继续添加指令，这个文件是否还能正常运行？这些都需要验证。不过今天暂时先这样了。</p>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 0001-01-01</span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/23-1-2/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/elf%E6%96%87%E4%BB%B6/>ELF文件</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav>
+<a href=/oslab1/ class=next rel=next title=操作系统的引导>操作系统的引导<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id=comments><div id=utterances></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2021 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>ShiDong</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer>
+</div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{utterances:{darkTheme:"github-dark",issueTerm:"pathname",label:"",lightTheme:"github-light",repo:"Mrsdwang/Mrsdwang.github.io"}},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1}}</script><script type=text/javascript src=/js/theme.min.js></script></body>
+</html>
