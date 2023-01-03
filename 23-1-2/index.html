@@ -14,7 +14,7 @@
 <meta name=twitter:title content="136字节大小的so文件如何执行藏匿于程序头的汇编指令">
 <meta name=twitter:description content="0x0 前言 在之前复现CVE-2021-3060时，搜索到POC，在里面发现了POC作者使用了如 图0-1 所示的so文件配合openssl的engi">
 <meta name=application-name content="花满楼">
-<meta name=apple-mobile-web-app-title content="花满楼"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/23-1-2/><link rel=prev href=http://int80.top/22-12-12/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"136字节大小的so文件如何执行藏匿于程序头的汇编指令","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/23-1-2\/"},"genre":"posts","keywords":"ELF文件","wordcount":5671,"url":"http:\/\/int80.top\/23-1-2\/","datePublished":"2023-01-02T00:00:00+00:00","dateModified":"2023-01-02T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<meta name=apple-mobile-web-app-title content="花满楼"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/23-1-2/><link rel=prev href=http://int80.top/22-12-12/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"136字节大小的so文件如何执行藏匿于程序头的汇编指令","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/23-1-2\/"},"genre":"posts","keywords":"ELF文件","wordcount":6455,"url":"http:\/\/int80.top\/23-1-2\/","datePublished":"2023-01-02T00:00:00+00:00","dateModified":"2023-01-02T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
 <body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
 <div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
 <div class=header-wrapper>
@@ -56,8 +56,8 @@
 <div class=toc-content id=toc-content-auto></div>
 </div><article class="page single"><h1 class="single-title animated flipInX">136字节大小的so文件如何执行藏匿于程序头的汇编指令</h1><div class=post-meta>
 <div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2023-01-02>2023-01-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5671 字
-<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2023-01-02>2023-01-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6455 字
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 13 分钟&nbsp;</div>
 </div><div class="details toc" id=toc-static kept>
 <div class="details-summary toc-title">
 <span>目录</span>
@@ -492,8 +492,27 @@ dynamic段的内容为结构体数组，结构体的声明如下。d_tag大小�
 </div>
 <p>综上，通过dlopen函数打开目标so文件会执行藏匿于0x3A的汇编指令，正是因为该so文件的设计让汇编指令正好为.init段的内容，因此会被执行。</p>
 <h4 id=0x2-额外的问题>0x2 额外的问题</h4>
-<p>最开始的问题确实是为什么这个so文件的汇编指令会被执行，但是在证明的过程中，又引出了其他的问题。为什么我更改dynamic段的文件偏移p_offset的值为0x58后再次载入该so文件会出错，为什么dynamic段的d_tag=0x5项的d_ptr更改为其他的值就会出错，这个项指向的地址根本是无意义的啊。同理d_tag=0x6的d_ptr指向的地址为0x0，同样更改后载入该so文件也会出错。为什么就不能替换成dynamic段其他必要的类型的项呢？</p>
-<p>这些问题同样需要解决。稍后一段时间我会再次去调试，尝试解决。噢还得验证是否可以作为模板使用，因为汇编指令只从0x3A到0x4F，如果更长呢？使用jmp跳到最后面继续添加指令，这个文件是否还能正常运行？这些都需要验证。不过今天暂时先这样了。</p>
+<p>最开始的问题确实是为什么这个so文件的汇编指令会被执行，但是在证明的过程中，又引出了其他的问题。为什么我更改dynamic段的文件偏移p_offset的值为0x58后再次载入该so文件会出错，为什么dynamic段的d_tag=0x5项的d_ptr更改为其他的值就会出错，这个项指向的地址根本是无意义的啊。同理d_tag=0x6的为什么也不能更改呢？</p>
+<p>为什么将0x18更改会导致载入错误，这是因为0x18刚好是ELF文件头中e_phoff的值(ELF文件头和程序头表部分重合)，这个数据表示程序头表的文件偏移。由于载入so文件到内存中并不需要dynamic段的文件偏移，因此这个数据可以不准确。</p>
+<p>对于so文件这种DSO(Dynamic shared object)来说，d_tag=0x5代表的是DT_STRTAB，也就是指向了.dynstr节区，该节区保存了动态符号字符串，d_tag=0x6代表的是DT_SYMTAB，指向了.dynsym节区，该节区保存了动态符号的信息，这些符号的名称字符串正是保存到了.dynstr节区中，因为涉及到动态符号的信息，因此会在解析和重定位时需要这些信息，所以对于DSO来说，DT_STRTAB和ST_SYMTAB两个类型的项是一定需要有的。</p>
+<p>那为什么d_tag=0x5后面的d_ptr=0x5更改后载入会出错呢？因为dynamic段的每个项指向的还是一个节区的内容，在该so中，虽然是NULL类型的节区，但是该节的文件偏移数据s_offset为0x3A，指向的也是汇编指令，而d_ptr=0x5刚好与该节头的属性s_flag重合，而s_flag=0x5则刚好是可写可执行属性，这样才可执行那段汇编指令。有的朋友又要问了，不是说dlopen获取的大部分数据都是虚拟地址吗，怎么这里又看文件偏移了？这是因为只有存在于磁盘上的ELF文件才说section节，在磁盘时，这段汇编指令属于该NULL类型的节的内容，属性为可写可执行。如果把d_tag=0x6的d_ptr=0x0更改并不会导致该so文件载入错误。</p>
+<p>还有一个问题该so文件是否可以作为模板使用呢？因为汇编指令只从0x3A到0x4F，如果更长呢？使用jmp跳到最后面继续添加指令，这个文件是否还能正常运行？</p>
+<p>如图2-1所示，将汇编指令分割，并将后面部分的指令写到so文件末尾，再通过jmp指令将两块指令连接起来。这样做的目的是为了后续若需要嵌入更长的汇编代码时，可以保证扩写后还能正确执行。</p>
+<div>
+<center>
+<img src=模板验证.png alt=模板验证.png style=100%>
+<br>
+图 2-1 验证该so文件是否可作为模板
+</center>
+</div>
+<p>如图2-2所示再用dlopen和openssl载入更改后的so文件，可以发现该so文件被载入并且执行了汇编指令。因此该so文件可以作为模板使用。</p>
+<div>
+<center>
+<img src=修改后so文件载入情况.png alt=修改后so文件载入情况.png style=100%>
+<br>
+图 2-1 修改后so文件载入情况
+</center>
+</div>
 </div><div class=post-footer id=post-footer>
 <div class=post-info>
 <div class=post-info-line>
