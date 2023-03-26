@@ -1,0 +1,1855 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>Guide to make a game hack - HackForAssaultCube - 栖迟於一丘</title><meta name=Description content><meta property="og:title" content="Guide to make a game hack - HackForAssaultCube">
+<meta property="og:description" content="0x00 Introduction This blog is written to record how i got started making a game hack. And this is my first time to write a blog in English, so There must be a lot of mistakes. I apologize for my poor English writing skill. The game hack i made is for hacking a FPS game, which is named AssaultCube v1.3.0.2. you can download this game from here You can access">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://int80.top/23-3-18/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2023-03-18T00:00:00+00:00">
+<meta property="article:modified_time" content="2023-03-18T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Guide to make a game hack - HackForAssaultCube">
+<meta name=twitter:description content="0x00 Introduction This blog is written to record how i got started making a game hack. And this is my first time to write a blog in English, so There must be a lot of mistakes. I apologize for my poor English writing skill. The game hack i made is for hacking a FPS game, which is named AssaultCube v1.3.0.2. you can download this game from here You can access">
+<meta name=application-name content="花满楼">
+<meta name=apple-mobile-web-app-title content="花满楼"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/mstile-150x150.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://int80.top/23-3-18/><link rel=prev href=http://int80.top/23-1-2/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Guide to make a game hack - HackForAssaultCube","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/int80.top\/23-3-18\/"},"genre":"posts","keywords":"游戏外挂","wordcount":10355,"url":"http:\/\/int80.top\/23-3-18\/","datePublished":"2023-03-18T00:00:00+00:00","dateModified":"2023-03-18T00:00:00+00:00","publisher":{"@type":"Organization","name":"ShiDong"},"author":{"@type":"Person","name":"ShiDong"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':''==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:''==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> Posts </a><a class=menu-item href=/tags/> Tags </a><a class=menu-item href=/categories/> Categories </a><a class=menu-item href=/aboutme/> About Me </a><a class=menu-item href=/search/><i class="fas fa-fw fa-search"></i> search </a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=栖迟於一丘><img class="lazyload logo" src=/svg/loading.min.svg data-src=/1.png data-srcset="/1.png, /1.png 1.5x, /1.png 2x" data-sizes=auto alt=/1.png title=/1.png>INT80</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/ title>Posts</a><a class=menu-item href=/tags/ title>Tags</a><a class=menu-item href=/categories/ title>Categories</a><a class=menu-item href=/aboutme/ title>About Me</a><a class=menu-item href=/search/ title><i class="fas fa-fw fa-search"></i>search</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container>
+<div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">Guide to make a game hack - HackForAssaultCube</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>ShiDong</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E9%80%86%E5%90%91/><i class="far fa-folder fa-fw"></i>逆向</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2023-03-18>2023-03-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 10355 字
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 21 分钟&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href=#0x00-introduction>0x00 Introduction</a></li>
+<li><a href=#0x10-wallhack>0x10 WallHack</a>
+<ul>
+<li><a href=#0x11-ensuring-graphics-library>0x11 Ensuring Graphics Library</a></li>
+<li><a href=#0x12-ensuring-the-render-function>0x12 Ensuring the Render Function</a></li>
+<li><a href=#0x13-disable-depth-testing>0x13 Disable Depth Testing</a></li>
+<li><a href=#0x14-coding>0x14 Coding</a></li>
+<li><a href=#0x15-hack-result>0x15 Hack Result</a></li>
+</ul>
+</li>
+<li><a href=#0x20-memory-hack>0x20 Memory Hack</a>
+<ul>
+<li><a href=#0x21-use-cheatengine>0x21 Use CheatEngine</a></li>
+<li><a href=#0x22-locate-the-base-address-of-character-structure>0x22 Locate the Base Address of Character Structure</a></li>
+<li><a href=#0x23-triggerbot>0x23 TriggerBot</a></li>
+<li><a href=#0x24-locate-team-and-death-infomation>0x24 Locate Team and Death Infomation</a></li>
+<li><a href=#0x25-infinite-life>0x25 Infinite Life</a></li>
+<li><a href=#0x26-infinite-ammo>0x26 Infinite ammo</a></li>
+<li><a href=#0x27-norecoil>0x27 NoRecoil</a></li>
+</ul>
+</li>
+<li><a href=#0x30-aimbot-and-esp>0x30 Aimbot And Esp</a>
+<ul>
+<li><a href=#0x31-aimbot>0x31 Aimbot</a></li>
+<li><a href=#0x32-internal-esp>0x32 Internal Esp</a></li>
+<li><a href=#0x33-external-esp>0x33 External Esp</a></li>
+</ul>
+</li>
+<li><a href=#0x40-conclusion>0X40 Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div><div class=content id=content><h4 id=0x00-introduction>0x00 Introduction</h4>
+<p>This blog is written to record how i got started making a game hack. And this is my first time to write a blog in English, so There must be a lot of mistakes. <strong>I apologize for my poor English writing skill</strong>.</p>
+<p>The game hack i made is for hacking a FPS game, which is named AssaultCube v1.3.0.2. you can download this game from <a href=https://github.com/assaultcube/AC target=_blank rel="noopener noreffer">here</a></p>
+<p>You can access <a href=https://github.com/Mrsdwang/HackForAssaultCube target=_blank rel="noopener noreffer">my github repository</a> to get all code of the game hack.</p>
+<p>The project code is compiled to DLL, So it need DLL injection to inject it to the game.</p>
+<p>This game hack&rsquo;s function includes wall hack, no recoil, infinite life, infinite ammo, triggerbot, aimbot, internal esp and external esp.</p>
+<div>
+<center>
+<img src=p0-1.png alt=p0-1.png style=100%>
+<br>
+Picture 0-1
+</center>
+</div>
+<h4 id=0x10-wallhack>0x10 WallHack</h4>
+<p>WallHack is a hack which allows us to see other players through the wall.</p>
+<p>There are a lot of mathods to implement wallhack. We choose to make use of the external graphics library render function to implement it.</p>
+<p>As we know, most games use external graphics library to render various models in game, different graphics librarise use different functions to render.</p>
+<p>So why cann&rsquo;t game player see the things behind the wall? The answer of this problem is also the priciple of why this method can implement wallhack.</p>
+<p>The graphics library use the &ldquo;Depth testing&rdquo; to determine which model should be rendered in front of the other models. You can think of the &ldquo;Depth testing&rdquo; is a kind of priority detection. If it &ldquo;test&rdquo; a model is high priority than other model, then render it to in the front.</p>
+<p>Now we can determine the resolution process. we first need to ensure which kind of graphics library is used in the game, then find which render function is used, and finally hook the render function and disable the &ldquo;Depth testing&rdquo;.</p>
+<h5 id=0x11-ensuring-graphics-library>0x11 Ensuring Graphics Library</h5>
+<p>Open the game and use x32dbg to attach it.</p>
+<p>Since the graphics library is loaded, Select the <em>Symbols</em> tab and search the &ldquo;direct&rdquo; and &ldquo;opengl&rdquo;, then you can find the opengl32.dll like in the picture 1-1. So we can conclude that the game is using OpenGL to rend.</p>
+<div>
+<center>
+<img src=p1-1.png alt=p1-1.png style=100%>
+<br>
+Picture 1-1
+</center>
+</div>
+<h5 id=0x12-ensuring-the-render-function>0x12 Ensuring the Render Function</h5>
+<p>OpenGL has several rendering approaches, and different games will use different approaches. For example, older games may use glBegin, glVertex, and glEnd; some games may use glDrawArrays; and others may use glDrawElements. Some even use a combination of these approaches to render different aspects, such as glDrawElements for player models and glBegin for screen effects like blood.</p>
+<p>All the functions mentioned above can be searched in the right of <em>Symbols</em> tab, so we need to locate which render funtion is used.</p>
+<p>To determine which function is used,we can take &ldquo;set breakpoint&rdquo; approach. set the breakpoint on the first instruction of these function one by one.If the function is used, the breakpoint will be hit, and program will stop running.</p>
+<p>In the Picture 1-2, When I set the breakpoint on the <em>glDrawElements</em>, the breakpoint is hit right away, so We can determine that the function is used.</p>
+<div>
+<center>
+<img src=p1-2.png alt=p1-2.png style=100%>
+<br>
+Picture 1-2
+</center>
+</div>
+<p>After testing, <em>glbegin</em>, <em>glDrawElements</em>, <em>glVertex</em> functions are all used.</p>
+<p>To further guarantee whether these functions are used for render graphics, we can change their first instruction to <em>ret x</em> (x is the last <em>ret</em> instruction&rsquo;s Immediate value, In the picture 1-2, x is 10), then see whether the game grapics is normal.</p>
+<p>After modifying the functions，I get the result below.</p>
+<p>modify the glDrawElements:</p>
+<p>from picture 1-3, we can find the guns and shadow disappear, but when you shoot, the gun appear for a while.</p>
+<div>
+<center>
+<img src=p1-3.png alt=p1-3.png style=100%>
+<br>
+Picture 1-3
+</center>
+</div>
+<p>modify the glbegin:</p>
+<p>from picture 1-4, we can find the text and picture such as HP, ammo amount and shadow disappear. And the sky is a mess, just like ike a picture being layered repeatedly.</p>
+<div>
+<center>
+<img src=p1-4.png alt=p1-4.png style=100%>
+<br>
+Picture 1-4
+</center>
+</div>
+<p>if modify the glVertex, the effect is same as modifying the glbegin, but the menu can&rsquo;t display when the &ldquo;ECS&rdquo; button pressed.</p>
+<p>In conclusion, three functions are all used to render graphics, but they all can&rsquo;t influence the wall and character model.</p>
+<p>However, our target is to hook the render functions to disable the Depth testing.So we can use one of these function. Here i choose glDrawElements to hook, because the impact of this function is smaller than the other two functions. This can keep game running correctly.</p>
+<h5 id=0x13-disable-depth-testing>0x13 Disable Depth Testing</h5>
+<p>notice the picture 1-5. Coming back to the part of glDrawElements, and analysing the instruction, we find that this function will carry the instruction <strong>call esi</strong> . That means the function are preparing to invoke the esi when it store the function address in the esi register.So we can hook the instruction which stores invoked function in esi.The target instruction address is 0x50846006.</p>
+<p>the call in the 0x50846011 is an empty call, because there is only one <strong>ret 0</strong> instruction in this function.</p>
+<div>
+<center>
+<img src=p1-5.png alt=p1-5.png style=100%>
+<br>
+Picture 1-5
+</center>
+</div>
+<p>Now we has located the hook address, we should determine how to disable the depth testing.</p>
+<p>After studying the opengl, I find a function named <em>glDepthFunc</em> can be used to modify the depth comparisons rule. The rule can be controlled by changing the function parameter value.The ones we are interested in are GL_LEQUAL (draw if the element is in front of another element) and GL_ALWAYS(draw always).So it&rsquo;s clearly now, we can invoke glDepthFunc(GL_ALWAYS) to disable depth testing.</p>
+<h5 id=0x14-coding>0x14 Coding</h5>
+<p>For hooking glDrawElements function, we need to get the loaded address of opengl32.dll, then get the address of glDrawElements. But there is a problem, we can&rsquo;t determine when the opengl32.dll will be loaded in game. So we need to write a while loop to get the address continuously.</p>
+<p>When we get glDrawElements address, the address needs to add 0x16 to point the hook address. then modify the priority to rewrite the instruction on the hook address. New instruction needs to jump to the detour function, therefore, instruction should be <strong>jmp detour_address</strong>.</p>
+<p>Since we can&rsquo;t guarantee whether the detour address is far away from hook address or near, it&rsquo;s better to use far jump instruction which hexadecimal data is 0xE9. However, the Immediate value of 0xE9 jump instruction is not the destimation address. The Immediate value of 0xE9 jump instruction needs to be calculated by such a formula: The Immediate value = The destination address - current instruction address - 0x5 (0x5 is the length of 0xE9 jmp instruction);</p>
+<p>So we can write down the following code:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C data-lang=C><span class=n>wallHack_hook_address</span> <span class=o>=</span> <span class=mh>0x50846006</span><span class=p>;</span>
+<span class=k>while</span> <span class=p>(</span><span class=nb>true</span><span class=p>)</span> <span class=p>{</span>
+ <span class=k>if</span> <span class=p>(</span><span class=n>OpenGLHandle</span> <span class=o>==</span> <span class=nb>NULL</span><span class=p>)</span> <span class=p>{</span>
+     <span class=n>OpenGLHandle</span> <span class=o>=</span> <span class=n>GetModuleHandle</span><span class=p>(</span><span class=sa>L</span><span class=s>&#34;opengl32.dll&#34;</span><span class=p>);</span> 
+ <span class=p>}</span>
+ <span class=k>if</span> <span class=p>(</span><span class=n>OpenGLHandle</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>)</span> <span class=p>{</span>
+     <span class=n>glDepthFunc</span> <span class=o>=</span> <span class=p>(</span><span class=kt>void</span><span class=p>(</span><span class=kr>__stdcall</span><span class=o>*</span><span class=p>)(</span><span class=kt>unsigned</span> <span class=kt>int</span><span class=p>))</span><span class=n>GetProcAddress</span><span class=p>(</span><span class=n>OpenGLHandle</span><span class=p>,</span> <span class=s>&#34;glDepthFunc&#34;</span><span class=p>);</span>
+     <span class=n>wallHack_hook_address</span> <span class=o>=</span> <span class=p>(</span><span class=kt>unsigned</span> <span class=kt>char</span><span class=o>*</span><span class=p>)</span><span class=n>GetProcAddress</span><span class=p>(</span><span class=n>OpenGLHandle</span><span class=p>,</span> <span class=s>&#34;glDrawElements&#34;</span><span class=p>);</span>
+     <span class=n>wallHack_hook_address</span> <span class=o>+=</span> <span class=mh>0x16</span><span class=p>;</span>
+
+     <span class=n>DWORD</span> <span class=n>old_protect</span><span class=p>;</span>
+     <span class=n>VirtualProtect</span><span class=p>((</span><span class=kt>void</span><span class=o>*</span><span class=p>)</span><span class=n>wallHack_hook_address</span><span class=p>,</span> <span class=mi>5</span><span class=p>,</span> <span class=n>PAGE_EXECUTE_READWRITE</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>old_protect</span><span class=p>);</span>
+     <span class=o>*</span><span class=n>wallHack_hook_address</span> <span class=o>=</span> <span class=mh>0xE9</span><span class=p>;</span>
+     <span class=o>*</span><span class=p>(</span><span class=n>DWORD</span><span class=o>*</span><span class=p>)(</span><span class=n>wallHack_hook_address</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=o>&amp;</span><span class=n>wallHack_detour</span> <span class=o>-</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>wallHack_hook_address</span> <span class=o>-</span> <span class=mi>5</span><span class=p>;</span>
+     <span class=o>*</span><span class=p>(</span><span class=n>wallHack_hook_address</span> <span class=o>+</span> <span class=mi>5</span><span class=p>)</span> <span class=o>=</span> <span class=mh>0x90</span><span class=p>;</span>
+
+     <span class=n>wallHack_jmpBack_address</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)(</span><span class=n>wallHack_hook_address</span> <span class=o>+</span> <span class=mh>0x6</span><span class=p>);</span>
+     <span class=k>break</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=n>Sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>After hooking, it&rsquo;s time to write the detour function. The principle to struct the detour function is try your best to keep program running as before. So the old instructions that are overwritten by jmp instruction should be completely rewritten in the detour function.</p>
+<p>before invoking glDepthFunc, we should store all the register. And before jumping back to the glDrawElements, restore all the register.</p>
+<p>Now the last problem is how do we call the glDepthFunc when we only have it&rsquo;s address and code in C++.</p>
+<p>In C++, using the function address to call it requires to declare the function pointer, such as:</p>
+<p>the declaration of glDepthFunc is:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=k>typedef</span> <span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>GLenum</span><span class=p>;</span>
+<span class=kt>void</span> <span class=nf>glDepthFunc</span><span class=p>(</span><span class=n>GLenum</span> <span class=n>func</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>It&rsquo;s function pointer should be declared like this:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=kt>void</span> <span class=p>(</span><span class=o>*</span><span class=n>glDepthFunc</span><span class=p>)(</span><span class=kt>unsigned</span> <span class=kt>int</span><span class=p>)</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>but if the code is build, we will get the following error:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=n>error</span> <span class=nl>C2440</span><span class=p>:</span> <span class=sc>&#39;=&#39;</span><span class=o>:</span> <span class=n>cannot</span> <span class=n>convert</span> <span class=n>from</span> <span class=err>&#39;</span><span class=n>FARPROC</span><span class=err>&#39;</span> <span class=n>to</span> <span class=err>&#39;</span><span class=kt>void</span> <span class=p>(</span><span class=kr>__cdecl</span> <span class=o>*</span><span class=p>)(</span><span class=kt>unsigned</span> <span class=kt>int</span><span class=p>)</span><span class=err>&#39;</span>
+    <span class=nl>message</span> <span class=p>:</span> <span class=n>This</span> <span class=n>conversion</span> <span class=k>requires</span> <span class=n>a</span> <span class=k>reinterpret_cast</span><span class=p>,</span> <span class=n>a</span> <span class=n>C</span><span class=o>-</span><span class=n>style</span> <span class=n>cast</span> <span class=n>or</span> <span class=n>function</span><span class=o>-</span><span class=n>style</span> <span class=n>cast</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>so we should declare the function pointer of glDepthFunc to this:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=kt>void</span> <span class=p>(</span><span class=kr>__cdecl</span> <span class=o>*</span><span class=n>glDepthFunc</span><span class=p>)(</span><span class=kt>unsigned</span> <span class=kt>int</span><span class=p>)</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>When the declaration is correct, the function pointer can be used to call glDepthFunc as following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=p>(</span><span class=o>*</span><span class=n>glDepthFunc</span><span class=p>)(</span><span class=n>GL_ALWAYS</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>In conclusion, The detour function should be constructed as following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=cp>#define GL_ALWAYS 0x0207
+</span><span class=cp></span>
+<span class=kr>__declspec</span><span class=p>(</span><span class=kr>naked</span><span class=p>)</span> <span class=kt>void</span> <span class=n>wallHack_detour</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>pushad</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>IsGameStart</span><span class=p>(</span><span class=n>match_type_address</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=n>menu</span><span class=p>.</span><span class=n>IsEnable</span><span class=p>(</span><span class=n>menu</span><span class=p>.</span><span class=n>WALLHACK</span><span class=p>))</span> <span class=p>{</span>
+        <span class=p>(</span><span class=o>*</span><span class=n>glDepthFunc</span><span class=p>)(</span><span class=mh>0x207</span><span class=p>);</span>
+    <span class=p>}</span>
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>popad</span>
+        <span class=n>mov</span> <span class=n>esi</span><span class=p>,</span> <span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ds</span> <span class=p>:</span> <span class=p>[</span><span class=n>esi</span> <span class=o>+</span> <span class=mh>0xA18</span><span class=p>]</span>
+        <span class=n>jmp</span> <span class=n>wallHack_jmpBack_address</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>I guess you might be confused about __declspec(naked). So Let&rsquo;s ask chatgpt.</p>
+<p>The __declspec(naked) prefix declares that this function doesn&rsquo;t contain the regular entry and exit instruction such as store/restore the register, return back to where calls this function and so on. So if you use this prefix, you need to write assemblely code manually to handle the parameters and return values of the function.</p>
+<p>That also means if you want to implement high-performance,low-latency operations or that interact directly with hardware, you can use it!</p>
+<p>However, if we build the code and inject the code to the game, we will see an error :</p>
+<div>
+<center>
+<img src=p1-6.png alt=p1-6.png style=100%>
+<br>
+Picture 1-6
+</center>
+</div>
+<p>The reason of this error is wrong declaration of glDepthFunc. If you remove the invoke of glDepthFunc, game no longer crashes.</p>
+<p>Following into the gl.h, the complete declaration of glDepthFunc is :</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>GLAPI void APIENTRY glDepthFunc (GLenum func);
+</code></pre></td></tr></table>
+</div>
+</div><p>You will find the define of APIENTRY is a reference for WINAPI, and WINAPI is a reference for __stdcall, if you go through the <a href=https://learn.microsoft.com/en-us/windows/win32/winprog/windows-data-types target=_blank rel="noopener noreffer">Microsoft&rsquo;s documentation on data types</a></p>
+<p>So the correct declaration of glDepthFunc&rsquo;s function pointer is :</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=kt>void</span> <span class=p>(</span><span class=kr>__stdcall</span> <span class=o>*</span><span class=n>glDepthFunc</span><span class=p>)(</span><span class=kt>unsigned</span> <span class=kt>int</span><span class=p>)</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>After we get the address of glDepthFunc from the return value of GetProcAddress, it&rsquo;s necessary to cast the return value as (void(__stdcall*)(unsigned int)):</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=n>glDepthFunc</span> <span class=o>=</span> <span class=p>(</span><span class=kt>void</span><span class=p>(</span><span class=kr>__stdcall</span><span class=o>*</span><span class=p>)(</span><span class=kt>unsigned</span> <span class=kt>int</span><span class=p>))</span><span class=n>GetProcAddress</span><span class=p>(</span><span class=n>openGLHandle</span><span class=p>,</span> <span class=s>&#34;glDepthFunc&#34;</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Calling conventions control how parameters are handled by functions when called. There are many different types. So it requires the calling convention must be correct when you invoke a function by function pointer.</p>
+<h5 id=0x15-hack-result>0x15 Hack Result</h5>
+<div>
+<center>
+<img src=p1-7.png alt=p1-7.png style=100%>
+<br>
+Picture 1-7
+</center>
+</div>
+<p>It seems we complement Wallhack, but it&rsquo;s not completely complement.</p>
+<p>The character models are only seen at the edge of the wall. if we are not at the edge of the wall like picture 1-8, we can&rsquo;t seen the character through the wall.</p>
+<div>
+<center>
+<img src=p1-8.png alt=p1-8.png style=100%>
+<br>
+Picture 1-8
+</center>
+</div>
+<p>I think the problem occurs because of the order of rendering. Because of diabling the depth testing, all the models are rendered with the same priority, therefore, the previously rendered models will be overwritten by the later rendering model.</p>
+<h4 id=0x20-memory-hack>0x20 Memory Hack</h4>
+<p>This part will analyze the implementation principles of functions including triggerbot, infinite life, infinite ammo and no recoil, which share the same implementation principles.</p>
+<p>The prerequisite for implementing these function is to find the base address of all characters.</p>
+<p>character&rsquo;s life and ammo are stored in the character structure. recoil will change the location and view of character which also are stored in the character structure.</p>
+<p>In most FPS games, when you hover over a player, games&rsquo;s crosshair will change to a different color or shapes, and some even display the name of player. So by using these changes, it&rsquo;s possible to determine whether the enemy has been targeted and automatically fire. To implement the triggerbot, we need to read the relevant data stroed in the character structure.</p>
+<p>To sum up, For implementing all of these functions, we need to find the base address of all characters first.</p>
+<p>The memory scanner <em>cheat engine</em> can be used to help us locate the base address of all characters.</p>
+<p>First of all, you should set the bot to be idle. You can press &ldquo;ESC&rdquo; to open the menu, then choose &ldquo;Singleplayer -> bot settings -> idle bot&rdquo; to get the settings in the picture 2-0. You can also lenthen the time of bot match to 60 minutes, which will help us to debug.</p>
+<div>
+<center>
+<img src=p2-0.png alt=p2-0.png style=100%>
+<br>
+Picture 2-0
+</center>
+</div>
+<h5 id=0x21-use-cheatengine>0x21 Use CheatEngine</h5>
+<p>In this blog, it&rsquo;s enough for you to only know three functions of CheatEngine to search the data.
+They are <em>First scan</em>, <em>Next scan</em>,<em>Find out what accesses this address</em>.</p>
+<p>We can determine that the name of character must be stored in the structure of character. I will use CheatEngine to search the name as an example to demonstrate how to use CheatEngine.</p>
+<p>When you hover over the character in the game , you can find his name is displayed in the screen:</p>
+<div>
+<center>
+<img src=p2-1.png alt=p2-1.png style=100%>
+<br>
+Picture 2-1
+</center>
+</div>
+<p>Change th <em>Value Type</em> to String, Search the name displayed in the CheatEngine, then click the <em>First Scan</em> :</p>
+<div>
+<center>
+<img src=p2-2.png alt=p2-2.png style=100%>
+<br>
+Picture 2-2
+</center>
+</div>
+<p>In the picture 2-2, the address where the string stored will be display in the left of CheatEngine.</p>
+<p>Chosing any address and right clicking , you can find the option <em>Find out what accesses this address</em> :</p>
+<div>
+<center>
+<img src=p2-3.png alt=p2-3.png style=100%>
+<br>
+Picture 2-3
+</center>
+</div>
+<p>This option will display which instructions accessed the string stored at that address</p>
+<p>Now move your corsshair not to target the character, use the <em>Find out what accesses this address</em> option ,then hover over the character again. If the new instructions are displayed, these instructions might be in the range of the code to diplay the name in the screen. However, not all the addresses are accessed, so we need to filter.</p>
+<p>For example :</p>
+<p>when you not target a character, some instructions are diaplayed :</p>
+<div>
+<center>
+<img src=p2-4.png alt=p2-4.png style=100%>
+<br>
+Picture 2-4
+</center>
+</div>
+<p>when you hover over a character, origin and new instructions are diaplayed :</p>
+<div>
+<center>
+<img src=p2-5.png alt=p2-5.png style=100%>
+<br>
+Picture 2-5
+</center>
+</div>
+<p>It&rsquo;s obvious that when you hover over a character from targeting nothing, the new addresses are displayed.</p>
+<p>If you need to find a data&rsquo;s address, and there are a lot of data are same as this data, you can use <em>First scan</em> to find all the data with the same value, then change this data&rsquo;s value and ues <em>Next scan</em> to filter the value that have not changed. The remaining data will be more fewwer.</p>
+<p>I am going to use the ammo as an example to demonstrate.</p>
+<p>first, there are 20 bullets left in the gun. We choose <em>4 Bytes</em> value type(game is 32bit),and <em>Exact Value</em> scan type, then enter 20 and click the <em>First Scan</em>, result is following:</p>
+<div>
+<center>
+<img src=p2-6.png alt=p2-6.png style=100%>
+<br>
+Picture 2-6
+</center>
+</div>
+<p>Take a shoot in the game, enter 4 and click the <em>Next Scan</em>, the result change:</p>
+<div>
+<center>
+<img src=p2-7.png alt=p2-7.png style=100%>
+<br>
+Picture 2-7
+</center>
+</div>
+<p>Take a shoot again, you will find some value change, and others won&rsquo;t change.</p>
+<div>
+<center>
+<img src=p2-8.png alt=p2-8.png style=100%>
+<br>
+Picture 2-8
+</center>
+</div>
+<p>To sum up, there is quite possible that the 0x008D1050 address is the address of ammo.</p>
+<h5 id=0x22-locate-the-base-address-of-character-structure>0x22 Locate the Base Address of Character Structure</h5>
+<p>From 0x21 we find some instructions access the name of character, that&rsquo;s will be the beginning to find base address of character.</p>
+<p>When I search the name of character, I find there exits the differece between teammate and enemy.</p>
+<p>For example:</p>
+<p>do not target character:</p>
+<div>
+<center>
+<img src=p2-9.png alt=p2-9.png style=100%>
+<br>
+Picture 2-9
+</center>
+</div>
+<p>target character:</p>
+<div>
+<center>
+<img src=p2-10.png alt=p2-10.png style=100%>
+<br>
+Picture 2-10
+</center>
+</div>
+<p>Comparing picture 2-9 with 2-10, We can find when hover over the enmey character, the enemy&rsquo;s scanning result adds some instructions in the teammate scanning result when not target the character(the second to seventh instructions). And when hover over the character, Regardless of whether it is an enemy or a teammate, new instructions appear(the last three instructions).We assume the last three instructions are related to display the name to the screen.</p>
+<p>Don&rsquo;t forget our main task is to find the base address of all characters.</p>
+<p>After I continue scanning all the character, I find all the teammates' and my name will be accessed by the second to the seventh insructions in the picture 2-10 if you target a teammate. And when hover over the enemy, the enemy&rsquo;s name is accessed but the teammates' name won&rsquo;t. So I boldly guess, these instructions traverse and read the names of all the teammate if you target a teammate. When you hover over a enemy, these instructions only access the name of targeting enemy.</p>
+<p>Next, we should analyze these instuctions.Because these instuctions are close, so we start from the instruction where is at 0x00481A67.</p>
+<p>The instructions nearby are as follows:</p>
+<div>
+<center>
+<img src=p2-11.png alt=p2-11.png style=100%>
+<br>
+Picture 2-11
+</center>
+</div>
+<p>You can target nothing, target enemy and target teammate, then set breakpoint on 0x481A5B &ldquo;cmp esi,ecx&rdquo;. You will find when you target a character, the instruction &ldquo;je 0x481A9F&rdquo; at 0x481A5D won&rsquo;t jump, and the instruction &ldquo;add ecx,205&rdquo; at 0x481A5F will store my player&rsquo;s name in ecx.</p>
+<p>Can we boldly assume that the ecx stores the base address of mine? And the 0x205 is the offset of the name. To determine this, we should continue to analyze upwards to find out what is stroed in the ecx, and under what conditions will the je instruction jump.</p>
+<p>In the picture 2-11, the instruction &ldquo;lea ebx,dword ptr ds&rdquo;[esi+205]" at 0x481A49 stored the name in ebx register. If you don&rsquo;t target character, the name stored in [esi+0x205] is my player name, here my player name is &ldquo;me&rdquo;. If you target a teammate, the name in the [esi+0x205] is all the teammate&rsquo;s and mine. If you target an enemy, [esi+0x205] only store my name and targeting enemy&rsquo;s name.</p>
+<div>
+<center>
+<img src=p2-12.png alt=p2-12.png style=100%>
+<br>
+Picture 2-12
+</center>
+</div>
+<p>the instruction &ldquo;mov ecx, dword ptr ds:[58AC00]&rdquo; at 0x481A3D handles the ecx register, it reads the data from a static address 0x58AC00. We have determine that the base address of mine is stored in the ecx, and ecx register is only changed here. Therefore the base address of my player character structure is stored in the 0x58AC00.</p>
+<p>If we target a character, the esi won&rsquo;t store my player base address, but rather other character&rsquo;s. therefore esi and ecx are different, and je instruction won&rsquo;t jump.</p>
+<p>after determining the base address of my player structure at 0x58AC00, we need to locate the other characters' base address.</p>
+<p>In the games, to find base address of the character structure , the base address should be stored in a static address. In this game, the base address of my player structure store in a static address 0x58AC00</p>
+<p>As I said earlier, when you hover over a teammate, teammates' name will be traverse. So somewhere aroud here should access the linked list of teammate. and the beginning address of linked list should also be stored in a static address.</p>
+<p>Let&rsquo;s step debug and continue the analysis.</p>
+<p>at the 0x481AD4 and 0x481AE0, we can find two static address 0x58AC0C and 0x58AC04:</p>
+<div>
+<center>
+<img src=p2-13.png alt=p2-13.png style=100%>
+<br>
+Picture 2-13
+</center>
+</div>
+<p>Notice the instructions at 0x481AD4, 0x481B29 and 0x481B2A. &ldquo;mov edi, dword ptr ds:[58AC0C]&rdquo; reads the data from 0x58AC0C, and stores it in the esi register. &ldquo;inc esi&rdquo; adds 1 to the value that is stored in the esi. &ldquo;cmp esi,edi&rdquo; compares the values of esi and edi to see whether they are equal. If the value of esi is less than edi&rsquo;s value, the instruction &ldquo;jl 0x481AE6&rdquo; will jump back to 0x481AE6.</p>
+<p>If we set a breakpoint on &ldquo;mov edi, dword ptr ds:[58AC0C]&rdquo;, then step. We will find edi stores the player number of current game.</p>
+<div>
+<center>
+<img src=p2-14.png alt=p2-14.png style=100%>
+<br>
+Picture 2-14
+</center>
+</div>
+<p>So we can determine that player number of current game is stored in 0x58AC0C.</p>
+<p>Next, the instruction &ldquo;add ecx, 205&rdquo; at 0x481AF7 gets my attention. we met this instruction before, and we find the base address of my player structure by this instruction. The conclusion we have drawn is that ecx stores base address of character structure, and 0x205 is offset of name.</p>
+<p>Set a breakpoint on 0x481AFD, then continue running the game, we will find ecx will store the names of all the character. We can assume that there is one instruction reads the linked list of player, and other one stores the member of linked list in the ecx.</p>
+<p>So the key is to find out how the ecx get the value. We can eazily notice the instruction &ldquo;mov ecx,dword ptr ds:[ebx+esi*4]&rdquo; at 0x481AE6. And ebx stores the data stored in 0x58AC04.</p>
+<p>Because the ecx will store all the names of characters after &ldquo;add ecx,205&rdquo;, so ebx stores the beginning address of linked list, and esi is the index of linked list. esi*4 moves the pointer to point next member.</p>
+<p>In conclusion, We have located the base address of my character structure is <strong>0x58AC00</strong>, the beginning address of character structure(except my character structure) linked list is <strong>0x58AC04</strong>, and <strong>0x58AC08</strong> stores the player number of current game.</p>
+<div>
+<center>
+<img src=p2-15.png alt=p2-15.png style=100%>
+<br>
+Picture 2-15
+</center>
+</div>
+<p>if we check the address stored in the 0x58AC04, We will find the first member of linked list is 0, and next members are the base address of other character structure.</p>
+<div>
+<center>
+<img src=p2-16.png alt=p2-16.png style=100%>
+<br>
+Picture 2-16
+</center>
+</div>
+<h5 id=0x23-triggerbot>0x23 TriggerBot</h5>
+<p>We have notice that when we target a character, his name will diplay on the screen. And in the picture 2-10, there are some instructions(last three instructions) read the targeting character&rsquo;s name and print it. So can we use this feature to implement the triggetbot.</p>
+<p>The idea is that we hook the instructions that will be excuted when target a character, then write the detour code which excutes the fire operation. So when we target a character, we shoot automatically.</p>
+<p>You might think that it will also shoot if I target a teammate. That&rsquo;s right, but the instruction reads the name of character, so we can also read the team infomation of character.</p>
+<p>If you set a breakpoint on the instruction &ldquo;cmp byte ptr ss:[ebp],al&rdquo; at 0x46DDEE of the picture 2-10, then continuely run the game, you will find ebp stores the text that is displayed on the screen. Such as &ldquo;FPS 200&rdquo;,&ldquo;50:55&rdquo; and so on.</p>
+<p>If you target a character, you will see the name stored in the ebp also.</p>
+<p>So I can determine the code here is to print texts on the screen. And there is a branch to see if you target a character before here, that&rsquo;s because the code needs to read the targeting character&rsquo;s name.</p>
+<p>Continue to analyse the above the code. Our task is to find the branch which jump condition is on whether you target the character.</p>
+<p>after analysing, there is no jump instruction before the &ldquo;cmp byte ptr ss:[ebp],al&rdquo;, so this branch isn&rsquo;t in this function.</p>
+<p>Through setting a breakpoint on 0x46DD20 where is the beginning of this function, We can get return address from the top of stack. From the picture 2-17, the return address is stored in the 0x19F7D0, and return address is 0x460807.</p>
+<div>
+<center>
+<img src=p2-17.png alt=p2-17.png style=100%>
+<br>
+Picture 2-17
+</center>
+</div>
+<p>Go to the 0x460807, and analyse the above the code again.</p>
+<p>The mathod to find the branch which jump condition is to see whether you target a character or not is to set the breakpoint on the next instruction of every jump instruction. If breakpoint is hit without targeting a character, this branch is not what we want. If breakpoint is hit when target a character, the branch should be analysed to determine.</p>
+<p>If you go through the whole function, you will be afraid of it huge amount of code. Don&rsquo;t worry, though the code is a lot, not all the code will be excuted.</p>
+<p>If you set the breakpoint on 0x46063F and 0x460644, you will find this instruction won&rsquo;t be excuted, but the next instruction at 0x460644 is excuted. We can determine that there must be a jump instruction that is excuted and jump to 0x460644.</p>
+<div>
+<center>
+<img src=p2-18.png alt=p2-18.png style=100%>
+<br>
+Picture 2-18
+</center>
+</div>
+<p>Right click the instruction at 0x460644, and choose <em>Find Reference to</em> and <em>Selected address</em> to find where the jump to this location is from. This jump instruction is located at 0x4600D1.</p>
+<p>Starting at 0x4600D1, continue to analyse the above of the code with the same method.</p>
+<p>I finally determine the branch that we want is at 0x45FD48. In the picture 2-19, the instruction &ldquo;mov ecx dword ptr ss:[esp+10]&rdquo; at 0x45FD42 stores the base address of the targeting character structrue to the ecx if you target a character. otherwise, the [esp+10] is 0, and ecx will also be 0, the &ldquo;je 0x45FD90&rdquo; will be token.</p>
+<div>
+<center>
+<img src=p2-19.png alt=p2-19.png style=100%>
+<br>
+Picture 2-19
+</center>
+</div>
+<p>When you target a teammate, the ecx store his character structure:</p>
+<div>
+<center>
+<img src=p2-20.png alt=p2-20.png style=100%>
+<br>
+Picture 2-20
+</center>
+</div>
+<p>Now the way to implement the triggetbot is clear. The ecx will store the base address of targeting character, so we hook the instructions at 0x45FD42 and 0x45FD46.</p>
+<p>The thought of implementing detour function is determine whether the ecx is NULL first, then simulating the left mouse button pressed to shoot. Finally restore the hooked instructions and jump back.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=n>PlayerInfo</span><span class=o>*</span> <span class=n>target</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
+
+<span class=kr>__declspec</span><span class=p>(</span><span class=kr>naked</span><span class=p>)</span> <span class=kt>void</span> <span class=n>TriggerBot_detour</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>mov</span> <span class=n>ecx</span><span class=p>,</span> <span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ss</span> <span class=p>:</span> <span class=p>[</span><span class=n>esp</span> <span class=o>+</span> <span class=mh>0x10</span><span class=p>]</span>
+        <span class=n>pushad</span>
+        <span class=n>mov</span> <span class=n>ecx_value</span><span class=p>,</span> <span class=n>ecx</span>
+    <span class=p>}</span>
+    <span class=n>target</span> <span class=o>=</span> <span class=p>(</span><span class=n>PlayerInfo</span><span class=o>*</span><span class=p>)</span><span class=n>ecx_value</span><span class=p>;</span>
+    
+     <span class=n>TriggerBotExecute</span><span class=p>(</span><span class=n>ecx_value</span><span class=p>);</span>
+    
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>popad</span>
+        <span class=n>test</span> <span class=n>ecx</span><span class=p>,</span> <span class=n>ecx</span>
+        <span class=n>jmp</span> <span class=n>triggerBot_jmpBack_address</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>Here we use the variable <em>target</em> and ecx_value to store the base address of targeting character structure.</p>
+<p>The function <em>TriggerBotExecute(ecx_value)</em> is to check whether the ecx_value is NULL, if not, then simulate to shoot.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=n>PlayerInfo</span><span class=o>*</span> <span class=n>me</span> <span class=o>=</span> <span class=p>(</span><span class=n>PlayerInfo</span><span class=o>*</span><span class=p>)(</span><span class=n>ReturnMeAddress</span><span class=p>());</span>
+<span class=kt>bool</span> <span class=n>isMyDown</span> <span class=o>=</span> <span class=nb>true</span><span class=p>;</span>
+<span class=kt>void</span> <span class=nf>TriggerBotExecute</span><span class=p>(</span><span class=n>DWORD</span> <span class=n>IsTarget</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>IsTarget</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>IsTeamMate</span><span class=p>(</span><span class=n>me</span><span class=o>-&gt;</span><span class=n>team</span><span class=p>,</span> <span class=n>target</span><span class=o>-&gt;</span><span class=n>team</span><span class=p>))</span> <span class=p>{</span>
+            <span class=n>input</span><span class=p>.</span><span class=n>type</span> <span class=o>=</span> <span class=n>INPUT_MOUSE</span><span class=p>;</span>
+            <span class=n>input</span><span class=p>.</span><span class=n>mi</span><span class=p>.</span><span class=n>dwFlags</span> <span class=o>=</span> <span class=n>MOUSEEVENTF_LEFTDOWN</span><span class=p>;</span>
+            <span class=n>SendInput</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>input</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>INPUT</span><span class=p>));</span>
+            <span class=k>if</span> <span class=p>(</span><span class=n>isMyDown</span><span class=p>)</span> <span class=p>{</span>
+                <span class=n>isMyDown</span> <span class=o>=</span> <span class=o>!</span><span class=n>isMyDown</span><span class=p>;</span>
+            <span class=p>}</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=o>!</span><span class=n>isMyDown</span><span class=p>){</span>
+        <span class=n>input</span><span class=p>.</span><span class=n>type</span> <span class=o>=</span> <span class=n>INPUT_MOUSE</span><span class=p>;</span>
+        <span class=n>input</span><span class=p>.</span><span class=n>mi</span><span class=p>.</span><span class=n>dwFlags</span> <span class=o>=</span> <span class=n>MOUSEEVENTF_LEFTUP</span><span class=p>;</span>
+        <span class=n>SendInput</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>input</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>INPUT</span><span class=p>));</span>
+        <span class=n>isMyDown</span> <span class=o>=</span> <span class=o>!</span><span class=n>isMyDown</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>the pointer structure <em>me</em> stores my character structer data, and the pointer structure <em>target</em> stores targeting character structer data. The function <em>IsTeamMate()</em> is to check whether targeting character is teammate, if he isn&rsquo;t, then shoot.</p>
+<p>However, there is a shortcoming in this way to implement triggerbot. the variable <em>isMyDown</em> is to solve it. If you target nothing, and press the left mouse button, the code in the &ldquo;else&rdquo; will be excuted without the variable <em>isMyDown</em>, then you can&rsquo;t keep shooting, because after you press the button, the code in the &ldquo;else&rdquo; will tell the computer your left mouse button has been up.</p>
+<p>use the variable <em>isMyDown</em> to ensure that we are not interrupted when we are shooting actively. According to this logic, only after we are not targeting an enemy, the code in the &ldquo;else&rdquo; will be excuted.</p>
+<h5 id=0x24-locate-team-and-death-infomation>0x24 Locate Team and Death Infomation</h5>
+<p>We know all the information of character is stored in the character structure. Now we should determine how can we get the team infomation from the character structure.</p>
+<p>we have located that the address of my character structure is at 0x58AC00, then check the dump of the address stored in 0x58AC00, then you can find your character name.</p>
+<div>
+<center>
+<img src=p2-21.png alt=p2-21.png style=100%>
+<br>
+Picture 2-21
+</center>
+</div>
+<p>In the game, you can press the ecs to open the menu, and chose the settings -> Gameplay settings -> change to the enemy team. Then you can watch the dump data to find out which data is changed. The data might be 0 or 1, and change between 1 and 0.</p>
+<p>after many attempts, this data absorbs my interest, because when I use <em>Change to the enemy team</em>, it changes to 0 :</p>
+<div>
+<center>
+<img src=p2-22.png alt=p2-22.png style=100%>
+<br>
+Picture 2-22
+</center>
+</div>
+<p>Now I modify it to 0 manually, the crosshair will change when I target a teammate before:</p>
+<div>
+<center>
+<img src=p2-23.png alt=p2-23.png style=100%>
+<br>
+Picture 2-23
+</center>
+</div>
+<p>Trough the change of crosshair, we can determine that our team is changed. So this data is declared the team of character, its offset is 0x30C.</p>
+<p>In the meanwhile, I also find the data of death. When you change your team, the character die, there is a data changing to 1. After the character Resurrection, this data change to 0 again. It&rsquo;s offset is 0x318. You can check it out like we located the team infomation.</p>
+<h5 id=0x25-infinite-life>0x25 Infinite Life</h5>
+<p>Use Cheat Engine to scan the life data like we did before, and find a way to decrease the life, then we can find such instruction:</p>
+<div>
+<center>
+<img src=p2-25.png alt=p2-25.png style=100%>
+<br>
+Picture 2-25
+</center>
+</div>
+<p>The first and second instructions catch my attention. The value stored at the address obtained by adding 0xEC to the base address of the character structure is exactly the value of character&rsquo;s health points.</p>
+<p>In the picture 2-26, 0x64 = 100 , 0x43 = 67. It&rsquo;s equal with HP. So We can locate that the HP offset is 0xEC.</p>
+<div>
+<center>
+<img src=p2-26.png alt=p2-26.png style=100%>
+<br>
+Picture 2-26
+</center>
+</div>
+<p>In the picture 2-25, the instruction at 0x41C223 and 0x47D1A8 will be excuted when you are damaged. Hp is decreased after being damaged, so the instruction &ldquo;sub [ebx+0x4],esi&rdquo; catches more of my attentsion.</p>
+<p>I assume that esi stores the damage value. We can set the breakpoint on 0x41C223, then damage our character. The breakpoint will be hit.</p>
+<p>When I check the ebx, I find ebx stores an address which is in the address range of my character structure, and ebx+0x4 is just the address which stores the HP of the character.</p>
+<div>
+<center>
+<img src=p2-27.png alt=p2-27.png style=100%>
+<br>
+Picture 2-27
+</center>
+</div>
+<p>here the esi stores the value 0x2D, So the HP should be 22 after being damaged. we cancel the breakpoint,then run the game again to check.</p>
+<div>
+<center>
+<img src=p2-28.png alt=p2-28.png style=100%>
+<br>
+Picture 2-28
+</center>
+</div>
+<p>This situation meets our expectation.</p>
+<p>I think the way to implement the infinite life is clear now. We just need to modify the esi to zero like the picture 2-29. We can test this thought.</p>
+<div>
+<center>
+<img src=p2-29.png alt=p2-29.png style=100%>
+<br>
+Picture 2-29
+</center>
+</div>
+<p>After modifying, you will find that the enemy won&rsquo;t be damaged either. If you set the breakpoint on 0x41C223, and active the bot, the breakpoint will be hit when bot shoots. Therefore, the bot and our character use the same code to compute the damage value.</p>
+<p>However, the ebx stores the address which is in the address range of the character structure, So we can compute the base address of this character structure which one of address is stored in the ebx and compare this base address with our character structure&rsquo;s base address. If it&rsquo;s our character&rsquo;s , we can modify the esi to zero.</p>
+<p>The hook code is as following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=k>static</span> <span class=kt>unsigned</span> <span class=kt>char</span><span class=o>*</span> <span class=n>infiniteLife_hook_address</span> <span class=o>=</span> <span class=p>(</span><span class=kt>unsigned</span> <span class=kt>char</span><span class=o>*</span><span class=p>)</span><span class=mh>0x41C223</span><span class=p>;</span>
+<span class=n>DWORD</span> <span class=n>infiniteLife_jmpBack_address</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+<span class=kt>void</span> <span class=nf>InfiniteLife</span><span class=p>()</span> <span class=p>{</span>
+    <span class=n>DWORD</span> <span class=n>old_protect</span><span class=p>;</span>
+    <span class=n>VirtualProtect</span><span class=p>((</span><span class=kt>void</span><span class=o>*</span><span class=p>)</span><span class=n>infiniteLife_hook_address</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=n>PAGE_EXECUTE_READWRITE</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>old_protect</span><span class=p>);</span>
+    <span class=o>*</span><span class=n>infiniteLife_hook_address</span> <span class=o>=</span> <span class=mh>0xE9</span><span class=p>;</span>
+    <span class=o>*</span><span class=p>(</span><span class=n>DWORD</span><span class=o>*</span><span class=p>)(</span><span class=n>infiniteLife_hook_address</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=o>&amp;</span><span class=n>InfiniteLife_detour</span> <span class=o>-</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>infiniteLife_hook_address</span> <span class=o>-</span> <span class=mi>5</span><span class=p>;</span>
+
+    <span class=n>infiniteLife_jmpBack_address</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)(</span><span class=n>infiniteLife_hook_address</span> <span class=o>+</span> <span class=mh>0x5</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The Detour function code is as following. &ldquo;sub ebx,0xE8&rdquo; is to compute the base address, then compare with my character structure&rsquo;s base address :</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=n>DWORD</span> <span class=n>ebx_value</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+
+<span class=kr>__declspec</span><span class=p>(</span><span class=kr>naked</span><span class=p>)</span> <span class=kt>void</span> <span class=n>InfiniteLife_detour</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>pushad</span>
+        <span class=n>sub</span> <span class=n>ebx</span><span class=p>,</span><span class=mh>0xE8</span>
+        <span class=n>mov</span> <span class=n>ebx_value</span><span class=p>,</span><span class=n>ebx</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>ebx_value</span> <span class=o>==</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>ReturnMeAddress</span><span class=p>())</span> <span class=p>{</span>
+        <span class=kr>__asm</span> <span class=p>{</span>
+            <span class=n>popad</span>
+            <span class=n>sub</span> <span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ds</span><span class=p>:[</span><span class=n>ebx</span><span class=o>+</span><span class=mh>0x4</span><span class=p>],</span><span class=mi>0</span>
+            <span class=n>jmp</span> <span class=n>infiniteLife_jmpBack_address</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>else</span> <span class=p>{</span>
+        <span class=kr>__asm</span> <span class=p>{</span>
+            <span class=n>popad</span>
+            <span class=n>sub</span> <span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ds</span><span class=p>:[</span><span class=n>ebx</span><span class=o>+</span><span class=mh>0x4</span><span class=p>],</span><span class=n>esi</span>
+            <span class=n>mov</span> <span class=n>eax</span><span class=p>,</span><span class=n>esi</span>
+            <span class=n>jmp</span> <span class=n>infiniteLife_jmpBack_address</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h5 id=0x26-infinite-ammo>0x26 Infinite ammo</h5>
+<p>In the picture 2-24, Use Cheat Engine to scan the ammo data like we did before, and shoot, we can find such instruction:</p>
+<div>
+<center>
+<img src=p2-24.png alt=p2-24.png style=100%>
+<br>
+Picture 2-24
+</center>
+</div>
+<p>the instruction at 0x4C7288 and 0x4C73EF will be excuted when you shoot.</p>
+<p>I boldly assume that, the instruction &ldquo;cmp dword ptr [eax],00&rdquo; is to check if the ammo is empty and &ldquo;dec [eax]&rdquo; is to decrease the ammo.</p>
+<p>The method to examine is the same as we used to implement the infinite life. Set a breakpoint on 0x4C73EF, then shoot. After the breakpoint is hit, check the address stored in the eax, then nop this instruction. After this instruction is nopped, the number of ammo shouldn&rsquo;t be changed after shooting.</p>
+<p>When the breakpoint is hit, the eax stores the 0x14 which is 20 in decimal. This value is the same as our number of ammo in the game. And the address of this value stored in is in the address range of our character structure. In the picture 2-30, we can find that this value change when the ammo is changed, and they are the same value all the time.</p>
+<div>
+<center>
+<img src=p2-30.png alt=p2-30.png style=100%>
+<br>
+Picture 2-30
+</center>
+</div>
+<p>So we can determine that this address stores the ammo of current gun.</p>
+<p>If you nop the instruction &ldquo;dec [eax]&rdquo;, the number of ammo won&rsquo;t decrease after shooting. Therefore this instruction is our target to hook.</p>
+<p>However, it&rsquo;s the same as infinite life, this instruction is also used by bots. If you set a breakpoint here, then active the bots, the breakpoint is hit.</p>
+<p>because the eax stores an address which is in the address range of character structure, we can compute the base address of this character structure. Then compare this address with our character structure&rsquo;s base address.</p>
+<p>The hook code should be as following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=n>DWORD</span> <span class=n>infiniteAmmo_jmpBack_address</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+<span class=k>static</span> <span class=kt>unsigned</span> <span class=kt>char</span><span class=o>*</span> <span class=n>infiniteAmmo_hook_address</span> <span class=o>=</span> <span class=p>(</span><span class=kt>unsigned</span> <span class=kt>char</span><span class=o>*</span><span class=p>)</span><span class=mh>0x4C73EF</span><span class=p>;</span>
+<span class=kt>void</span> <span class=nf>InfiniteAmmo</span><span class=p>()</span> <span class=p>{</span>
+    <span class=n>DWORD</span> <span class=n>old_protect</span><span class=p>;</span>
+    <span class=n>VirtualProtect</span><span class=p>((</span><span class=kt>void</span><span class=o>*</span><span class=p>)</span><span class=n>infiniteAmmo_hook_address</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=n>PAGE_EXECUTE_READWRITE</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>old_protect</span><span class=p>);</span>
+    <span class=o>*</span><span class=n>infiniteAmmo_hook_address</span> <span class=o>=</span> <span class=mh>0xE9</span><span class=p>;</span>
+    <span class=o>*</span><span class=p>(</span><span class=n>DWORD</span><span class=o>*</span><span class=p>)(</span><span class=n>infiniteAmmo_hook_address</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=o>&amp;</span><span class=n>infiniteAmmo_Detour</span> <span class=o>-</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>infiniteAmmo_hook_address</span> <span class=o>-</span> <span class=mi>5</span><span class=p>;</span>
+    <span class=o>*</span><span class=p>(</span><span class=n>infiniteAmmo_hook_address</span> <span class=o>+</span> <span class=mh>0x5</span><span class=p>)</span> <span class=o>=</span> <span class=mh>0x90</span><span class=p>;</span>
+    <span class=n>infiniteAmmo_jmpBack_address</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)(</span><span class=n>infiniteAmmo_hook_address</span> <span class=o>+</span> <span class=mh>0x6</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The detour function should be as following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=n>DWORD</span> <span class=n>eax_value_ammo</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+<span class=kr>__declspec</span><span class=p>(</span><span class=kr>naked</span><span class=p>)</span> <span class=kt>void</span> <span class=n>infiniteAmmo_Detour</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>pushad</span>
+        <span class=n>mov</span> <span class=n>eax_value_ammo</span><span class=p>,</span><span class=n>eax</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>IsMyInfo</span><span class=p>())</span> <span class=p>{</span>
+        <span class=kr>__asm</span> <span class=p>{</span>
+            <span class=n>popad</span>
+            <span class=n>lea</span> <span class=n>eax</span><span class=p>,</span><span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ss</span><span class=p>:[</span><span class=n>esp</span><span class=o>+</span><span class=mh>0x1C</span><span class=p>]</span>
+            <span class=n>jmp</span> <span class=n>infiniteAmmo_jmpBack_address</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>else</span> <span class=p>{</span>
+        <span class=kr>__asm</span> <span class=p>{</span>
+            <span class=n>popad</span>
+            <span class=n>dec</span> <span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ds</span><span class=p>:[</span><span class=n>eax</span><span class=p>]</span>
+            <span class=n>lea</span> <span class=n>eax</span><span class=p>,</span><span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ss</span><span class=p>:[</span><span class=n>esp</span><span class=o>+</span><span class=mh>0x1C</span><span class=p>]</span>
+            <span class=n>jmp</span> <span class=n>infiniteAmmo_jmpBack_address</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The function IsMyInfo() is to compare whether the computed base address is equal with base address of our character structure. The code is as following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=kt>bool</span> <span class=nf>IsMyInfo</span><span class=p>(</span> <span class=p>)</span> <span class=p>{</span>
+    <span class=k>for</span> <span class=p>(</span><span class=n>DWORD</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>6</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=p>((</span><span class=n>eax_value_ammo</span> <span class=o>-</span> <span class=p>(</span><span class=mh>0x140</span> <span class=o>-</span> <span class=p>(</span><span class=n>i</span> <span class=o>*</span> <span class=mi>4</span><span class=p>)))</span> <span class=o>==</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>ReturnMeAddress</span><span class=p>())</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=nb>true</span><span class=p>;</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nb>false</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>You might be confused about why the variable eax_value_ammo substract the &ldquo;(0x140 - (i*4))&rdquo; in the code &ldquo;(eax_value_ammo - (0x140 - (i * 4))) == (DWORD)ReturnMeAddress()&rdquo;.</p>
+<p>This is because different guns use different address to store their ammo, but these address is consecutive. It may be an array, and the name of gun is as index of array.</p>
+<p>There are six guns in the game, and 0x140 offset is the last element of the array. Every element is 4 Bytes, So we use 0x140 to substract i*4. If one is equal with base address of our character structure, the function return true which means this ammo data is ours.</p>
+<p>In the picture 2-31, We change gun to submachine gun and pistol, the ammo address change.</p>
+<div>
+<center>
+<img src=p2-31.png alt=p2-31.png style=100%>
+<br>
+Picture 2-31
+</center>
+</div>
+<h5 id=0x27-norecoil>0x27 NoRecoil</h5>
+<p>Every time we shoot, the character is pushed back and the angle of view rises. This is recoil.</p>
+<p>Because the recoil appears after shooting, the code to compute the recoil should be around the code of decreasing the ammo.</p>
+<p>The angle of view in the game use two variables yaw and pitch to represent. The location of character uses coordinate to represent.</p>
+<p>Press &ldquo;`&rdquo; to open the command terminal and enter &ldquo;dbgpos 1&rdquo; to print the angle of view and location like the picture 2-32.</p>
+<div>
+<center>
+<img src=p2-32.png alt=p2-32.png style=100%>
+<br>
+Picture 2-32
+</center>
+</div>
+<p>In the 0x26 infinite ammo section, we have located the instruction which is used to decrease the ammo. Because the angle of view and location are all float type, We should find the instructions which handle the float computing.</p>
+<p>After analysing, not far away from the instruction &ldquo;dec [eax]&rdquo;, I find a lot of instructions to handle the float computing, and the last instruction call a function.</p>
+<div>
+<center>
+<img src=p2-33.png alt=p2-33.png style=100%>
+<br>
+Picture 2-33
+</center>
+</div>
+<p>before 0x4c738A, the instructions might prepare for this call. in this function, there are still a lot of instructions handling the float computing. So these code should be analysed carafully.</p>
+<p>When we shoot, we can find the view of angle and location change smoothly, so the code to compute the view of angle and location can&rsquo;t be this which use the view of angle and location to add a variation value directly. They should add or substract the value which becomes smaller constantly. So the variation value should be stored somewhere.</p>
+<p>You might think of that we can use Cheat Engine to find the instructions which only are excuted after shooting. However this method is useless now, because there aren&rsquo;t such instructions. I will take the variable yaw as example, You can see the picture 2-34, there are new instructions.</p>
+<div>
+<center>
+<img src=p2-34.png alt=p2-34.png style=100%>
+<br>
+Picture 2-34
+</center>
+</div>
+<p>If you scan the variable x of coordinate, you will get a lot of instructions, and don&rsquo;t know how to filter :</p>
+<div>
+<center>
+<img src=p2-35.png alt=p2-35.png style=100%>
+<br>
+Picture 2-35
+</center>
+</div>
+<p>If you try to analyse the whole instructions which computing the float data, you will also can&rsquo;t find the clue to locate where handles the recoil.</p>
+<p>Experience from the above analysis, we should pay more attention to the data which in the character structure.</p>
+<p>After analysing, I find the following instructions write some float data into the character structure, the eax here stores the base address of our character structure:</p>
+<div>
+<center>
+<img src=p2-36.png alt=p2-36.png style=100%>
+<br>
+Picture 2-36
+</center>
+</div>
+<p>The addresses are written is following the data of the x,y and z axes in the coordinate.</p>
+<div>
+<center>
+<img src=p2-37.png alt=p2-37.png style=100%>
+<br>
+Picture 2-37
+</center>
+</div>
+<p>Because the value of x will change smoothly and the printed the value of x is changed in real time after shooting, the value of x will be written many times.</p>
+<p>To determine whether this data is used as the variation value which is add or substract by x value, we can set the hardware breakpoint on 0x9453D4 where is the value of x stored. The condition for this breakpoint hit is when this address is written the data.</p>
+<p>Continue to run the game, the breakpoint will be hit many times on one instruction. If you constantly run, you will find the value of x is changing bit by bit and when the value of x changes by a certain value, the data written to the eax+10 is change also. Please check the picture 2-38:</p>
+<div>
+<center>
+<img src=p2-38.png alt=p2-38.png style=100%>
+<br>
+Picture 2-38
+</center>
+</div>
+<p>Although the magnitude changes of the value of x and variation value aren&rsquo;t consistent. If you run the game continuely, you will find the value of x won&rsquo;t change when the variation value is small enough.</p>
+<p>Therefore I boldly assume this variation value influence the value of x. We can try to change the instruction &ldquo;movss dword ptr ds:[eax+0x10], xmm0&rdquo; at 0x4C8DD2 to &ldquo;mov dword ptr ds:[eax+0x10], 0&rdquo;, then shoot inthe game to check wheter the value of x will change.</p>
+<p>The result is the value of x won&rsquo;t change:</p>
+<div>
+<center>
+<img src=p2-39.png alt=p2-39.png style=100%>
+<br>
+Picture 2-39
+</center>
+</div>
+<p>So we can determine the data whose offset is 0x10 in the character structure will influence the value of x after shooting.</p>
+<p>Come back to the picture 2-36, the value of y and z are the same. The value in the eax+0x14 will influence the value of y, and the value of eax+0x18 will influence the value of z.</p>
+<p>So I will only show the code which handles the value of x.</p>
+<p>The hook code is following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++>
+<span class=kt>void</span> <span class=nf>NoRecoil</span><span class=p>()</span> <span class=p>{</span>
+     <span class=k>static</span> <span class=kt>unsigned</span> <span class=kt>char</span><span class=o>*</span> <span class=n>shootPushBackx_hook_address</span> <span class=o>=</span> <span class=p>(</span><span class=kt>unsigned</span> <span class=kt>char</span><span class=o>*</span><span class=p>)</span><span class=mh>0x4C8DD2</span><span class=p>;</span>
+     <span class=n>DWORD</span> <span class=n>shootPushBackx_jmpBack_address</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+    <span class=n>DWORD</span> <span class=n>old_protect</span><span class=p>;</span>
+    <span class=n>VirtualProtect</span><span class=p>((</span><span class=kt>void</span><span class=o>*</span><span class=p>)</span><span class=n>shootPushBackx_hook_address</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=n>PAGE_EXECUTE_READWRITE</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>old_protect</span><span class=p>);</span>
+    <span class=o>*</span><span class=n>shootPushBackx_hook_address</span> <span class=o>=</span> <span class=mh>0xE9</span><span class=p>;</span>
+    <span class=o>*</span><span class=p>(</span><span class=n>DWORD</span><span class=o>*</span><span class=p>)(</span><span class=n>shootPushBackx_hook_address</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=o>&amp;</span><span class=n>shootPushBackx_Detour</span> <span class=o>-</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>shootPushBackx_hook_address</span> <span class=o>-</span> <span class=mi>5</span><span class=p>;</span>
+    <span class=n>shootPushBackx_jmpBack_address</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)(</span><span class=n>shootPushBackx_hook_address</span> <span class=o>+</span> <span class=mh>0x5</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The Detou function is following. comparing the address stored in the eax with the base address of our character structure is to avoid to influence the bots:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=kr>__declspec</span><span class=p>(</span><span class=kr>naked</span><span class=p>)</span> <span class=kt>void</span> <span class=n>shootPushBackx_Detour</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>pushad</span>
+        <span class=n>mov</span> <span class=n>eax_value</span><span class=p>,</span><span class=n>eax</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>eax_value</span> <span class=o>==</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>ReturnMeAddress</span><span class=p>())</span> <span class=p>{</span>
+        <span class=kr>__asm</span> <span class=p>{</span>
+            <span class=n>popad</span>
+            <span class=n>mov</span> <span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ds</span><span class=p>:[</span><span class=n>eax</span><span class=o>+</span><span class=mh>0x10</span><span class=p>],</span><span class=mi>0</span>
+            <span class=n>jmp</span> <span class=n>shootPushBackx_jmpBack_address</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>else</span> <span class=p>{</span>
+        <span class=kr>__asm</span> <span class=p>{</span>
+            <span class=n>popad</span>
+            <span class=n>movss</span> <span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ds</span> <span class=p>:</span> <span class=p>[</span><span class=n>eax</span> <span class=o>+</span> <span class=mh>0x10</span><span class=p>]</span> <span class=p>,</span> <span class=n>xmm0</span>
+            <span class=n>jmp</span> <span class=n>shootPushBackx_jmpBack_address</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>After hook, you will find we won&rsquo;t be pushed back after shooting, but the angle of view still rise.</p>
+<p>Continue to analyse, there is an instruction &ldquo;movss dword ptr ds:[eax+40],xmm2&rdquo; at 0x4C8E52 writing the data to the character structure, and the address which stores this data is behind the value of yaw and pitch:</p>
+<div>
+<center>
+<img src=p2-40.png alt=p2-40.png style=100%>
+<br>
+Picture 2-40
+</center>
+</div>
+<p>So the method to examine is the same as when we examine the x. I won&rsquo;t represent it again.</p>
+<p>The hook code is following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=k>static</span> <span class=kt>unsigned</span> <span class=kt>char</span><span class=o>*</span> <span class=n>shootPitchUp_hook_address</span> <span class=o>=</span> <span class=p>(</span><span class=kt>unsigned</span> <span class=kt>char</span><span class=o>*</span><span class=p>)</span><span class=mh>0x4C8E52</span><span class=p>;</span>
+<span class=n>DWORD</span> <span class=n>shootPitchUp_jmpBack_address</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+<span class=kt>void</span> <span class=nf>NoRecoil</span><span class=p>()</span> <span class=p>{</span>
+    <span class=n>VirtualProtect</span><span class=p>((</span><span class=kt>void</span><span class=o>*</span><span class=p>)</span><span class=n>shootPitchUp_hook_address</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=n>PAGE_EXECUTE_READWRITE</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>old_protect</span><span class=p>);</span>
+    <span class=o>*</span><span class=n>shootPitchUp_hook_address</span> <span class=o>=</span> <span class=mh>0xE9</span><span class=p>;</span>
+    <span class=o>*</span><span class=p>(</span><span class=n>DWORD</span><span class=o>*</span><span class=p>)(</span><span class=n>shootPitchUp_hook_address</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=o>&amp;</span><span class=n>shootPitchUp_Detour</span> <span class=o>-</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>shootPitchUp_hook_address</span> <span class=o>-</span> <span class=mi>5</span><span class=p>;</span>
+    <span class=n>shootPitchUp_jmpBack_address</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)(</span><span class=n>shootPitchUp_hook_address</span> <span class=o>+</span> <span class=mh>0x5</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The detour funtion is following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=kr>__declspec</span><span class=p>(</span><span class=kr>naked</span><span class=p>)</span> <span class=kt>void</span> <span class=n>shootPitchUp_Detour</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>pushad</span>
+        <span class=n>mov</span> <span class=n>eax_value</span><span class=p>,</span> <span class=n>eax</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>eax_value</span> <span class=o>==</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>ReturnMeAddress</span><span class=p>())</span> <span class=p>{</span>
+        <span class=kr>__asm</span> <span class=p>{</span>
+            <span class=n>popad</span>
+            <span class=n>mov</span> <span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ds</span> <span class=p>:</span> <span class=p>[</span><span class=n>eax</span> <span class=o>+</span> <span class=mh>0x40</span><span class=p>]</span> <span class=p>,</span> <span class=mi>0</span>
+            <span class=n>jmp</span> <span class=n>shootPitchUp_jmpBack_address</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>else</span> <span class=p>{</span>
+        <span class=kr>__asm</span> <span class=p>{</span>
+            <span class=n>popad</span>
+            <span class=n>movss</span> <span class=n>dword</span> <span class=n>ptr</span> <span class=nl>ds</span> <span class=p>:</span> <span class=p>[</span><span class=n>eax</span> <span class=o>+</span> <span class=mh>0x40</span><span class=p>]</span> <span class=p>,</span> <span class=n>xmm2</span>
+            <span class=n>jmp</span> <span class=n>shootPitchUp_jmpBack_address</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>So far, this part is over.</p>
+<h4 id=0x30-aimbot-and-esp>0x30 Aimbot And Esp</h4>
+<p>In this hack, Esp has two types. One is internal Esp which uses the internal function of game to print the information, and the algorithm to compute the location of printed information is the same as aimbot which need to compute the location of character&rsquo;s head. the other one is external Esp, which converts the coordinates of characters in the game into the coordinates of screen, then draw the rectangle and print the information on the certain coordinates of screen.</p>
+<h5 id=0x31-aimbot>0x31 Aimbot</h5>
+<p>It&rsquo;s obvious that we need all the enemies' coordinates, so we need to traverse all the enemies&rsquo;s structure to read value of coordinates. We can discriminate whether current character is enemy by comparing the team infomation. And we should aim automatically when we shoot, not always. Of cause, we shouldn&rsquo;t aim automatically when we can&rsquo;t see the enemy or enemy all die and shoot.</p>
+<p>According to the above thought, we can write such codes.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=kt>void</span> <span class=nf>AimBot</span><span class=p>()</span> <span class=p>{</span>
+
+	<span class=n>PlayerInfo</span><span class=o>*</span> <span class=n>me</span> <span class=o>=</span> <span class=p>(</span><span class=n>PlayerInfo</span><span class=o>*</span><span class=p>)(</span><span class=n>ReturnMeAddress</span><span class=p>());</span>
+	<span class=n>MathMatics</span> <span class=n>math</span> <span class=o>=</span> <span class=n>MathMatics</span><span class=p>();</span>
+	<span class=k>while</span> <span class=p>(</span><span class=n>TRUE</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=n>IsGameStart</span><span class=p>(</span><span class=n>match_type_address</span><span class=p>))</span> <span class=p>{</span>
+            <span class=n>math</span><span class=p>.</span><span class=n>InitData</span><span class=p>();</span>
+            <span class=k>for</span> <span class=p>(</span><span class=n>DWORD</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>ReturnPlayerNum</span><span class=p>(</span><span class=n>player_number_address</span><span class=p>);</span> <span class=o>++</span><span class=n>i</span><span class=p>)</span> <span class=p>{</span>
+                <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>IsGameStart</span><span class=p>(</span><span class=n>match_type_address</span><span class=p>))</span> <span class=p>{</span>
+                    <span class=k>break</span><span class=p>;</span>
+                <span class=p>}</span>
+                <span class=n>DWORD</span><span class=o>*</span> <span class=n>others_address</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=o>*</span><span class=p>)(</span><span class=n>ReturnOthersListAddress</span><span class=p>()</span> <span class=o>+</span> <span class=p>(</span><span class=n>i</span> <span class=o>*</span> <span class=mi>4</span><span class=p>));</span>
+                <span class=n>PlayerInfo</span><span class=o>*</span> <span class=n>others</span> <span class=o>=</span> <span class=p>(</span><span class=n>PlayerInfo</span><span class=o>*</span><span class=p>)(</span><span class=o>*</span><span class=n>others_address</span><span class=p>);</span>
+                <span class=k>if</span> <span class=p>(</span><span class=n>others</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>)</span> <span class=p>{</span>
+                    <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>others</span><span class=o>-&gt;</span><span class=n>dead</span> <span class=o>&amp;&amp;</span> <span class=o>!</span><span class=n>IsTeamMate</span><span class=p>(</span><span class=n>me</span><span class=o>-&gt;</span><span class=n>team</span><span class=p>,</span> <span class=n>others</span><span class=o>-&gt;</span><span class=n>team</span><span class=p>))</span> <span class=p>{</span>
+                        <span class=c1>// 计算要瞄准的人物头部坐标
+</span><span class=c1></span>                        <span class=n>math</span><span class=p>.</span><span class=n>CalcutationForYawPit</span><span class=p>(</span><span class=n>me</span><span class=p>,</span> <span class=n>others</span><span class=p>,</span> <span class=n>EspInfo</span><span class=p>,</span> <span class=n>i</span><span class=p>);</span>
+                        <span class=n>EspInfo</span><span class=p>.</span><span class=n>print_text</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=n>print_info</span><span class=p>(</span><span class=n>others</span><span class=p>);</span>
+                    <span class=p>}</span>
+                    <span class=k>if</span> <span class=p>(</span><span class=n>others</span><span class=o>-&gt;</span><span class=n>dead</span><span class=p>)</span> <span class=p>{</span>
+                        <span class=n>EspInfo</span><span class=p>.</span><span class=n>print_text</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=s>&#34;&#34;</span><span class=p>;</span>
+                    <span class=p>}</span>
+                <span class=p>}</span>
+            <span class=p>}</span>
+            <span class=c1>// 检测到鼠标左键按下，并且游戏中敌人没有全部死亡并且能看见 就自动瞄准
+</span><span class=c1></span>            <span class=k>if</span> <span class=p>(</span><span class=n>GetAsyncKeyState</span><span class=p>(</span><span class=n>VK_LBUTTON</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x8000</span><span class=p>)</span> <span class=p>{</span>
+                <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>IsAllEnemyDie</span><span class=p>()</span> <span class=o>&amp;&amp;</span> <span class=n>IsSeen</span><span class=p>(</span><span class=n>math</span><span class=p>.</span><span class=n>closest_player</span><span class=p>))</span> <span class=p>{</span>
+                    <span class=n>math</span><span class=p>.</span><span class=n>WriteClosestYawPit</span><span class=p>(</span><span class=n>me</span><span class=p>);</span>
+                <span class=p>}</span>
+            <span class=p>}</span>
+        <span class=p>}</span>
+		<span class=n>Sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+	<span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The main algorithm is in the function &ldquo;CalcutationForYawPit()&rdquo;, so we enter the function to analyse.</p>
+<p>Operations in 3D space are expensive to compute, To decrese the comsumption of calculating in the 3D game, our character will always be placed at the origin (0,0,0) and all the distance and angles for objects can be calculated by just retrieving that object&rsquo;s coordinates instead of having to substract the object&rsquo;s position from the player&rsquo;s position.</p>
+<p>Take an example, when we target the enemy, the x and y axes of coordinates should be like picture 2-41.</p>
+<div>
+<center>
+<img src=p3-1.png alt=p3-1.png style=100%>
+<br>
+Picture 3-1
+</center>
+</div>
+<p>But like we analysed before, In the picture 2-37,our character&rsquo;s value of coordinates isn&rsquo;t at the origin (0,0,0).</p>
+<p>The actual situation should be like the picture 2-42.</p>
+<div>
+<center>
+<img src=p3-2.png alt=p3-2.png style=100%>
+<br>
+Picture 3-2
+</center>
+</div>
+<p>In the game, value of yaw is in the range of 0 to 360, if we set the positive axis of x is 0, the negtive axis of x is 180. So if we calculate the value of θ in the picture 2-42, we can determine the value of yaw.</p>
+<p>Luckily, we can retrieve the coordinates of our character and enemise, so we can compute the absolute distances between our character and enemise.</p>
+<p>Through trigonometric function, we can compute the arctangent value of θ whose result is the ratio between opposite and adjacent. But, we still need to convert the result to degree from radian, then the arctangent can be represent the angle we need to set to our character&rsquo;s yaw to aim at an enemy.</p>
+<p>The code to compute the yaw is following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++>    <span class=n>vec3d</span> <span class=n>abspos</span> <span class=o>=</span> <span class=p>{</span> <span class=mi>0</span><span class=p>,</span><span class=mi>0</span><span class=p>,</span><span class=mi>0</span> <span class=p>};</span>
+    <span class=n>abspos</span><span class=p>.</span><span class=n>x</span> <span class=o>=</span> <span class=n>others</span><span class=o>-&gt;</span><span class=n>x</span> <span class=o>-</span> <span class=n>me</span><span class=o>-&gt;</span><span class=n>x</span><span class=p>;</span>
+    <span class=n>abspos</span><span class=p>.</span><span class=n>y</span> <span class=o>=</span> <span class=n>others</span><span class=o>-&gt;</span><span class=n>y</span> <span class=o>-</span> <span class=n>me</span><span class=o>-&gt;</span><span class=n>y</span><span class=p>;</span>
+    <span class=n>abspos</span><span class=p>.</span><span class=n>z</span> <span class=o>=</span> <span class=n>others</span><span class=o>-&gt;</span><span class=n>z</span> <span class=o>-</span> <span class=n>me</span><span class=o>-&gt;</span><span class=n>z</span><span class=p>;</span>
+
+    <span class=kt>float</span> <span class=n>abs_distance</span> <span class=o>=</span> <span class=n>GetDistance_2d</span><span class=p>(</span><span class=n>abspos</span><span class=p>.</span><span class=n>x</span><span class=p>,</span> <span class=n>abspos</span><span class=p>.</span><span class=n>y</span><span class=p>);</span>
+
+    <span class=kt>float</span> <span class=n>temp_closest_distance</span> <span class=o>=</span> <span class=n>abs_distance</span><span class=p>;</span>
+
+    <span class=kt>float</span> <span class=n>arctan_yx</span> <span class=o>=</span> <span class=n>atan2f</span><span class=p>(</span><span class=n>abspos</span><span class=p>.</span><span class=n>y</span><span class=p>,</span> <span class=n>abspos</span><span class=p>.</span><span class=n>x</span><span class=p>);</span>
+    <span class=kt>float</span> <span class=n>temp_closest_yaw</span> <span class=o>=</span> <span class=p>((</span><span class=kt>float</span><span class=p>)(</span><span class=n>arctan_yx</span> <span class=o>*</span> <span class=p>(</span><span class=mf>180.0</span> <span class=o>/</span> <span class=n>PI</span><span class=p>)))</span> <span class=o>+</span> <span class=mi>90</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>you might be confused about why it adds the 90 in the code &ldquo;float temp_closest_yaw = ((float)(arctan_yx * (180.0 / PI))) + 90;&rdquo;. This is because the game defaults to 90 as the center which is character facing straight ahead. If you enter the game first time, you will find the character&rsquo;s starting yaw is 90. So we should add 90 to compensate this setting.</p>
+<p>After finishing the calculation of yaw, we need to calculate the pitch. We choose y and z axies of coordinates to compute. The computing principle is the same as computing yaw, which just change the oppsite side to z from y axis and adjacent size to y from x axis, the result is also the arctangent value of θ.</p>
+<p>However, there should handle a extra situation. When you are close enough to the enemy, the arctangent value should be bigger if result is bigger than 0 or smaller if result is smaller than 0, and this will cause you suddenly aim straight up or straight down. This is because when you are close to a character, the value of y will be small, the ratio between z and y will be bigger. We can solve this problem by replacing the value of y with the value of x.</p>
+<p>If I am close to a character from the direction which makes my y value the same as testing character&rsquo;s y value, the coordinates data is in the picture 2-43.</p>
+<div>
+<center>
+<img src=p3-3.png alt=p3-3.png style=100%>
+<br>
+Picture 3-3
+</center>
+</div>
+<p>In this situation, replacing the value of y with x will conpensate the computing error. However, this method is rough, the variation value of x can also be small which causes the arctangent value is also wrong. So you can sometimes find you can&rsquo;t aim right in the game, and you will aim the above of the character.</p>
+<p>the code to compute the pitch is below:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++>    <span class=kt>float</span> <span class=n>arctan_zy</span> <span class=o>=</span> <span class=n>atan2f</span><span class=p>(</span><span class=n>abspos</span><span class=p>.</span><span class=n>z</span><span class=p>,</span> <span class=n>abspos</span><span class=p>.</span><span class=n>y</span><span class=p>);</span>
+    <span class=kt>float</span> <span class=n>temp_closest_pit</span> <span class=o>=</span> <span class=p>(</span><span class=kt>float</span><span class=p>)(</span><span class=n>arctan_zy</span> <span class=o>*</span> <span class=p>(</span><span class=mf>180.0</span> <span class=o>/</span> <span class=n>PI</span><span class=p>));</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>To aim the closest character, in the process of calculation, we should store the calculation result of the current closest character.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++>    <span class=k>if</span> <span class=p>(</span><span class=n>closest_distance</span> <span class=o>==</span> <span class=o>-</span><span class=mf>1.0f</span> <span class=o>||</span> <span class=n>abs_distance</span> <span class=o>&lt;</span> <span class=n>closest_distance</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>closest_player</span> <span class=o>=</span> <span class=n>others</span><span class=p>;</span>
+        <span class=n>closest_distance</span> <span class=o>=</span> <span class=n>abs_distance</span><span class=p>;</span>
+        <span class=n>closest_yaw</span> <span class=o>=</span> <span class=n>temp_closest_yaw</span><span class=p>;</span>
+        <span class=n>closest_pit</span> <span class=o>=</span> <span class=n>temp_closest_pit</span><span class=p>;</span>
+    <span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>then If we press the left mouse button and the closest character doesn&rsquo;t die and can be seen, we write the calculated result to our character&rsquo;s yaw and pitch data.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=k>if</span> <span class=p>(</span><span class=n>menu</span><span class=p>.</span><span class=n>IsEnable</span><span class=p>(</span><span class=n>menu</span><span class=p>.</span><span class=n>AIMBOT</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=n>GetAsyncKeyState</span><span class=p>(</span><span class=n>VK_LBUTTON</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x8000</span><span class=p>))</span> <span class=p>{</span>
+    <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>IsAllEnemyDie</span><span class=p>()</span> <span class=o>&amp;&amp;</span> <span class=n>IsSeen</span><span class=p>(</span><span class=n>math</span><span class=p>.</span><span class=n>closest_player</span><span class=p>))</span> <span class=p>{</span>
+        <span class=n>math</span><span class=p>.</span><span class=n>WriteClosestYawPit</span><span class=p>(</span><span class=n>me</span><span class=p>);</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+<span class=kt>void</span> <span class=n>MathMatics</span><span class=o>::</span><span class=n>WriteClosestYawPit</span><span class=p>(</span><span class=n>PlayerInfo</span><span class=o>*</span> <span class=n>me</span><span class=p>)</span> <span class=p>{</span>
+    <span class=n>me</span><span class=o>-&gt;</span><span class=n>yaw</span> <span class=o>=</span> <span class=n>closest_yaw</span><span class=p>;</span>
+    <span class=n>me</span><span class=o>-&gt;</span><span class=n>pit</span> <span class=o>=</span> <span class=n>closest_pit</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>now the aimbot part is all analysed.</p>
+<h5 id=0x32-internal-esp>0x32 Internal Esp</h5>
+<p>The Internal Esp and Aimbot use the same algorithm, So we just need to add some codes in the &ldquo;CalcutationForYawPit()&rdquo; function to implement the calculation.</p>
+<p>The Internal Esp use the internal print function to print the information of character, so the first step should find this internal function.</p>
+<p>In the &ldquo;main menu&rdquo; -> &ldquo;Help&rdquo; -> &ldquo;AssaultCube reference&rdquo; -> &ldquo;Heads-Up Displayer&rdquo; -> &ldquo;ShowSpeed&rdquo;, we can print the speed of our character on the screen:</p>
+<div>
+<center>
+<img src=p3-4.png alt=p3-4.png style=100%>
+<br>
+Picture 3-4
+</center>
+</div>
+<p>The method to locate the print function is to search the string &ldquo;Speed:&rdquo;, then find its reference. The step is represent in the picture 2-45 and 2-46.</p>
+<div>
+<center>
+<img src=p3-5.png alt=p3-5.png style=100%>
+<br>
+Picture 3-5
+</center>
+</div>
+<div>
+<center>
+<img src=p3-6.png alt=p3-6.png style=100%>
+<br>
+Picture p3-6
+</center>
+</div>
+<p>We can see the string &ldquo;Speed:&rdquo; is pushed in stack which is as the parameter of function at 0x46E640. If you change the first instruction &ldquo;push 708&rdquo; to &ldquo;push 100&rdquo;, you can find the location of string &ldquo;Speed:&rdquo; changes :</p>
+<div>
+<center>
+<img src=p3-7.png alt=p3-7.png style=100%>
+<br>
+Picture 3-7
+</center>
+</div>
+<p>So we can determine this function is what we want to find.</p>
+<p>Then we should learn how to convert the coordinates of the game to the screen coordinates.</p>
+<p>Why should we do this? why can&rsquo;t we print the information on the location of character directly? That&rsquo;s because the print function prints on the screen, not in the game. The first and second &ldquo;push&rdquo; instructions in the picture 2- 46 push the printed location in the game&rsquo;s window.</p>
+<p>So the location is influenced by the game&rsquo;s resolution ratio. we will learn to convert the coordinates on the 1024 * 768 resolution.</p>
+<p>In the game&rsquo;s window, the most left is 0, and the most right is 1024. If a character which in our view is targeted by us, the pixel is just 512. If the character is on the most left, we can assume he is on the pixel where is 10. If the character is on the most right, we assume he is on the pixel where is 1000.</p>
+<p>But in the print function, we find the value of eax is 0x4B0 in the instruction &ldquo;push eax&rdquo;. And 0x4B0 in decimal is 1200 which is the horizontal center of the game&rsquo;s window. This is because Games will often make use of a &ldquo;virtual&rdquo; screen that will always be an identical size regardless of the resolution.</p>
+<p>After changing the some value of &ldquo;push 708&rdquo;, I determine the vertical center is 900. So the virtual screen resolution is 2400 * 1800</p>
+<p>We can enumerate the following equations to calculate a suitable formula to achieve coordinate conversion, so that the printed information follows the movement of the character :</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=mi>1200</span> <span class=o>=</span> <span class=mi>1200</span> <span class=o>+</span> <span class=p>(</span><span class=n>V</span> <span class=o>*</span> <span class=n>S</span><span class=p>)</span>
+<span class=mi>100</span> <span class=o>=</span> <span class=mi>1200</span> <span class=o>+</span> <span class=p>(</span><span class=n>V</span> <span class=o>*</span> <span class=n>S</span><span class=p>)</span>
+<span class=mi>2400</span> <span class=o>=</span> <span class=mi>1200</span> <span class=o>+</span> <span class=p>(</span><span class=n>V</span> <span class=o>*</span> <span class=n>S</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The V is a variable which represents how far the character away from our view center. The S is a static scalling value. When we target a character, the V should be 0. If the character is on the left of view center, the value of (V*S) should less than 0, and if on the right, the value of (V*S) is bigger than 0.</p>
+<p>Because the variable V represents how far the character away from out view center, so V = our yaw - the yaw where character locates. We can debug our code to watch the value of V.</p>
+<p>the code is following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++>    <span class=kt>float</span> <span class=n>arctan_yx</span> <span class=o>=</span> <span class=n>atan2f</span><span class=p>(</span><span class=n>abspos</span><span class=p>.</span><span class=n>y</span><span class=p>,</span> <span class=n>abspos</span><span class=p>.</span><span class=n>x</span><span class=p>);</span>
+    <span class=kt>float</span> <span class=n>temp_closest_yaw</span> <span class=o>=</span> <span class=p>((</span><span class=kt>float</span><span class=p>)(</span><span class=n>arctan_yx</span> <span class=o>*</span> <span class=p>(</span><span class=mf>180.0</span> <span class=o>/</span> <span class=n>PI</span><span class=p>)))</span> <span class=o>+</span> <span class=mi>90</span><span class=p>;</span>
+        
+    <span class=kt>float</span> <span class=n>absyaw</span> <span class=o>=</span> <span class=n>me</span><span class=o>-&gt;</span><span class=n>yaw</span> <span class=o>-</span> <span class=n>temp_closest_yaw</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>after debugging, I get the result of the picture 2-48. The first value of absyaw is calculated in the situation that we target the character. The second value of absyaw is calculated in the situation that the character is on the most left screen. The last value of absyaw is calculated in the situation that the character is on the most right screen.</p>
+<div>
+<center>
+<img src=p3-8.png alt=p3-8.png style=100%>
+<br>
+Picture 3-8
+</center>
+</div>
+<p>Round off the value of absyaw and Substitute it into equation &ldquo;100/1200/2400 = 1200 + (V * S)&rdquo;, then the result of S is below:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=c1>// target the character
+</span><span class=c1></span><span class=mi>1200</span> <span class=o>=</span> <span class=mi>1200</span> <span class=o>+</span> <span class=p>(</span><span class=mi>0</span> <span class=o>*</span> <span class=n>S</span><span class=p>)</span> 
+<span class=c1>// the character is on the most left of screen
+</span><span class=c1></span><span class=mi>100</span> <span class=o>=</span> <span class=mi>1200</span> <span class=o>+</span> <span class=p>(</span><span class=mi>38</span> <span class=o>*</span> <span class=n>S</span><span class=p>)</span> <span class=o>=&gt;</span> <span class=n>S</span> <span class=o>=</span> <span class=o>-</span><span class=mi>29</span>
+<span class=c1>// the character is on the most right of screen
+</span><span class=c1></span><span class=mi>2400</span> <span class=o>=</span> <span class=mi>1200</span> <span class=o>+</span> <span class=p>(</span><span class=o>-</span><span class=mi>40</span> <span class=o>*</span> <span class=n>S</span><span class=p>)</span> <span class=o>=&gt;</span> <span class=n>S</span> <span class=o>=</span> <span class=o>-</span><span class=mi>30</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>We chose the S = -30. So the equation is :</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=n>x</span> <span class=o>=</span> <span class=mi>1200</span> <span class=o>+</span> <span class=p>(</span><span class=n>absyaw</span> <span class=o>*</span> <span class=p>(</span><span class=o>-</span><span class=mi>30</span><span class=p>))</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>If you watch a character in some angle, when debug the variable absyaw, you will find the value of absyaw is bigger than the 180, which is obviously wrong.</p>
+<div>
+<center>
+<img src=p3-9.png alt=p3-9.png style=100%>
+<br>
+Picture 3-9
+</center>
+</div>
+<p>This is Because our view port can never show more than 180 degrees of the screen. So if absyaw is bigger than 180 degress, the infomation will display incorrectly.</p>
+<div>
+<center>
+<img src=p3-10.png alt=p3-10.png style=100%>
+<br>
+Picture 3-10
+</center>
+</div>
+<p>There is a easy method to solve this problem. We just need to substract 360 when absyaw is bigger than 180 and add the 360 when absyaw is smaller than -180. This method ensures the absyaw is in the range of -180 to 180.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=k>if</span> <span class=p>(</span><span class=n>absyaw</span> <span class=o>&gt;</span> <span class=mi>180</span><span class=p>)</span> <span class=n>absyaw</span> <span class=o>-=</span> <span class=mi>360</span><span class=p>;</span>
+<span class=k>if</span> <span class=p>(</span><span class=n>absyaw</span> <span class=o>&lt;</span> <span class=o>-</span><span class=mi>180</span><span class=p>)</span> <span class=n>absyaw</span> <span class=o>+=</span> <span class=mi>360</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The x-axis coordinate in screen coordinates finishes to compute. The principle to compute the y-axis in screen coordinate is the same, so I won&rsquo;t demonstrate again.</p>
+<p>The equation of y axis is : y = 900 + (V * S), You can debug the value of V to compute the S like we did before. The debug code is below:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++>    <span class=kt>float</span> <span class=n>arctan_zy</span> <span class=o>=</span> <span class=n>atan2f</span><span class=p>(</span><span class=n>abspos</span><span class=p>.</span><span class=n>z</span><span class=p>,</span> <span class=n>abspos</span><span class=p>.</span><span class=n>y</span><span class=p>);</span>
+    <span class=kt>float</span> <span class=n>temp_closest_pit</span> <span class=o>=</span> <span class=p>(</span><span class=kt>float</span><span class=p>)(</span><span class=n>arctan_zy</span> <span class=o>*</span> <span class=p>(</span><span class=mf>180.0</span> <span class=o>/</span> <span class=n>PI</span><span class=p>));</span>
+
+    <span class=kt>float</span> <span class=n>abspit</span> <span class=o>=</span> <span class=n>me</span><span class=o>-&gt;</span><span class=n>pit</span> <span class=o>-</span> <span class=n>temp_closest_pit</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>After debugging, the value of S is 25.</p>
+<p>all of this will only display one character&rsquo;s information, if you want to display all the infomation of enemies, you can use an array to store the data.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=n>EspInfo</span><span class=p>.</span><span class=n>x_val</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=mi>1200</span> <span class=o>+</span> <span class=p>(</span><span class=n>absyaw</span> <span class=o>*</span> <span class=p>(</span><span class=o>-</span><span class=mi>30</span><span class=p>)));</span>
+<span class=n>EspInfo</span><span class=p>.</span><span class=n>y_val</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=mi>900</span> <span class=o>+</span> <span class=p>((</span><span class=n>abspit</span><span class=p>)</span> <span class=o>*</span> <span class=mi>25</span><span class=p>));</span>
+<span class=n>EspInfo</span><span class=p>.</span><span class=n>print_text</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>=</span> <span class=n>print_info</span><span class=p>(</span><span class=n>others</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>After the data is prepared, hook the print function then pass the information to the function.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=kr>__declspec</span><span class=p>(</span><span class=kr>naked</span><span class=p>)</span> <span class=kt>void</span> <span class=n>InternalEsp_detour</span><span class=p>()</span> <span class=p>{</span>
+
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>sub</span> <span class=n>esp</span><span class=p>,</span> <span class=mi>4</span>
+        <span class=n>push</span> <span class=n>empty_text</span>
+        <span class=n>call</span> <span class=n>InternalEsp_print_address</span>
+        <span class=n>pushad</span>
+    <span class=p>}</span>
+    <span class=c1>//internal esp
+</span><span class=c1></span>    <span class=k>for</span> <span class=p>(</span><span class=n>DWORD</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=o>*</span><span class=n>player_number_address</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>print_text</span><span class=p>(</span><span class=n>EspInfo</span><span class=p>.</span><span class=n>x_val</span><span class=p>[</span><span class=n>i</span><span class=p>],</span> <span class=n>EspInfo</span><span class=p>.</span><span class=n>y_val</span><span class=p>[</span><span class=n>i</span><span class=p>],</span> <span class=n>EspInfo</span><span class=p>.</span><span class=n>print_text</span><span class=p>[</span><span class=n>i</span><span class=p>].</span><span class=n>c_str</span><span class=p>());</span>
+    <span class=p>}</span>
+    
+    <span class=kr>__asm</span> <span class=p>{</span>
+        <span class=n>popad</span>
+        <span class=n>jmp</span> <span class=n>internalEsp_jmpBack_address</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kt>void</span> <span class=nf>InternalEsp</span><span class=p>()</span> <span class=p>{</span>        <span class=n>sub</span> <span class=n>esp</span><span class=p>,</span> <span class=mi>4</span>
+
+	<span class=n>DWORD</span> <span class=n>old_protect</span><span class=p>;</span>
+	<span class=n>VirtualProtect</span><span class=p>((</span><span class=kt>void</span><span class=o>*</span><span class=p>)</span><span class=n>InternalEsp_hook_address</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=n>PAGE_EXECUTE_READWRITE</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>old_protect</span><span class=p>);</span>
+	<span class=o>*</span><span class=n>InternalEsp_hook_address</span> <span class=o>=</span> <span class=mh>0xE9</span><span class=p>;</span>
+	<span class=o>*</span><span class=p>(</span><span class=n>DWORD</span><span class=o>*</span><span class=p>)(</span><span class=n>InternalEsp_hook_address</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=o>&amp;</span><span class=n>InternalEsp_detour</span> <span class=o>-</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)</span><span class=n>InternalEsp_hook_address</span> <span class=o>-</span> <span class=mi>5</span><span class=p>;</span>
+
+    <span class=n>internalEsp_jmpBack_address</span> <span class=o>=</span> <span class=p>(</span><span class=n>DWORD</span><span class=p>)(</span><span class=n>InternalEsp_hook_address</span> <span class=o>+</span> <span class=mh>0x5</span><span class=p>);</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h5 id=0x33-external-esp>0x33 External Esp</h5>
+<p>When I first time to implement this function, I used the window of game to draw the rectangle directly. However, it worked incorrectly. The rectangle was drawn in the back of the game screen:</p>
+<div>
+<center>
+<img src=p3-11.png alt=p3-11.png style=100%>
+<br>
+Picture 3-11
+</center>
+</div>
+<p>But I can&rsquo;t find out why this problem happens.</p>
+<p>After knowing that the windows can create the transparent window, I decide to create an transparent window and draw rectangle and print the infomation on this window.</p>
+<p>Therefore, this method need to convert the game coordinates to screen coordinates. You can use the method we used in the Internal ESP, but I will introduce another method which is more accurate.</p>
+<p>This game uses the opengl graphic library, So there should be a method to convert the coordinate of game to screen coordinate.</p>
+<p>After consulting the official document, I know the &ldquo;glGet()&rdquo; series functions will be used to read the matrix which is used to compute the conversion of coordinates.</p>
+<p>In the game, it uses the glGetFloatv() which is one of glGet() series function to read needed matrix.</p>
+<p>The glGetFloatv() function is declared to be :</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++><span class=kt>void</span> <span class=n>WINAPI</span> <span class=nf>glGetFloatv</span><span class=p>(</span>
+   <span class=n>GLenum</span>  <span class=n>pname</span><span class=p>,</span>
+   <span class=n>GLfloat</span> <span class=o>*</span><span class=n>params</span>
+<span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>And pname parameter specifies the type of matrix queried, and the params parameter is a pointer to GLfloat type array that stores the return matrix.</p>
+<p>When I set a breakpoint on the glGetFloatv() function. The breakpoint is hit. When I jump back to the return address, I find glGetFloatv() function is invoked two times.</p>
+<p>The first time it passes the 0xBA6 as the pname parameter, and the second time passes the 0xBA7 as the pname parameter:</p>
+<div>
+<center>
+<img src=p3-12.png alt=p3-12.png style=100%>
+<br>
+Picture 3-12
+</center>
+</div>
+<p>The 0xBA6 is defined as GL_MODELVIEW_MATRIX, and 0xBA7 is defined as GL_PROJECTION_MATRIX.</p>
+<p>So glGetFloatv() function will query the modelview matrix and projection matrix. Then use these two matrices to multiply and store the result in the 0x57DFD0 address. You can find the process of multiplying the matrix and the instructions which store the result in the 0x57DFD0.</p>
+<p>As I said before, These two matrices are used to compute the conversion of coordinates.</p>
+<p>So why can these matrices do this? What&rsquo;s it principle? How do these matrices compute?</p>
+<p>The graphic library opengl uses the OpenGL rendering pipeline to convert the data of the game to image. The OpenGL rendering pipeline principle is following:</p>
+<div>
+<center>
+<img src=p3-13.png alt=p3-13.png style=100%>
+<br>
+Picture 3-13
+</center>
+</div>
+<p>The MC is input which means the model coordinate, WC is the world coordinate, VC is the View coordinate and DC is device coordinate. We can understand it as the screen coordinate.</p>
+<p>In the before, the program have stored the multiplication result of modelview matrix and projection matrix in 0x57DFD0. The matrix stored in the 0x57DFD0 is a matrix called MVP matrix, which is the multiplication result of model matrix, view matrix and projection matrix. You can understand it by the following picture:</p>
+<div>
+<center>
+<img src=p3-14.png alt=p3-14.png style=100%>
+<br>
+Picture 3-14
+</center>
+</div>
+<p>So after we get the MVP matrix, we already have converted the local Space to Clip space. Then we want to convert the character&rsquo;s coordinate data on the local space into clip space.</p>
+<p>The equation of conversion is <em>clip = MVP * Vertex</em>, The vertex is the character&rsquo;s coordinate data. But because the MVP matrix is a four columns and four rows matrix, the character&rsquo;s coordinate data is only three elements x,y,z. So we need to convert it to homogeneous coordinate, the coordinate data should be (wx,wy,wx,w), here the w is equal with 1.</p>
+<p>So the clip coordinate data should be computed like:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++>    <span class=n>clipCoords</span><span class=p>.</span><span class=n>x</span> <span class=o>=</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>x</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>())</span> <span class=o>+</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>y</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span><span class=o>+</span><span class=mi>4</span><span class=p>))</span> <span class=o>+</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>z</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>8</span><span class=p>))</span> <span class=o>+</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>12</span><span class=p>));</span>
+    <span class=n>clipCoords</span><span class=p>.</span><span class=n>y</span> <span class=o>=</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>x</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>1</span><span class=p>))</span> <span class=o>+</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>y</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>5</span><span class=p>))</span> <span class=o>+</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>z</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>9</span><span class=p>))</span> <span class=o>+</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>13</span><span class=p>));</span>
+    <span class=n>clipCoords</span><span class=p>.</span><span class=n>z</span> <span class=o>=</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>x</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>2</span><span class=p>))</span> <span class=o>+</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>y</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>6</span><span class=p>))</span> <span class=o>+</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>z</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>10</span><span class=p>))</span> <span class=o>+</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>14</span><span class=p>));</span>
+    <span class=n>clipCoords</span><span class=p>.</span><span class=n>w</span> <span class=o>=</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>x</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>3</span><span class=p>))</span> <span class=o>+</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>y</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>7</span><span class=p>))</span> <span class=o>+</span> <span class=n>feet_pos</span><span class=p>.</span><span class=n>z</span> <span class=o>*</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>11</span><span class=p>))</span> <span class=o>+</span> <span class=p>(</span><span class=o>*</span><span class=p>(</span><span class=n>matrix</span><span class=p>.</span><span class=n>get</span><span class=p>()</span> <span class=o>+</span> <span class=mi>15</span><span class=p>));</span>
+
+    <span class=c1>// smaller than 0 is out of the range of Visual cone, don&#39;t need to compute
+</span><span class=c1></span>    <span class=k>if</span> <span class=p>(</span><span class=n>clipCoords</span><span class=p>.</span><span class=n>w</span> <span class=o>&lt;</span> <span class=mf>0.1f</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=nb>false</span><span class=p>;</span>
+    <span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Because our character&rsquo;s coordinate only has three elements, we should convert the homogeneous coordinate into it&rsquo;s 3D coordinate. The Computing code is :</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++>    <span class=n>NDC</span><span class=p>.</span><span class=n>x</span> <span class=o>=</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>x</span> <span class=o>/</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>w</span><span class=p>;</span>
+    <span class=n>NDC</span><span class=p>.</span><span class=n>y</span> <span class=o>=</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>y</span> <span class=o>/</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>w</span><span class=p>;</span>
+    <span class=n>NDC</span><span class=p>.</span><span class=n>z</span> <span class=o>=</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>z</span> <span class=o>/</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>w</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>NDC（Normalized Device Coordinates) is a normalized device coordinates which is used to described the position of 3D objects in the screen space. The data of NDC is in the range of -1 to 1. If we want to convert the NDC into the screen coordinate, there are still some work we should do.</p>
+<p>Because the screen coordinate data is in the range of 0 to it&rsquo;s width and it&rsquo;s height. So the NDC data should be adjusted to map the range of screen coordinate.</p>
+<p>The origin point of NDC is on the center of screen, and the origin point of screen is on the left upper corner.</p>
+<p>The x of NDC should add 1 to adjust, because the positive of x axies in the NDC and in the screen coordiante are the same. The x will be in the [0,2].</p>
+<p>The y of NDC should be substracted by 1. This is because the positve y axis in the screen coordinate is exactly oppsite to the positive y axis in the NDC. The y will be in the [0,2].</p>
+<p>Because the origin point of NDC is on the center of screen, the NDX data is still need to multiply the 0.5.</p>
+<p>Why? I understand it like thie, when the ndc_x is in the range of [0,1], it should be mapped on the right of screen. Therefore, the value of ndc_x should be mapped based on the width/2 which is the location of the width center. Otherwise the object will be mapped out of the scree, if use width not width/2.</p>
+<p>The code to compute is following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++>    <span class=n>NDC</span><span class=p>.</span><span class=n>x</span> <span class=o>=</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>x</span> <span class=o>/</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>w</span><span class=p>;</span>
+    <span class=n>NDC</span><span class=p>.</span><span class=n>y</span> <span class=o>=</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>y</span> <span class=o>/</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>w</span><span class=p>;</span>
+    <span class=n>NDC</span><span class=p>.</span><span class=n>z</span> <span class=o>=</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>z</span> <span class=o>/</span> <span class=n>clipCoords</span><span class=p>.</span><span class=n>w</span><span class=p>;</span>
+
+    <span class=n>screen</span><span class=p>.</span><span class=n>x</span> <span class=o>=</span> <span class=p>(</span><span class=n>windowWidth</span> <span class=o>/</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>NDC</span><span class=p>.</span><span class=n>x</span><span class=p>)</span> <span class=o>+</span> <span class=p>(</span><span class=n>NDC</span><span class=p>.</span><span class=n>x</span> <span class=o>+</span> <span class=n>windowWidth</span> <span class=o>/</span> <span class=mi>2</span><span class=p>);</span>
+    <span class=n>screen</span><span class=p>.</span><span class=n>y</span> <span class=o>=</span> <span class=o>-</span><span class=p>(</span><span class=n>windowHeight</span> <span class=o>/</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>NDC</span><span class=p>.</span><span class=n>y</span><span class=p>)</span> <span class=o>+</span> <span class=p>(</span><span class=n>NDC</span><span class=p>.</span><span class=n>y</span> <span class=o>+</span> <span class=n>windowHeight</span> <span class=o>/</span> <span class=mi>2</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>When we get the screen coordinate, we can draw the rectangle and print the information now.</p>
+<p>The code to create a transparent window and draw the rectangle is easy, you just need to know how to use some windows API which is demonstrated clear by the official ducument.</p>
+<p>Here I will illustrate the code to compute the location of rectangle.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-C++ data-lang=C++>    <span class=n>vec4d</span> <span class=n>Rect</span> <span class=o>=</span> <span class=p>{</span> <span class=mi>0</span> <span class=p>};</span>
+    <span class=n>Rect</span><span class=p>.</span><span class=n>w</span> <span class=o>=</span> <span class=mi>1100</span> <span class=o>/</span> <span class=n>distance</span><span class=p>;</span>
+    <span class=n>Rect</span><span class=p>.</span><span class=n>z</span> <span class=o>=</span> <span class=mi>2000</span> <span class=o>/</span> <span class=n>distance</span><span class=p>;</span>
+    <span class=n>Rect</span><span class=p>.</span><span class=n>x</span> <span class=o>=</span> <span class=p>(</span><span class=n>screen</span><span class=p>.</span><span class=n>x</span> <span class=o>-</span> <span class=p>(</span><span class=n>Rect</span><span class=p>.</span><span class=n>w</span> <span class=o>/</span> <span class=mi>2</span><span class=p>));</span>
+    <span class=n>Rect</span><span class=p>.</span><span class=n>y</span> <span class=o>=</span> <span class=n>screen</span><span class=p>.</span><span class=n>y</span> <span class=o>-</span> <span class=n>Rect</span><span class=p>.</span><span class=n>z</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The variable Rect has four elements, the w and z mean the height and width of rectangle, where x and y represent the location of the upper left corner of the rectangle in the screen coordinate. The variable distance is the 3D distance between your character and other character.</p>
+<p>The data stored in the variable screen is character&rsquo;s coordinate data. So this rectangle is a rectangle centered on the target character. The width of this rectangle is 1100/distance, and the height is 2000/height. The calculation method of Rect.x is based on the position of the target character in the screen coordinate system, offsetting half the width of the rectangle to the left, while the calculation method of Rect. y is based on the position of the target character in the screen coordinate system, offsetting the height of the rectangle upward.</p>
+<p>So you can adjust the rectangle height and width by changing the 1100 and 2000.</p>
+<h4 id=0x40-conclusion>0X40 Conclusion</h4>
+<p>I didn&rsquo;t write this blog in particular detail. The best way to understand is to read the code and reverse the game by yourself.</p>
+<p>I use the internal print function which is used by the internal esp to print the menu of hacks on the left upper corner of game window. You can analyse the code easily.</p>
+<p>This is my first time to write the English blog, it&rsquo;s hard for me. I&rsquo;m sorry for the things that I didn&rsquo;t express clearly.</p>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2023-03-18</span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/23-3-18/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/%E6%B8%B8%E6%88%8F%E5%A4%96%E6%8C%82/>游戏外挂</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/23-1-2/ class=prev rel=prev title=136字节大小的so文件如何执行藏匿于程序头的汇编指令><i class="fas fa-angle-left fa-fw"></i>136字节大小的so文件如何执行藏匿于程序头的汇编指令</a></div>
+</div>
+<div id=comments><div id=utterances></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2021 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>ShiDong</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer>
+</div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{utterances:{darkTheme:"github-dark",issueTerm:"pathname",label:"",lightTheme:"github-light",repo:"Mrsdwang/Mrsdwang.github.io"}},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1}}</script><script type=text/javascript src=/js/theme.min.js></script></body>
+</html>
